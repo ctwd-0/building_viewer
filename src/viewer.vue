@@ -58,7 +58,7 @@
 							v-bind:index="index"
 							v-bind:key="item.key"
 							v-on:click="click_photo(index)"
-							src="./assets/sample.jpg">
+							v-bind:src="item.src">
 					</div>
 				</div>
 			</div>
@@ -123,13 +123,13 @@ export default {
 			}],
 			photo_array:[{
 				key:0,
-				src:"照片",
+				src:"/dist/sample.jpg",
 			},{
 				key:1,
-				src:"线图",
+				src:"/dist/sample.jpg",
 			},{
 				key:2,
-				src:"点云切片",
+				src:"/dist/sample.jpg",
 			}],
 		};
 	},
@@ -316,7 +316,7 @@ ul {
 
 .single_photo {
 	width: 236px;
-	height: 236px;
+	height: 178px;
 	margin: 5px;
 }
 
