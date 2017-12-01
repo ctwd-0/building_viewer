@@ -1,7 +1,17 @@
 <template>
 	<div id="outer_div">
 		<div id="webgl"></div>
-		<div id="bottom_bar"></div>
+		<div id="bottom_bar">
+			<div id="table_title">
+				
+			</div>
+			<div id="table_content">
+				
+			</div>
+			<div id="table_comment">
+				
+			</div>
+		</div>
 		<div id="right_bar">
 			<div id="selector">
 				<div id="selector_tab_content">
@@ -342,6 +352,7 @@ ul {
 	text-align: center;
 	border-bottom: 1px solid rgb(65,113,156);
 }
+
 .clear {
 	clear: both;
 }
