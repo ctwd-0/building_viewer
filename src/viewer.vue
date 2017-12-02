@@ -2,11 +2,55 @@
 	<div id="outer_div">
 		<div id="webgl"></div>
 		<div id="bottom_bar">
-			<div id="table_title">
-				
+			<div 
+				id="table_header"
+				v-bind:style="{width : sum_tb_wdh + 'px'}"
+			>
+				<div 
+					class="table_header"
+					v-bind:style="{width : tb.wdh[index] + 'px'}"
+					v-for="(hd, index) in tb.hds"
+				>
+					<label
+						class="table_header_label"
+						v-bind:style="{width : tb.wdh[index] - 23 + 'px'}"
+					>
+						{{hd}}
+					</label>
+					<button
+						class="table_header_button"
+						v-on:click="on_table_header_button(index)"
+					>
+					</button>
+				</div>
+			</div>
+			<div
+				id="table_menu"
+				v-show="mn.show"
+				v-bind:style="{left: mn.left + 'px'}"
+			>
+				<div
+					class="table_menu_button"
+					v-for="(text, index) in mn.btns"
+					v-on:click="on_table_menu_button(index)"
+				>
+					{{text}}
+				</div>
 			</div>
 			<div id="table_content">
-				
+				<div 
+					class="table_line"
+					v-bind:style="{width : sum_tb_wdh + 'px'}"
+					v-for="(line, line_no) in tb.cts"
+				>
+					<label 
+						class="table_blcok" 
+						v-bind:style="{width : tb.wdh[index] + 'px'}"
+						v-for="(field, index) in line"
+					>
+						{{field}}
+					</label>
+				</div>
 			</div>
 			<div id="table_comment">
 				
@@ -34,7 +78,9 @@
 							v-bind:key="item.key"
 							v-bind:class="{selected:item.sel, not_selected:!item.sel}"
 							v-on:click="change_sel(index)"
-						>{{item.text}}</li>
+						>
+							{{item.text}}
+						</li>
 					</ul>
 				</div>
 				<div class="clear"></div>
@@ -82,6 +128,24 @@ export default {
 	name: 'viewer',
 	data () {
 		return {
+			mn: {
+				show:false,
+				left:0,
+				index:0,
+				btns:["递增排序", "递减排序", "过滤此列"],
+			},
+			tb:{
+				wdh:[100,100,100,100,120,100,170,100],
+				hds:["编号","构件类别","材质","保存状况","病害类型","材质类别","轴网位置/原图编号","干预情况"],
+				cts:[
+					["TZ01-Z01","柱","铸钢","一般","表面锈蚀","钢","D3D4之间","未干预"],
+					["TZ01-L01","梁","铸钢","病害轻微","断裂","钢","D3D4之间","加固/修补"],
+					["TZ02-B03","板","轧钢","病害轻微","表面锈蚀、断裂","钢","D4E4之间","除锈"],
+					["LJ01-L04","梁","铸钢","病害严重","变形、位移","钢","B3B4之间","更换"],
+					["LJ01-L05","梁","铸钢","病害严重","变形、位移","钢","C3C4之间","更换"],
+					["LJ01-B03","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
+				],
+			},
 			sel : 0,
 			sel_array:[{
 				key:0,
@@ -163,10 +227,70 @@ export default {
 		},
 		direct_click() {
 			alert(this.direct_id);
-		}
+		},
+
+		on_table_header_button(index) {
+			if(this.mn.show === true && this.mn.index === index ) {
+				this.mn.show = false;
+			} else {
+				this.mn.show = true;
+				this.mn.index = index;
+				this.mn.left = 5;
+				for(var i = 0; i <= this.mn.index; i++) {
+					this.mn.left += this.tb.wdh[i] + 2;
+				}
+				this.mn.left -= 2;
+				this.mn.left -= 80;
+			}
+		},
+
+		on_table_menu_button(index) {
+			this.mn.show = false;
+			if(index === 0) {
+				//"递增排序"
+				this.tb.cts.sort(this.sort_asc_index);
+			} else if(index === 1) {
+				//"递减排序"
+				this.tb.cts.sort(this.sort_desc_index);
+			} else if(index === 2) {
+				//"过滤此列"
+			}
+		},
+
+		sort_asc_index(a, b) {
+			var x = a[this.mn.index];
+			var y = b[this.mn.index];
+			if(x === y) {
+				return 0;
+			} else if(x > y) {
+				return 1;
+			} else {
+				return -1;
+			}
+		},
+
+		sort_desc_index(a, b) {
+			var x = a[this.mn.index];
+			var y = b[this.mn.index];
+			if(x === y) {
+				return 0;
+			} else if(x < y) {
+				return 1;
+			} else {
+				return -1;
+			}
+		},
 	},
+
 	computed: {
-	}
+		sum_tb_wdh: function() {
+			var sum = 0;
+			for(var i in this.tb.wdh) {
+				sum += this.tb.wdh[i];
+			}
+			sum += this.tb.wdh * 2;
+		},
+	},
 }
 
 </script>
@@ -201,6 +325,51 @@ export default {
 	border: 1px solid blue;
 	left: 10px;
 	bottom: 10px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+	padding-top: 2px;
+	padding-left: 5px;
+}
+
+#table_menu {
+	position: absolute;
+	background-color: white;
+	display: inline-block;
+	top: 21px;
+	width: 80px;
+	box-shadow:2px 2px 3px #aaaaaa
+}
+
+.table_menu_button {
+	background-color: rgb(222,235,247);
+	font-size: 16px;
+	top: 21px;
+	margin: 3px;
+	text-align: center;
+}
+.table_header {
+	background-color: rgb(222,235,247);
+	display: inline-block;
+	height: 20px;
+	margin: 1px;
+}
+.table_header_label {
+	background-color: rgb(222,235,247);
+	display: inline-block;
+	height: 20px;
+}
+.table_header_button {
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	background:url(./assets/drop_down.png);
+	border:0;
+}
+.table_blcok {
+	background-color: rgb(222,235,247);
+	display: inline-block;
+	height: 20px;
+	margin: 1px;
 }
 
 #right_bar {
