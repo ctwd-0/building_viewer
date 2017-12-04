@@ -32,7 +32,7 @@
 		<div id="bottom_bar">
 			<div 
 				id="table_header"
-				v-bind:style="{width : sum_tb_wdh + 'px'}"
+				v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
 			>
 				<div 
 					class="table_header"
@@ -68,7 +68,7 @@
 			<div id="table_content">
 				<div 
 					class="table_line"
-					v-bind:style="{width : sum_tb_wdh + 'px'}"
+					v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
 					v-for="(line, line_no) in tb.cts"
 				>
 					<label 
@@ -167,16 +167,21 @@ export default {
 				btns:["递增排序", "递减排序", "过滤此列"],
 			},
 			tb:{
-				wdh:[120,100,100,100,120,100,170,100],
-				hds:["编号","构件类别","材质","保存状况","病害类型","材质类别","轴网位置/原图编号","干预情况"],
-				cts:[
-					["TFK-02-12-01","柱","铸钢","一般","表面锈蚀","钢","D3D4之间","未干预"],
-					["TFK-02-12-02","梁","铸钢","病害轻微","断裂","钢","D3D4之间","加固/修补"],
-					["TFK-02-12-03","板","轧钢","病害轻微","表面锈蚀、断裂","钢","D4E4之间","除锈"],
-					["TFK-01-12-01","梁","铸钢","病害严重","变形、位移","钢","B3B4之间","更换"],
-					["DCC-04-12-01","梁","铸钢","病害严重","变形、位移","钢","C3C4之间","更换"],
-					["DCC-02-12-01","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
-				],
+				// wdh:[120,100,100,100,120,100,170,100],
+				// sum_tb_wdh: 940,
+				// hds:["编号","构件类别","材质","保存状况","病害类型","材质类别","轴网位置/原图编号","干预情况"],
+				// cts:[
+				// 	["TFK-02-12-01","柱","铸钢","一般","表面锈蚀","钢","D3D4之间","未干预"],
+				// 	["TFK-02-12-02","梁","铸钢","病害轻微","断裂","钢","D3D4之间","加固/修补"],
+				// 	["TFK-02-12-03","板","轧钢","病害轻微","表面锈蚀、断裂","钢","D4E4之间","除锈"],
+				// 	["TFK-01-12-01","梁","铸钢","病害严重","变形、位移","钢","B3B4之间","更换"],
+				// 	["DCC-04-12-01","梁","铸钢","病害严重","变形、位移","钢","C3C4之间","更换"],
+				// 	["DCC-02-12-01","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
+				// ],
+				wdh:[],
+				sum_tb_wdh: 0,
+				hds:0,
+				cts:0,
 			},
 			sel : 0,
 			sel_array:[{
@@ -216,26 +221,23 @@ export default {
 			photo_sel: 0,
 			photo_tag_array:[{
 				key:0,
-				text:"照片",
+				text:"图纸",
 				sel:true,
 			},{
 				key:1,
-				text:"线图",
+				text:"照片",
 				sel:false,
 			},{
 				key:2,
-				text:"点云切片",
+				text:"正射影像",
 				sel:false,
 			}],
 			photo_array:[{
 				key:0,
-				src:"/dist/sample.jpg",
+				src:"/dist/drawings/top.thumbnail.jpg",
 			},{
 				key:1,
-				src:"/dist/sample.jpg",
-			},{
-				key:2,
-				src:"/dist/sample.jpg",
+				src:"/dist/drawings/west.thumbnail.jpg",
 			}],
 		};
 	},
@@ -253,7 +255,31 @@ export default {
 				this.photo_tag_array[item].sel = false;
 			}
 			this.photo_tag_array[index].sel = true;
+
+			var pparent = this;
+			$.ajax({
+				type: 'POST',
+				url: "http://localhost:8000/polls/getImage",
+				data: {
+					username: "admin",
+					password: "gugong",
+					"model_id": "-1",
+					"cat_index": index,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					var content_array = []
+					for (var i in result['content']) {
+						content_array.push({
+							key:i,
+							src:result['content'][i],
+						});
+					}
+					pparent.photo_array = content_array;
+				},
+			});
 		},
+
 		click_photo(index) {
 
 		},
@@ -370,20 +396,123 @@ export default {
 			this.fe.show = false;
 			triger_clear_filter_data();
 		},
-	},
 
-	computed: {
-		sum_tb_wdh: function() {
+		set_up_tb_data(header, content) {
+			for(var i in content) {
+				content[i].splice(0,1);
+			}
+			header.splice(0,1);
+			header[0] = '编号';
+
+			for(var i in header) {
+				if(header[i] === '') {
+					header[i] = '-';
+				}
+			}
+			for(var i in content) {
+				for(var j in content[i]) {
+					if(content[i][j] === '') {
+						content[i][j] = '-';
+					}
+				}
+			}
+
+			var width = [];
+			for(var i = 0; i < header.length; i++) {
+				width.push(0);
+			}
+
+			for(var i = 0; i < header.length; i++) {
+				if(header[i].length + 2 > width[i]) {
+					width[i] = header[i].length + 2;
+				}
+				for(var j in content) {
+					if(content[j][i].length > width[i]) {
+						width[i] = content[j][i].length;
+					}
+				}
+			}
+
+			for(var i in width) {
+				width[i] *= 15;
+			}
+			width[0] /=15;
+			width[0] *= 10;
+
+			this.tb.cts = content;
+			this.tb.hds = header;
+			this.tb.wdh = width;
+
 			var sum = 0;
 			for(var i in this.tb.wdh) {
 				sum += this.tb.wdh[i];
 			}
 			sum += this.tb.wdh.length * 3;
-			return sum;
+			this.tb.sum_tb_wdh = sum;
 		},
 	},
-	mounted() {
+
+	computed: {
+
+	},
+mounted() {
 		_viewer = this;
+
+
+		var pparent = this;
+
+		$.ajax({
+			type: 'POST',
+			url: "http://localhost:8000/polls/init",
+			data: {
+				username: "admin",
+				password: "gugong",
+			},
+			crossDomain: true,
+			success: function( result ) {
+				pparent.set_up_tb_data(result['header'], result['content']);
+				// for (var i in result['content']) {
+				// 	result['content'][i].splice(0, 1);
+				// }
+				// result['header'].splice(0,1);
+				// result['header'][0] = '编号'
+
+				// pparent.tb['hds'] = result['header'];
+				// pparent.tb['cts'] = result['content'];
+			},
+		});
+
+		$.ajax({
+			type: 'POST',
+			url: "http://localhost:8000/polls/getImage",
+			data: {
+				username: "admin",
+				password: "gugong",
+				"model_id": "-1",
+			},
+			crossDomain: true,
+			success: function( result ) {
+
+				//var header_array = []
+				var content_array = []
+				// for (var i in result['header']) {
+				// 	header_array.push({
+				// 		key:i,
+				// 		text:result['header'][i],
+				// 		sel:i == 0,
+				// 	});
+				// }
+
+				for (var i in result['content']) {
+					content_array.push({
+						key:i,
+						src:result['content'][i],
+					});
+				}
+				//pparent.photo_tag_array = header_array;
+				pparent.photo_array = content_array;
+			},
+		});
 	}
 }
 
