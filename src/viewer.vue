@@ -135,15 +135,15 @@ export default {
 				btns:["递增排序", "递减排序", "过滤此列"],
 			},
 			tb:{
-				wdh:[100,100,100,100,120,100,170,100],
+				wdh:[120,100,100,100,120,100,170,100],
 				hds:["编号","构件类别","材质","保存状况","病害类型","材质类别","轴网位置/原图编号","干预情况"],
 				cts:[
-					["TZ01-Z01","柱","铸钢","一般","表面锈蚀","钢","D3D4之间","未干预"],
-					["TZ01-L01","梁","铸钢","病害轻微","断裂","钢","D3D4之间","加固/修补"],
-					["TZ02-B03","板","轧钢","病害轻微","表面锈蚀、断裂","钢","D4E4之间","除锈"],
-					["LJ01-L04","梁","铸钢","病害严重","变形、位移","钢","B3B4之间","更换"],
-					["LJ01-L05","梁","铸钢","病害严重","变形、位移","钢","C3C4之间","更换"],
-					["LJ01-B03","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
+					["TFK-02-12-01","柱","铸钢","一般","表面锈蚀","钢","D3D4之间","未干预"],
+					["TFK-02-12-02","梁","铸钢","病害轻微","断裂","钢","D3D4之间","加固/修补"],
+					["TFK-02-12-03","板","轧钢","病害轻微","表面锈蚀、断裂","钢","D4E4之间","除锈"],
+					["TFK-01-12-01","梁","铸钢","病害严重","变形、位移","钢","B3B4之间","更换"],
+					["DCC-04-12-01","梁","铸钢","病害严重","变形、位移","钢","C3C4之间","更换"],
+					["DCC-02-12-01","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
 				],
 			},
 			sel : 0,
@@ -226,7 +226,20 @@ export default {
 
 		},
 		direct_click() {
-			alert(this.direct_id);
+			if(current_model !== 'g_-1') {
+				alert('请返回顶层');
+			} else if(this.direct_id === ''){
+				alert('请输入正确的编号');
+			} else {
+				var object_id = lookup_object_id(this.direct_id);
+				if(object_id == -1) {
+					alert('请输入正确的编号');
+				} else if(object_id == -2){
+					alert('该编号对应重复的构件，请检查');
+				} else {
+					triger_direct_to_object(object_id);
+				}
+			}
 		},
 
 		on_table_header_button(index) {
@@ -254,6 +267,7 @@ export default {
 				this.tb.cts.sort(this.sort_desc_index);
 			} else if(index === 2) {
 				//"过滤此列"
+				this.filter_by(this.mn.index);
 			}
 		},
 
@@ -280,6 +294,33 @@ export default {
 				return -1;
 			}
 		},
+
+		filter_by(index) {
+			var name_index = -1;
+			for(var i = 0; i < this.tb.hds.length; i++) {
+				if(this.tb.hds[i] === '编号') {
+					name_index = i;
+					break;
+				}
+			}
+			if(name_index === -1) {
+				alert('找不到编号列，请检查');
+			} else if(name_index === index) {
+				alert('请不要按编号过滤');
+			} else{
+				var data = {};
+				for(var i = 0; i < this.tb.cts.length; i++) {
+					var type = this.tb.cts[i][index];
+					if(data[type] === undefined) {
+						data[type] = {};
+						data[type].color = random_color();
+						data[type].names = [];
+					}
+					data[type].names.push(this.tb.cts[i][name_index]);
+				}
+				triger_filter_objects(data);
+			}
+		},
 	},
 
 	computed: {
@@ -288,7 +329,8 @@ export default {
 			for(var i in this.tb.wdh) {
 				sum += this.tb.wdh[i];
 			}
-			sum += this.tb.wdh * 2;
+			sum += this.tb.wdh.length * 3;
+			return sum;
 		},
 	},
 }
