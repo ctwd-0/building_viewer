@@ -1,6 +1,34 @@
 <template>
 	<div id="outer_div">
-		<div id="webgl"></div>
+		<div id="webgl_wrapper">
+			<div id="webgl">
+			</div>
+			<div 
+				id="filter_example"
+				v-show="fe.show"
+			>
+				<div 
+					class="filter_example_line"
+					v-for="(example, index) in fe.cts"
+				>
+					<label
+						class="filter_example_block"
+						v-bind:style="{'background-color': example.color}"
+					>
+					</label>
+					<label class="filter_example_name">
+						{{example.name}}
+					</label>
+
+				</div>
+				<div
+					id="filter_example_cancel"
+					v-on:click="on_cancel_filter()"	
+				>
+					取消过滤
+				</div>
+			</div>
+		</div>
 		<div id="bottom_bar">
 			<div 
 				id="table_header"
@@ -128,6 +156,10 @@ export default {
 	name: 'viewer',
 	data () {
 		return {
+			fe: {
+				show:false,
+				cts:[],
+			},
 			mn: {
 				show:false,
 				left:0,
@@ -296,6 +328,11 @@ export default {
 		},
 
 		filter_by(index) {
+			this.fe.show = false;
+			if(current_model !== 'g_-1') {
+				alert('暂时只支持在顶层过滤');
+				return ;
+			}
 			var name_index = -1;
 			for(var i = 0; i < this.tb.hds.length; i++) {
 				if(this.tb.hds[i] === '编号') {
@@ -305,10 +342,11 @@ export default {
 			}
 			if(name_index === -1) {
 				alert('找不到编号列，请检查');
-			} else if(name_index === index) {
-				alert('请不要按编号过滤');
+			// } else if(name_index === index) {
+			// 	alert('请不要按编号过滤');
 			} else{
 				var data = {};
+				this.fe.cts.splice(0,this.fe.cts.length);
 				for(var i = 0; i < this.tb.cts.length; i++) {
 					var type = this.tb.cts[i][index];
 					if(data[type] === undefined) {
@@ -318,8 +356,19 @@ export default {
 					}
 					data[type].names.push(this.tb.cts[i][name_index]);
 				}
+				for(var type in data) {
+					this.fe.cts.push({
+						name:type,
+						color:color_toc_ss_string(data[type].color ),
+					});
+				}
 				triger_filter_objects(data);
+				this.fe.show = true;
 			}
+		},
+		on_cancel_filter() {
+			this.fe.show = false;
+			triger_clear_filter_data();
 		},
 	},
 
@@ -333,6 +382,9 @@ export default {
 			return sum;
 		},
 	},
+	mounted() {
+		_viewer = this;
+	}
 }
 
 </script>
@@ -349,7 +401,7 @@ export default {
 	position: relative;
 }
 
-#webgl {
+#webgl_wrapper{
 	position: absolute;
 	margin-top: 10px;
 	margin-left: 10px;
@@ -360,11 +412,46 @@ export default {
 	border: 1px solid black;
 }
 
+#filter_example {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	background-color: transparent; 
+	padding-left: 15px;
+	padding-bottom: 15px;
+}
+.filter_example_line {
+
+}
+.filter_example_name {
+	color: white;
+	font-size: 18px;
+}
+
+.filter_example_block {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border: 1px solid white;
+}
+#filter_example_cancel {
+	color: white;
+	font-size: 18px;
+	text-align: center;
+}
+#webgl {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+
+}
+
 #bottom_bar {
 	position: absolute;
 	width: 75%;
 	height: 20%;
-	border: 1px solid blue;
+	border: 1px solid rgb(65,113,156);
 	left: 10px;
 	bottom: 10px;
 	overflow-y: scroll;
