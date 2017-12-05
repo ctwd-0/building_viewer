@@ -95,7 +95,12 @@
 							v-bind:key="item.key"
 						>
 							<label>{{item.text}}</label>
-							<input type="checkbox" v-bind:value="item.text" v-model="checked_types">
+							<input 
+								type="checkbox" 
+								v-bind:value="item.value" 
+								v-model="checked_types"
+								v-on:change="check_changed()"
+							>
 						</div>
 					</div>
 					<div id="selector_tab_header">
@@ -173,6 +178,8 @@ export default {
 	name: 'viewer',
 	data () {
 		return {
+			header:[],
+			content:[],
 			li: {
 				show:false,
 				src:"/dist/images/drawings/top.thumbnail.jpg",
@@ -207,33 +214,32 @@ export default {
 			sel : 0,
 			sel_array:[{
 				key:0,
-				text:"保存状况",
+				text:"保存状态",
 				sel:true,
 			},{
 				key:1,
 				text:"干预情况",
 				sel:false,
-			// },{
-			// 	key:2,
-			// 	text:"高级选择",
-			// 	sel:false,
 			}],
 			sel_types:[{
 				key:0,
 				text:"铁构件",
+				value:"铁",
 				checked:false,
 			},{
 				key:1,
 				text:"石构件",
+				value:"石",
 				checked:false,
 			},{
 				key:2,
-				text:"钢构件",
+				text:"砖构件",
+				value:"砖",
 				checked:false,
-			},{
-				key:3,
-				text:"锌构件",
-				checked:false,
+			// },{
+			// 	key:3,
+			// 	text:"锌构件",
+			// 	checked:false,
 			}],
 			checked_types:[],
 			lable_direct:"编号入口（直接输入编号）",
@@ -262,6 +268,7 @@ export default {
 			}],
 		};
 	},
+
 	methods: {
 		change_sel(index) {
 			this.sel = index;
@@ -269,7 +276,18 @@ export default {
 				this.sel_array[item].sel = false;
 			}
 			this.sel_array[index].sel = true;
+			var idx = -1;
+			for(var i= 0; i < this.tb.hds.length; i++) {
+				if(this.tb.hds[i] === this.sel_array[index].text) {
+					idx = i;
+					break;
+				}
+			}
+			if(idx !== -1) {
+				this.filter_by(idx);
+			}
 		},
+
 		change_photo_sel(index) {
 			this.photo_sel = index;
 			for(var item in this.photo_tag_array) {
@@ -309,7 +327,7 @@ export default {
 		on_image_click() {
 			this.li.show = false;
 		},
-		
+
 		direct_click() {
 			if(current_model !== 'g_-1') {
 				alert('请返回顶层');
@@ -425,7 +443,46 @@ export default {
 			triger_clear_filter_data();
 		},
 
-		set_up_tb_data(header, content) {
+		check_changed() {
+			//alert(this.checked_types);	
+			this.filter_and_setup_tb_data(this.header, this.content, '材质类别', this.checked_types);
+			if(this.fe.show === true) {
+				this.on_cancel_filter();
+			}
+		},
+		
+		filter_and_setup_tb_data(header, content, key, values) {
+			if(values === undefined 
+				|| values === null
+				|| values.length === 0) {
+				this.set_up_tb_data(header, content);
+			} else {
+				var index = -1;
+				for(var i = 0; i < header.length; i++) {
+					if(header[i] === key) {
+						index = i;
+						break;
+					}
+				}
+				if(index === -1) {
+					this.set_up_tb_data(header, content);
+				} else {
+					var filtered_content = [];
+					var dict = {};
+					for(var i in values) {
+						dict[values[i]] = true;
+					}
+					for(var i in content) {
+						if(dict[content[i][index]] === true) {
+							filtered_content.push(content[i]);
+						}
+					}
+					this.set_up_tb_data(header, filtered_content);
+				}
+			}
+		},
+
+		cut_data(header, content) {
 			for(var i in content) {
 				content[i].splice(0,1);
 			}
@@ -444,7 +501,9 @@ export default {
 					}
 				}
 			}
+		},
 
+		set_up_tb_data(header, content) {
 			var width = [];
 			for(var i = 0; i < header.length; i++) {
 				width.push(0);
@@ -498,6 +557,9 @@ export default {
 			},
 			crossDomain: true,
 			success: function( result ) {
+				pparent.header = result['header'];
+				pparent.content = result['content'];
+				pparent.cut_data(result['header'], result['content']);
 				pparent.set_up_tb_data(result['header'], result['content']);
 				// for (var i in result['content']) {
 				// 	result['content'][i].splice(0, 1);
