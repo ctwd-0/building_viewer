@@ -1,150 +1,167 @@
 <template>
-	<div id="outer_div">
-		<div id="webgl_wrapper">
-			<div id="webgl">
-			</div>
-			<div 
-				id="filter_example"
-				v-show="fe.show"
-			>
+	<div>
+		<div id="outer_div">
+			<div id="webgl_wrapper">
+				<div id="webgl">
+				</div>
 				<div 
-					class="filter_example_line"
-					v-for="(example, index) in fe.cts"
+					id="filter_example"
+					v-show="fe.show"
 				>
-					<label
-						class="filter_example_block"
-						v-bind:style="{'background-color': example.color}"
+					<div 
+						class="filter_example_line"
+						v-for="(example, index) in fe.cts"
 					>
-					</label>
-					<label class="filter_example_name">
-						{{example.name}}
-					</label>
-
-				</div>
-				<div
-					id="filter_example_cancel"
-					v-on:click="on_cancel_filter()"	
-				>
-					取消过滤
-				</div>
-			</div>
-		</div>
-		<div id="bottom_bar">
-			<div 
-				id="table_header"
-				v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
-			>
-				<div 
-					class="table_header"
-					v-bind:style="{width : tb.wdh[index] + 'px'}"
-					v-for="(hd, index) in tb.hds"
-				>
-					<label
-						class="table_header_label"
-						v-bind:style="{width : tb.wdh[index] - 23 + 'px'}"
-					>
-						{{hd}}
-					</label>
-					<button
-						class="table_header_button"
-						v-on:click="on_table_header_button(index)"
-					>
-					</button>
-				</div>
-			</div>
-			<div
-				id="table_menu"
-				v-show="mn.show"
-				v-bind:style="{left: mn.left + 'px'}"
-			>
-				<div
-					class="table_menu_button"
-					v-for="(text, index) in mn.btns"
-					v-on:click="on_table_menu_button(index)"
-				>
-					{{text}}
-				</div>
-			</div>
-			<div id="table_content">
-				<div 
-					class="table_line"
-					v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
-					v-for="(line, line_no) in tb.cts"
-				>
-					<label 
-						class="table_blcok" 
-						v-bind:style="{width : tb.wdh[index] + 'px'}"
-						v-for="(field, index) in line"
-					>
-						{{field}}
-					</label>
-				</div>
-			</div>
-			<div id="table_comment">
-				
-			</div>
-		</div>
-		<div id="right_bar">
-			<div id="selector">
-				<div id="selector_tab_content">
-					<div class="selector_line"
-						v-for="(item,index) in sel_types"
-						v-bind:item="item"
-						v-bind:index="index"
-						v-bind:key="item.key"
-					>
-						<label>{{item.text}}</label>
-						<input type="checkbox" v-bind:value="item.text" v-model="checked_types">
-					</div>
-				</div>
-				<div id="selector_tab_header">
-					<ul>
-						<li
-							v-for="(item, index) in sel_array"
-							v-bind:item="item"
-							v-bind:index="index"
-							v-bind:key="item.key"
-							v-bind:class="{selected:item.sel, not_selected:!item.sel}"
-							v-on:click="change_sel(index)"
+						<label
+							class="filter_example_block"
+							v-bind:style="{'background-color': example.color}"
 						>
-							{{item.text}}
-						</li>
-					</ul>
-				</div>
-				<div class="clear"></div>
-			</div>
-			<div id="direct">
-				<div class="direct_lable">{{lable_direct}}</div>
-				<div class="direct_input_line">
-					<input type="text" v-model="direct_id">
-					<button id="direct_button" @click="direct_click">{{direct_button_text}}</button>
-				</div>
-			</div>
-			<div id="photos">
-				<div id="photo_tab_header">
-					<ul>
-						<li
-							v-for="(item, index) in photo_tag_array"
-							v-bind:item="item"
-							v-bind:index="index"
-							v-bind:key="item.key"
-							v-bind:class="{photo_selected:item.sel, photo_not_selected:!item.sel}"
-							v-on:click="change_photo_sel(index)"
-						>{{item.text}}</li>
-					</ul>
-				</div>
-				<div id="photo_tab_content">
-					<div id="photo_content">
-						<img
-							class="single_photo"
-							v-for="(item, index) in photo_array"
-							v-bind:item="item"
-							v-bind:index="index"
-							v-bind:key="item.key"
-							v-on:click="click_photo(index)"
-							v-bind:src="item.src">
+						</label>
+						<label class="filter_example_name">
+							{{example.name}}
+						</label>
+
+					</div>
+					<div
+						id="filter_example_cancel"
+						v-on:click="on_cancel_filter()"	
+					>
+						取消过滤
 					</div>
 				</div>
+			</div>
+			<div id="bottom_bar">
+				<div 
+					id="table_header"
+					v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
+				>
+					<div 
+						class="table_header"
+						v-bind:style="{width : tb.wdh[index] + 'px'}"
+						v-for="(hd, index) in tb.hds"
+					>
+						<label
+							class="table_header_label"
+							v-bind:style="{width : tb.wdh[index] - 23 + 'px'}"
+						>
+							{{hd}}
+						</label>
+						<button
+							class="table_header_button"
+							v-on:click="on_table_header_button(index)"
+						>
+						</button>
+					</div>
+				</div>
+				<div
+					id="table_menu"
+					v-show="mn.show"
+					v-bind:style="{left: mn.left + 'px'}"
+				>
+					<div
+						class="table_menu_button"
+						v-for="(text, index) in mn.btns"
+						v-on:click="on_table_menu_button(index)"
+					>
+						{{text}}
+					</div>
+				</div>
+				<div id="table_content">
+					<div 
+						class="table_line"
+						v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
+						v-for="(line, line_no) in tb.cts"
+					>
+						<label 
+							class="table_blcok" 
+							v-bind:style="{width : tb.wdh[index] + 'px'}"
+							v-for="(field, index) in line"
+						>
+							{{field}}
+						</label>
+					</div>
+				</div>
+				<div id="table_comment">
+					
+				</div>
+			</div>
+			<div id="right_bar">
+				<div id="selector">
+					<div id="selector_tab_content">
+						<div class="selector_line"
+							v-for="(item,index) in sel_types"
+							v-bind:item="item"
+							v-bind:index="index"
+							v-bind:key="item.key"
+						>
+							<label>{{item.text}}</label>
+							<input type="checkbox" v-bind:value="item.text" v-model="checked_types">
+						</div>
+					</div>
+					<div id="selector_tab_header">
+						<ul>
+							<li
+								v-for="(item, index) in sel_array"
+								v-bind:item="item"
+								v-bind:index="index"
+								v-bind:key="item.key"
+								v-bind:class="{selected:item.sel, not_selected:!item.sel}"
+								v-on:click="change_sel(index)"
+							>
+								{{item.text}}
+							</li>
+						</ul>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div id="direct">
+					<div class="direct_lable">{{lable_direct}}</div>
+					<div class="direct_input_line">
+						<input type="text" v-model="direct_id">
+						<button id="direct_button" @click="direct_click">{{direct_button_text}}</button>
+					</div>
+				</div>
+				<div id="photos">
+					<div id="photo_tab_header">
+						<ul>
+							<li
+								v-for="(item, index) in photo_tag_array"
+								v-bind:item="item"
+								v-bind:index="index"
+								v-bind:key="item.key"
+								v-bind:class="{photo_selected:item.sel, photo_not_selected:!item.sel}"
+								v-on:click="change_photo_sel(index)"
+							>{{item.text}}</li>
+						</ul>
+					</div>
+					<div id="photo_tab_content">
+						<div id="photo_content">
+							<img
+								class="single_photo"
+								v-for="(item, index) in photo_array"
+								v-bind:item="item"
+								v-bind:index="index"
+								v-bind:key="item.key"
+								v-on:click="click_photo(index)"
+								v-bind:src="item.src">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div 
+			id="large_image_container"
+			v-show="li.show"
+		>
+			<div 
+				id="large_image_scroll"
+				v-on:click="on_image_click()"
+			>
+				<img 
+					class="large_image"
+					v-bind:src="li.src"
+					v-on:click="on_image_click()"
+				>
 			</div>
 		</div>
 	</div>
@@ -156,6 +173,10 @@ export default {
 	name: 'viewer',
 	data () {
 		return {
+			li: {
+				show:false,
+				src:"/dist/images/drawings/top.thumbnail.jpg",
+			},
 			fe: {
 				show:false,
 				cts:[],
@@ -234,10 +255,10 @@ export default {
 			}],
 			photo_array:[{
 				key:0,
-				src:"/dist/drawings/top.thumbnail.jpg",
+				src:"/dist/images/drawings/top.thumbnail.jpg",
 			},{
 				key:1,
-				src:"/dist/drawings/west.thumbnail.jpg",
+				src:"/dist/images/drawings/west.thumbnail.jpg",
 			}],
 		};
 	},
@@ -281,8 +302,14 @@ export default {
 		},
 
 		click_photo(index) {
-
+			this.li.show = true;
+			this.li.src = this.photo_array[index].src;
 		},
+		
+		on_image_click() {
+			this.li.show = false;
+		},
+		
 		direct_click() {
 			if(current_model !== 'g_-1') {
 				alert('请返回顶层');
@@ -392,6 +419,7 @@ export default {
 				this.fe.show = true;
 			}
 		},
+
 		on_cancel_filter() {
 			this.fe.show = false;
 			triger_clear_filter_data();
@@ -455,9 +483,9 @@ export default {
 	computed: {
 
 	},
-mounted() {
+	
+	mounted() {
 		_viewer = this;
-
 
 		var pparent = this;
 
@@ -519,6 +547,25 @@ mounted() {
 </script>
 
 <style scoped>
+
+#large_image_container {
+	position: fixed;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	background-color: rgba(0,0,0,.1);
+	z-index: 10001;
+}
+
+#large_image_scroll {
+	overflow: auto;
+	height: 100%;
+	text-align: center;
+}
+.large_image {
+	width: 1024px;
+}
 #outer_div {
 	margin-left: auto;
 	margin-right: auto;
