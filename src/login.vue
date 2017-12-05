@@ -53,7 +53,11 @@ export default {
 	methods: {
 		login_click: function (event) {
 			//alert(this.username);
-			location.href="viewer.html";
+			if(this.username === 'admin' && this.password === 'gugong') {
+				location.href="viewer.html";
+			} else {
+				alert("用户名或密码错误。");
+			}
 		},
 	},
 }
