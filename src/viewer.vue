@@ -18,7 +18,7 @@
 						>
 						</label>
 						<label class="filter_example_name">
-							{{example.name}}
+							{{example.text}}
 						</label>
 
 					</div>
@@ -417,6 +417,8 @@ export default {
 				for(var type in data) {
 					this.fe.cts.push({
 						name:type,
+						count:data[type].names.length,
+						text: type + ': ' + data[type].names.length + "个",
 						color:color_toc_ss_string(data[type].color ),
 					});
 				}
