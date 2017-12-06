@@ -103,20 +103,7 @@
 							>
 						</div>
 					</div>
-					<div id="selector_tab_header">
-						<ul>
-							<li
-								v-for="(item, index) in sel_array"
-								v-bind:item="item"
-								v-bind:index="index"
-								v-bind:key="item.key"
-								v-bind:class="{selected:item.sel, not_selected:!item.sel}"
-								v-on:click="change_sel(index)"
-							>
-								{{item.text}}
-							</li>
-						</ul>
-					</div>
+
 					<div class="clear"></div>
 				</div>
 				<div id="direct">
@@ -750,7 +737,7 @@ export default {
 }
 
 #selector {
-	width: 270px;
+	width: 260px;
 	margin: auto;
 	margin-top: 8px;
 }
@@ -761,12 +748,13 @@ export default {
 
 #selector_tab_content {
 	float: left;
-	width: 240px;
+	width: 260px;
 	height: 200px;
 	background-color: rgb(222,235,247);
 	border-bottom: 1px solid rgb(65,113,156);
 	border-top: 1px solid rgb(65,113,156);
 	border-left: 1px solid rgb(65,113,156);
+	border-right: 1px solid rgb(65,113,156);
 }
 
 ul {
