@@ -6,27 +6,33 @@
 				</div>
 				<div 
 					id="filter_example"
+					v-bind:style="{'width': fe.width + 'px'}"
 					v-show="fe.show"
 				>
-					<div 
-						class="filter_example_line"
-						v-for="(example, index) in fe.cts"
-					>
-						<label
-							class="filter_example_block"
-							v-bind:style="{'background-color': example.color}"
-						>
-						</label>
-						<label class="filter_example_name">
-							{{example.text}}
-						</label>
-
-					</div>
 					<div
-						id="filter_example_cancel"
-						v-on:click="on_cancel_filter()"	
+						id="filter_example_son"
+						v-bind:style="{'width': (fe.width + 18) + 'px'}"
 					>
-						取消过滤
+						<div 
+							class="filter_example_line"
+							v-for="(example, index) in fe.cts"
+						>
+							<label
+								class="filter_example_block"
+								v-bind:style="{'background-color': example.color}"
+							>
+							</label>
+							<label class="filter_example_name">
+								{{example.text}}
+							</label>
+
+						</div>
+						<div
+							id="filter_example_cancel"
+							v-on:click="on_cancel_filter()"	
+						>
+							取消过滤
+						</div>
 					</div>
 				</div>
 			</div>
@@ -455,14 +461,20 @@ export default {
 					}
 					data[type].names.push(this.tb.cts[i][name_index]);
 				}
+				var max_len = 0;
 				for(var type in data) {
+					var text = type + ': ' + data[type].names.length + "个";
+					if(text.length > max_len) {
+						max_len = text.length;
+					}
 					this.fe.cts.push({
 						name:type,
 						count:data[type].names.length,
-						text: type + ': ' + data[type].names.length + "个",
+						text: text,
 						color:color_toc_ss_string(data[type].color ),
 					});
 				}
+				this.fe.width = max_len * 18 + 10;
 				triger_filter_objects(data);
 				this.fe.show = true;
 			}
@@ -679,7 +691,9 @@ export default {
 	height: 75%;
 	border: 1px solid black;
 }
-
+#webgl {
+	background-color: black;
+}
 #filter_example {
 	position: absolute;
 	left: 0;
@@ -687,7 +701,15 @@ export default {
 	background-color: transparent; 
 	padding-left: 15px;
 	padding-bottom: 15px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
+
+#filter_example_son {
+	max-height: 450px;
+	overflow-x: hidden;
+}
+
 .filter_example_line {
 
 }
@@ -702,10 +724,12 @@ export default {
 	height: 18px;
 	border: 1px solid white;
 }
+
 #filter_example_cancel {
 	color: white;
+	margin-left: 24px;
 	font-size: 18px;
-	text-align: center;
+	text-align: left;
 }
 #webgl {
 	width: 100%;
@@ -722,8 +746,8 @@ export default {
 	border: 1px solid rgb(65,113,156);
 	left: 10px;
 	bottom: 10px;
-	overflow-y: scroll;
-	overflow-x: scroll;
+	overflow-y: auto;
+	overflow-x: auto;
 	padding-top: 2px;
 	padding-left: 5px;
 }
