@@ -165,11 +165,12 @@ export default {
 	name: 'viewer',
 	data () {
 		return {
+			model_id: 'g_-1',
 			header:[],
 			content:[],
 			li: {
 				show:false,
-				src:"/dist/images/drawings/top.thumbnail.jpg",
+				src:"/dist/images/g_-1/drawings/1.thumbnail.jpg",
 			},
 			fe: {
 				show:false,
@@ -248,10 +249,10 @@ export default {
 			}],
 			photo_array:[{
 				key:0,
-				src:"/dist/images/drawings/top.thumbnail.jpg",
+				src:"/dist/images/g_-1/drawings/1.thumbnail.jpg",
 			},{
 				key:1,
-				src:"/dist/images/drawings/west.thumbnail.jpg",
+				src:"/dist/images/g_-1/drawings/1.thumbnail.jpg",
 			}],
 		};
 	},
@@ -289,7 +290,7 @@ export default {
 				data: {
 					username: "admin",
 					password: "gugong",
-					"model_id": "-1",
+					"model_id": this.model_id,
 					"cat_index": index,
 				},
 				crossDomain: true,
@@ -304,6 +305,40 @@ export default {
 					pparent.photo_array = content_array;
 				},
 			});
+		},
+
+		change_photo(model_id) {
+			if(model_id !== 'g_-1' && model_id !== 'g_7' && model_id !== 'o') {
+				return;
+			}
+
+			if(model_id == this.model_id) {
+				return;
+			} else {
+				this.model_id = model_id;
+				var pparent = this;
+				$.ajax({
+					type: 'POST',
+					url: "http://localhost:8000/polls/getImage",
+					data: {
+						username: "admin",
+						password: "gugong",
+						"model_id": this.model_id,
+						"cat_index": this.photo_sel,
+					},
+					crossDomain: true,
+					success: function( result ) {
+						var content_array = []
+						for (var i in result['content']) {
+							content_array.push({
+								key:i,
+								src:result['content'][i],
+							});
+						}
+						pparent.photo_array = content_array;
+					},
+				});
+			}
 		},
 
 		click_photo(index) {
@@ -393,7 +428,7 @@ export default {
 			}
 			var name_index = -1;
 			for(var i = 0; i < this.tb.hds.length; i++) {
-				if(this.tb.hds[i] === '编号') {
+				if(this.tb.hds[i] === '构件编号') {
 					name_index = i;
 					break;
 				}
@@ -482,7 +517,7 @@ export default {
 				content[i].splice(0,1);
 			}
 			header.splice(0,1);
-			header[0] = '编号';
+			header[0] = '构件编号';
 
 			for(var i in header) {
 				if(header[i] === '') {
@@ -516,9 +551,9 @@ export default {
 			}
 
 			for(var i in width) {
-				width[i] *= 15;
+				width[i] *= 18;
 			}
-			width[0] /=15;
+			width[0] /=18;
 			width[0] *= 10;
 
 			this.tb.cts = content;
@@ -573,7 +608,7 @@ export default {
 			data: {
 				username: "admin",
 				password: "gugong",
-				"model_id": "-1",
+				"model_id": this.model_id,
 			},
 			crossDomain: true,
 			success: function( result ) {
