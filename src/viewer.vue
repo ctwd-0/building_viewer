@@ -404,13 +404,19 @@ export default {
 			// 	alert('请不要按编号过滤');
 			} else{
 				var data = {};
+				var color_index = 0;
 				this.fe.cts.splice(0,this.fe.cts.length);
 				for(var i = 0; i < this.tb.cts.length; i++) {
 					var type = this.tb.cts[i][index];
 					if(data[type] === undefined) {
 						data[type] = {};
-						data[type].color = random_color();
 						data[type].names = [];
+						if(color_index < _colors.length) {
+							data[type].color = _colors[color_index];
+							color_index ++;
+						} else {
+							data[type].color = random_color();
+						}
 					}
 					data[type].names.push(this.tb.cts[i][name_index]);
 				}
