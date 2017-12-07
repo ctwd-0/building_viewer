@@ -362,7 +362,11 @@ export default {
 			} else if(this.direct_id === ''){
 				alert('请输入正确的编号');
 			} else {
-				var object_id = lookup_object_id(this.direct_id);
+				var name = this.direct_id;
+				if(csv_rhino[name] !== undefined) {
+					name = csv_rhino[name];
+				}
+				var object_id = lookup_object_id(name);
 				if(object_id == -1) {
 					alert('请输入正确的编号');
 				} else if(object_id == -2){
