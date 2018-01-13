@@ -176,7 +176,7 @@ export default {
 			content:[],
 			li: {
 				show:false,
-				src:"/dist/images/g_-1/drawings/1.thumbnail.jpg",
+				src:"dist/images/g_-1/drawings/1.thumbnail.jpg",
 			},
 			fe: {
 				show:false,
@@ -255,10 +255,10 @@ export default {
 			}],
 			photo_array:[{
 				key:0,
-				src:"/dist/images/g_-1/drawings/1.thumbnail.jpg",
+				src:"dist/images/g_-1/drawings/1.thumbnail.jpg",
 			},{
 				key:1,
-				src:"/dist/images/g_-1/drawings/1.thumbnail.jpg",
+				src:"dist/images/g_-1/drawings/2.thumbnail.jpg",
 			}],
 		};
 	},
@@ -303,9 +303,10 @@ export default {
 				success: function( result ) {
 					var content_array = []
 					for (var i in result['content']) {
+
 						content_array.push({
 							key:i,
-							src:result['content'][i],
+							src: pparent.fix_absolute_uri(result['content'][i]),
 						});
 					}
 					pparent.photo_array = content_array;
@@ -338,7 +339,7 @@ export default {
 						for (var i in result['content']) {
 							content_array.push({
 								key:i,
-								src:result['content'][i],
+								src: pparent.fix_absolute_uri(result['content'][i]),
 							});
 						}
 						pparent.photo_array = content_array;
@@ -583,6 +584,14 @@ export default {
 			sum += this.tb.wdh.length * 3;
 			this.tb.sum_tb_wdh = sum;
 		},
+
+		fix_absolute_uri(uri) {
+			if(uri.startWith('/') || uri.startWith('\\')) {
+				return uri.substring(1);
+			} else {
+				return uri;
+			}
+		}
 	},
 
 	computed: {
@@ -642,7 +651,7 @@ export default {
 				for (var i in result['content']) {
 					content_array.push({
 						key:i,
-						src:result['content'][i],
+						src: pparent.fix_absolute_uri(result['content'][i]),
 					});
 				}
 				//pparent.photo_tag_array = header_array;
@@ -787,7 +796,7 @@ export default {
 	display: inline-block;
 	width: 17px;
 	height: 17px;
-	background:url(./assets/drop_down.png);
+	background:url(assets/drop_down.png);
 	border:0;
 }
 .table_blcok {
