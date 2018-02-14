@@ -37,6 +37,37 @@
 				</div>
 			</div>
 			<div id="bottom_bar">
+				<div
+					id="header_selector"
+				>
+					<div
+						id="header_selector_header"
+					>
+						<div
+							class="table_selector_header"
+							v-for="(name, index) in table_filter.names"
+							v-on:click="on_table_selector_change(index)"
+						>
+							{{name}}
+						</div>
+					</div>
+					<div
+						id="header_selector_content"
+					>
+						<div
+							class="table_selector_header"
+							v-for="(name, index) in table_filter.all_headers[table_filter.current_index]"
+						>
+							<input
+								type="checkbox"
+								v-bind:disabled="name.disabled"
+								v-bind:checked="name.checked"
+								v-on:change="on_table_meta_change(index)"
+							>
+							<label>{{name.name}}</label>
+						</div>
+					</div>
+				</div>
 				<div 
 					id="table_header"
 					v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
@@ -100,13 +131,13 @@
 							v-bind:index="index"
 							v-bind:key="item.key"
 						>
-							<label>{{item.text}}</label>
 							<input 
 								type="checkbox" 
 								v-bind:value="item.value" 
 								v-model="checked_types"
 								v-on:change="check_changed()"
 							>
+							<label>{{item.text}}</label>
 						</div>
 					</div>
 
@@ -171,6 +202,38 @@ export default {
 	name: 'viewer',
 	data () {
 		return {
+			table_filter:{
+				names:["默认","模式1"],
+				current_index: 0,
+				all_headers:[
+					[
+						{checked:true, name:"构件编号",disabled:true},
+						{checked:true, name:"构件类别"},
+						{checked:true, name:"构件类型"},
+						{checked:true, name:"方位"},
+						{checked:true, name:"所属部件"},
+						{checked:true, name:"材质类别"},
+						{checked:true, name:"材质类型"},
+						{checked:true, name:"保存状态"},
+						{checked:true, name:"病害类型"},
+						{checked:true, name:"干预情况"},
+						{checked:true, name:"备注"},
+					],
+					[
+						{checked:true, name:"构件编号",disabled:true},
+						{checked:false, name:"构件类别"},
+						{checked:false, name:"构件类型"},
+						{checked:false, name:"方位"},
+						{checked:false, name:"所属部件"},
+						{checked:false, name:"材质类别"},
+						{checked:false, name:"材质类型"},
+						{checked:false, name:"保存状态"},
+						{checked:false, name:"病害类型"},
+						{checked:false, name:"干预情况"},
+						{checked:false, name:"备注"},
+					],
+				],
+			},
 			model_id: 'g_-1',
 			header:[],
 			content:[],
@@ -201,6 +264,8 @@ export default {
 				// 	["DCC-02-12-01","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
 				// ],
 				wdh:[],
+				hds:[],
+				cts:[],
 				sum_tb_wdh: 0,
 				hds:0,
 				cts:0,
@@ -264,6 +329,15 @@ export default {
 	},
 
 	methods: {
+		on_table_selector_change(index) {
+			this.table_filter.current_index = index;
+		},
+		
+		on_table_meta_change(index) {
+			var i = this.table_filter.current_index;
+			this.table_filter.all_headers[i][index].checked = !this.table_filter.all_headers[i][index].checked;
+		},
+
 		change_sel(index) {
 			this.sel = index;
 			for(var item in this.sel_array) {
@@ -586,7 +660,7 @@ export default {
 		},
 
 		fix_absolute_uri(uri) {
-			if(uri.startWith('/') || uri.startWith('\\')) {
+			if(uri.charAt(0) === '/' || uri.charAt(0) === '\\' ) {
 				return uri.substring(1);
 			} else {
 				return uri;
@@ -665,6 +739,14 @@ export default {
 
 <style scoped>
 
+.table_selector_header{
+	display: inline-block;
+}
+
+.table_selector_content{
+	display: inline-block;
+}
+
 #large_image_container {
 	position: fixed;
 	top:0;
@@ -683,6 +765,7 @@ export default {
 .large_image {
 	width: 1024px;
 }
+
 #outer_div {
 	margin-left: auto;
 	margin-right: auto;
