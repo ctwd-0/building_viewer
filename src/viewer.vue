@@ -70,7 +70,7 @@ export default {
 			var pparent = this;
 			$.ajax({
 				type: 'POST',
-				url: "http://13.125.98.199:8000/polls/getImage",
+				url: "http://localhost:8000/polls/getImage",
 				data: {
 					username: "admin",
 					password: "gugong",
@@ -104,7 +104,7 @@ export default {
 				var pparent = this;
 				$.ajax({
 					type: 'POST',
-					url: "http://13.125.98.199:8000/polls/getImage",
+					url: "http://localhost:8000/polls/getImage",
 					data: {
 						username: "admin",
 						password: "gugong",
@@ -357,7 +357,7 @@ export default {
 
 		$.ajax({
 			type: 'POST',
-			url: "http://13.125.98.199:8000/polls/init",
+			url: "http://localhost:8000/polls/init",
 			data: {
 				username: "admin",
 				password: "gugong",
@@ -381,7 +381,7 @@ export default {
 
 		$.ajax({
 			type: 'POST',
-			url: "http://13.125.98.199:8000/polls/getImage",
+			url: "http://localhost:8000/polls/getImage",
 			data: {
 				username: "admin",
 				password: "gugong",
