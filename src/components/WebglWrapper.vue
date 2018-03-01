@@ -2,55 +2,23 @@
 	<div id="webgl_wrapper">
 		<div id="webgl">
 		</div>
-		<div 
-			id="filter_example"
-			v-bind:style="{'width': width + 'px'}"
-			v-show="show"
-		>
-			<div
-				id="filter_example_hide_scroll"
-				v-bind:style="{'width': (width + 18) + 'px'}"
-			>
-				<div 
-					class="filter_example_line"
-					v-for="(example, index) in contents"
-				>
-					<label
-						class="filter_example_block"
-						v-bind:style="{'background-color': example.color}"
-					>
-					</label>
-					<label class="filter_example_name">
-						{{example.text}}
-					</label>
-
-				</div>
-				<div
-					id="filter_example_cancel"
-					v-on:click="on_cancel_filter()"	
-				>
-					取消过滤
-				</div>
-			</div>
-		</div>
+		<FilterExample/>
 	</div>
 </template>
 	
 <script>
+import FilterExample from './WebglWrapper/FilterExample.vue'
+
 export default {
 	name: 'webgl_wrapper',
+	components: {
+		FilterExample,
+	},
 	data () {
 		return {
-			show:false,
-			contents:[],
-			width:0,
 		};
 	},
 	methods: {
-		on_cancel_filter() {
-			this.fe.show = false;
-			triger_clear_filter_data();
-		},
 	},
 }
 </script>
@@ -67,44 +35,6 @@ export default {
 	border: 1px solid black;
 }
 
-#filter_example {
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	background-color: transparent; 
-	padding-left: 15px;
-	padding-bottom: 15px;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-#filter_example_hide_scroll {
-	max-height: 450px;
-	overflow-x: hidden;
-}
-
-.filter_example_line {
-
-}
-.filter_example_name {
-	color: white;
-	font-size: 18px;
-}
-
-.filter_example_block {
-	display: inline-block;
-	width: 18px;
-	height: 18px;
-	border: 1px solid white;
-}
-
-#filter_example_cancel {
-	color: white;
-	margin-left: 24px;
-	font-size: 18px;
-	text-align: left;
-}
-
 #webgl {
 	background-color: black;
 	width: 100%;
@@ -113,5 +43,4 @@ export default {
 	padding: 0;
 
 }
-
 </style>

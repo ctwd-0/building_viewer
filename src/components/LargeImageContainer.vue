@@ -1,16 +1,16 @@
 <template>
-		<div id="large_image_container" v-show="li.show">
-			<div 
-				id="large_image_scroll"
+	<div id="large_image_container" v-show="li.show">
+		<div 
+			id="large_image_scroll"
+			v-on:click="on_image_click()"
+		>
+			<img 
+				class="large_image"
+				v-bind:src="li.src"
 				v-on:click="on_image_click()"
 			>
-				<img 
-					class="large_image"
-					v-bind:src="li.src"
-					v-on:click="on_image_click()"
-				>
-			</div>
 		</div>
+	</div>
 </template>
 
 <script>

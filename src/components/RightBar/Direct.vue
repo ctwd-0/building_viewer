@@ -1,22 +1,17 @@
 <template>
-	<div id="right_bar">
-		<Selector/>
-		<Direct/>
-		<Photos/>
+	<div id="direct">
+		<div class="direct_lable">{{lable_direct}}</div>
+		<div class="direct_input_line">
+			<input type="text" v-model="direct_id">
+			<button id="direct_button" @click="direct_click">{{direct_button_text}}</button>
+		</div>
 	</div>
 </template>
 
 <script>
-import Selector from './RightBar/Selector.vue'
-import Photos from './RightBar/Photos.vue'
-import Direct from './RightBar/Direct.vue'
-
 export default {
-	name: 'right_bar',
+	name: 'direct',
 	components: {
-		Selector,
-		Photos,
-		Direct
 	},
 	data () {
 		return {
@@ -51,40 +46,6 @@ export default {
 </script>
 
 <style scoped>
-
-#right_bar {
-	position: absolute;
-	width: 22%;
-	height: 97%;
-	right: 10px;
-	top: 10px;
-	bottom: 10px;
-	background-color: rgb(243,244,247);
-}
-
-.selected {
-	background-color: rgb(222,235,247);
-	width: 25px;
-	height: 100px;
-	font-size: 20px;
-	line-height: 25px;
-	text-align: center;
-	border-right: 1px solid rgb(65,113,156);
-	border-top: 1px solid rgb(65,113,156);
-	border-bottom: 1px solid rgb(65,113,156);
-	color: rgb(132,60,12);
-}
-
-.not_selected {
-	background-color: rgb(189,215,238);
-	width: 25px;
-	height: 100px;
-	font-size: 20px;
-	line-height: 25px;
-	text-align: center;
-	border-left: 1px solid rgb(65,113,156);
-}
-
 #direct {
 	margin: 10px auto;
 	width: 270px;
