@@ -94,7 +94,7 @@ export default {
 		_viewer = this;
 		$.ajax({
 			type: 'POST',
-			url: "http://localhost:8000/polls/init",
+			url: "http://"+json_server+"/polls/init",
 			data: {
 				username: "admin",
 				password: "gugong",
@@ -110,7 +110,7 @@ export default {
 
 		$.ajax({
 			type: 'POST',
-			url: "http://localhost:8000/polls/getImage",
+			url: "http://"+json_server+"/polls/getImage",
 			data: {
 				username: "admin",
 				password: "gugong",

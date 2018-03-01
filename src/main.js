@@ -3,6 +3,8 @@ import Login from './login.vue'
 import Viewer from './viewer.vue'
 
 //import './global.js'
+global.json_server = "localhost:8000";
+//global.json_server = "13.125.98.199:8000";
 global.the_fucking_bus = new Vue();
 global.bus = global.the_fucking_bus;
 global.model_id = 'g_-1';

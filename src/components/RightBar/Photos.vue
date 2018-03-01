@@ -73,7 +73,7 @@ export default {
 			var _this = this;
 			$.ajax({
 				type: 'POST',
-				url: "http://localhost:8000/polls/getImage",
+				url: "http://"+json_server+"/polls/getImage",
 				data: {
 					username: "admin",
 					password: "gugong",
@@ -112,7 +112,7 @@ export default {
 				model_id = m_id;
 				$.ajax({
 					type: 'POST',
-					url: "http://localhost:8000/polls/getImage",
+					url: "http://"+json_server+"/polls/getImage",
 					data: {
 						username: "admin",
 						password: "gugong",
