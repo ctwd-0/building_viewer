@@ -1,9 +1,8 @@
 <template>
 	<div id="bottom_bar">
 		<HeaderSelector/>
-		<TableHeader/>
+		<BottomTable/>
 		<TableMenu/>
-		<TableContent/>
 		<div id="table_comment">
 		</div>
 	</div>
@@ -11,25 +10,21 @@
 
 <script>
 import HeaderSelector from './BottomBar/HeaderSelector.vue'
-import TableHeader from './BottomBar/TableHeader.vue'
+import BottomTable from './BottomBar/BottomTable.vue'
 import TableMenu from './BottomBar/TableMenu.vue'
-import TableContent from './BottomBar/TableContent.vue'
 
 export default {
 	name: 'bottom_bar',
 	components: {
 		HeaderSelector,
-		TableHeader,
+		BottomTable,
 		TableMenu,
-		TableContent
 	},
 	data () {
 		return {
-
 		};
 	},
 	methods: {
-
 	},
 }
 </script>
@@ -48,5 +43,4 @@ export default {
 	padding-top: 2px;
 	padding-left: 5px;
 }
-
 </style>

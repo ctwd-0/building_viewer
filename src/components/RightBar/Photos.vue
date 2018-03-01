@@ -33,6 +33,7 @@ export default {
 	},
 	data () {
 		return {
+			model_id: 'g_-1',
 			photo_sel: 0,
 			photo_tag_array:[{
 				key:0,
@@ -57,8 +58,82 @@ export default {
 		};
 	},
 	methods: {
+		click_photo(index) {
+			bus.$emit("click_photo", this.photo_array[index].src);
+			//this.li.show = true;
+			//this.li.src = this.photo_array[index].src;
+		},
+		change_photo_sel(index) {
+			this.photo_sel = index;
+			for(var item in this.photo_tag_array) {
+				this.photo_tag_array[item].sel = false;
+			}
+			this.photo_tag_array[index].sel = true;
 
+			var _this = this;
+			$.ajax({
+				type: 'POST',
+				url: "http://localhost:8000/polls/getImage",
+				data: {
+					username: "admin",
+					password: "gugong",
+					model_id: model_id,
+					cat_index: index,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					var content_array = []
+					for (var i in result['content']) {
+
+						content_array.push({
+							key:i,
+							src: fix_absolute_uri(result['content'][i]),
+						});
+					}
+					_this.photo_array = content_array;
+				},
+			});
+		},
 	},
+	created:function() {
+		var _this = this;
+		bus.$on("photo_array", function(photo_array) {
+			_this.photo_array = photo_array;
+		});
+
+		bus.$on("change_photo", function(m_id){
+			if(m_id !== 'g_-1' && m_id !== 'g_7' && m_id !== 'o') {
+				return;
+			}
+
+			if(m_id == model_id) {
+				return;
+			} else {
+				model_id = m_id;
+				$.ajax({
+					type: 'POST',
+					url: "http://localhost:8000/polls/getImage",
+					data: {
+						username: "admin",
+						password: "gugong",
+						model_id: model_id,
+						cat_index: this.photo_sel,
+					},
+					crossDomain: true,
+					success: function( result ) {
+						var content_array = []
+						for (var i in result['content']) {
+							content_array.push({
+								key:i,
+								src: fix_absolute_uri(result['content'][i]),
+							});
+						}
+						_this.photo_array = content_array;
+					},
+				});
+			}
+		});
+	}
 }
 </script>
 

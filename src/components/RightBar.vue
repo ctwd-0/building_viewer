@@ -84,32 +84,4 @@ export default {
 	text-align: center;
 	border-left: 1px solid rgb(65,113,156);
 }
-
-#direct {
-	margin: 10px auto;
-	width: 270px;
-}
-
-.direct_lable {
-	margin: 5px;
-	font-size: 20px;
-	text-align: center;
-	background-color: rgb(222,235,247);
-}
-
-.direct_input_line {
-	margin: 8px auto;
-	text-align: center;
-}
-
-#direct > div > input {
-	height: 20px;
-	width: 208px;
-	vertical-align: middle;
-}
-
-#direct_button {
-	height: 26px;
-	vertical-align: middle;
-}
 </style>

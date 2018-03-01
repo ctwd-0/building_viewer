@@ -43,11 +43,25 @@ export default {
 		};
 	},
 	methods: {
-		on_cancel_filter() {
-			this.fe.show = false;
-			triger_clear_filter_data();
+		on_cancel_filter(from_mesh) {
+			this.show = false;
+			if(from_mesh !== true) {
+				triger_clear_filter_data();
+			}
 		},
 	},
+	created: function() {
+		var _this = this;
+		bus.$on("cancel_filter", function(from_mesh) {
+			_this.on_cancel_filter(from_mesh);
+		});
+
+		bus.$on("show_filter_example", function(width, contents) {
+			_this.show = true;
+			_this.width = width;
+			_this.contents = contents;
+		});
+	}
 }
 </script>
 

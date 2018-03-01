@@ -26,6 +26,18 @@ export default {
 			},
 		};
 	},
+	methods: {
+		on_image_click() {
+			this.li.show = false;
+		},
+	},
+	created: function(){
+		var _this = this;
+		bus.$on("click_photo", function(src) {
+			_this.li.show = true;
+			_this.li.src = src;
+		});
+	},
 }
 </script>
 

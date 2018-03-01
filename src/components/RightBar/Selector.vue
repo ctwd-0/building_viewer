@@ -28,16 +28,6 @@ export default {
 	},
 	data () {
 		return {
-			sel : 0,
-			sel_array:[{
-				key:0,
-				text:"保存状态",
-				sel:true,
-			},{
-				key:1,
-				text:"干预情况",
-				sel:false,
-			}],
 			sel_types:[{
 				key:0,
 				text:"铁构件",
@@ -58,7 +48,10 @@ export default {
 		};
 	},
 	methods: {
-
+		check_changed() {
+			bus.$emit("check_changed", this.checked_types);
+			bus.$emit("cancel_filter", false);
+		},
 	},
 }
 </script>
@@ -66,8 +59,9 @@ export default {
 <style scoped>
 #selector {
 	width: 260px;
-	margin: auto;
-	margin-top: 8px;
+	margin: 10px;
+	margin-bottom: 2px;
+	display: inline-block;
 }
 
 #selector_tab_header {

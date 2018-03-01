@@ -35,6 +35,16 @@ export default {
 	name: 'header_selector',
 	components: {
 	},
+	methods: {
+		on_table_selector_change(index) {
+			this.table_filter.current_index = index;
+		},
+		
+		on_table_meta_change(index) {
+			var i = this.table_filter.current_index;
+			this.table_filter.all_headers[i][index].checked = !this.table_filter.all_headers[i][index].checked;
+		},
+	},
 	data () {
 		return {
 			table_filter:{
