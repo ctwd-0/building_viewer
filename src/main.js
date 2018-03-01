@@ -5,13 +5,15 @@ import Viewer from './viewer.vue'
 if(document.getElementById('login')) {
 	new Vue({
 		el: '#login',
-		render: h => h(Login)
+		 template: '<Login/>',
+		 components: { Login }
 	})
 }
 
 if(document.getElementById('viewer')) {
 	new Vue({
 		el: '#viewer',
- 		render: h => h(Viewer)
+		template: '<Viewer/>',
+		components: { Viewer }
 	})
 }
