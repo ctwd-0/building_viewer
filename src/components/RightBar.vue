@@ -1,20 +1,20 @@
 <template>
 	<div id="right_bar">
-		<Selector/>
+		<Selector2/>
 		<Direct/>
 		<Photos/>
 	</div>
 </template>
 
 <script>
-import Selector from './RightBar/Selector.vue'
+import Selector2 from './RightBar/Selector2.vue'
 import Photos from './RightBar/Photos.vue'
 import Direct from './RightBar/Direct.vue'
 
 export default {
 	name: 'right_bar',
 	components: {
-		Selector,
+		Selector2,
 		Photos,
 		Direct
 	},
