@@ -38,7 +38,8 @@
     transition: all 150ms cubic-bezier(1.000, -0.115, 0.975, 0.855);
     transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
     opacity: 1;
-    height: 20px; width: 10px;
+    height: 14px;
+    width: 10px;
   }
   .v-select .open-indicator:before {
     border-color: rgba(60, 60, 60, .5);
@@ -194,8 +195,8 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     line-height: 1.42857143;
-    font-size:1em;
-    height: 34px;
+    font-size: 14px;
+    height: 21px;
     display: inline-block;
     border: none;
     outline: none;
@@ -218,6 +219,8 @@
     line-height: 1.42857143; /* Normalize line height */
   }
   .v-select li > a {
+    height: 21px;
+    font-size: 14px;
     display: block;
     padding: 3px 20px;
     clear: both;
@@ -240,6 +243,7 @@
     color: #fff;
   }
   .v-select .highlight:not(:last-child) {
+    font-size: 14px;
     margin-bottom: 0; /* Fixes Bulma Margin */
   }
   /* Loading Spinner */

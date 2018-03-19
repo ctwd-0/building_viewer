@@ -2,10 +2,11 @@
 	<div>
 		<VSelect
 			ref="v-select"
+			maxHeight="200px"
 			:search="value"
 			:options="options"
 			:clearSearchOnSelect="false"
-			v-on:updatesearch="update_search($event)"
+			@updatesearch="update_search($event)"
 		>
 		</VSelect>
 		<input v-model="value">
