@@ -1,7 +1,7 @@
 <template>
 	<div id="selector2">
 		<div id="selector_content">
-			<textarea id="query_string" wrap="off"/>
+			<textarea id="query_string" v-model="query_string" wrap="off"/>
 			<SelectInput
 				v-model="current_name"
 				:options="options"
@@ -25,7 +25,6 @@ export default {
 	},
 	data () {
 		return {
-			query:{},
 			query_string: "",
 			current_name: "",
 			options: ["条件1","条件2","条件3","条件4"],
@@ -33,9 +32,15 @@ export default {
 	},
 	methods: {
 		edit_click:function() {
-			bus.$emit("edit_json", query_string);
+			bus.$emit("edit_json", this.query_string);
 		}
 	},
+	mounted: function() {
+		var _this = this;
+		bus.$on("query:finish", function(query) {
+			_this.query_string = query;
+		});
+	}
 }
 </script>
 
