@@ -6,6 +6,7 @@
 			<RightBar/>
 		</div>
 		<LargeImageContainer/>
+		<Editor/>
 	</div>
 </template>
 
@@ -15,6 +16,7 @@ import WebglWrapper from './components/WebglWrapper.vue'
 import BottomBar from './components/BottomBar.vue'
 import RightBar from './components/RightBar.vue'
 import LargeImageContainer from './components/LargeImageContainer.vue'
+import Editor from './components/Editor.vue'
 
 export default {
 	name: 'viewer',
@@ -22,7 +24,8 @@ export default {
 		WebglWrapper,
 		BottomBar,
 		RightBar,
-		LargeImageContainer
+		LargeImageContainer,
+		Editor
 	},
 	data () {
 		return {

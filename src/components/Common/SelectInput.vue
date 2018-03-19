@@ -9,7 +9,6 @@
 			@updatesearch="update_search($event)"
 		>
 		</VSelect>
-		<input v-model="value">
 	</div>
 </template>
 

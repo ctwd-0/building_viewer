@@ -6,7 +6,10 @@
 				v-model="current_name"
 				:options="options"
 			/>
-			<input v-model="current_name"></label>
+			<button>新建</button>
+			<button @click="edit_click">编辑</button>
+			<button>保存</button>
+			<button>删除</button>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -29,6 +32,9 @@ export default {
 		};
 	},
 	methods: {
+		edit_click:function() {
+			bus.$emit("edit_json", query_string);
+		}
 	},
 }
 </script>
