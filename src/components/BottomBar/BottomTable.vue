@@ -67,6 +67,7 @@ export default {
 			},
 		};
 	},
+
 	methods: {
 		sort_asc_index(a, b) {
 			var x = a[this.index];
@@ -101,52 +102,49 @@ export default {
 			left -= 80;
 			bus.$emit("open_menu", left,index);
 		},
-		filter_and_setup_tb_data(header, content, key, values) {
-			if(values === undefined 
-				|| values === null
-				|| values.length === 0) {
-				bus.$emit("set_up_tb_data", header, content);
-				//this.set_up_tb_data(header, content);
-			} else {
-				var index = -1;
-				for(var i = 0; i < header.length; i++) {
-					if(header[i] === key) {
-						index = i;
-						break;
-					}
-				}
-				if(index === -1) {
-					bus.$emit("set_up_tb_data", header, content);
-					//this.set_up_tb_data(header, content);
-				} else {
-					var filtered_content = [];
-					var dict = {};
-					for(var i in values) {
-						dict[values[i]] = true;
-					}
-					for(var i in content) {
-						if(dict[content[i][index]] === true) {
-							filtered_content.push(content[i]);
-						}
-					}
-					bus.$emit("set_up_tb_data", header, filtered_content);
-					//this.set_up_tb_data(header, filtered_content);
-				}
-			}
-		},
+		
+		// filter_and_setup_tb_data(header, content, key, values) {
+		// 	if(values === undefined 
+		// 		|| values === null
+		// 		|| values.length === 0) {
+		// 		bus.$emit("set_up_tb_data", header, content);
+		// 		//this.set_up_tb_data(header, content);
+		// 	} else {
+		// 		var index = -1;
+		// 		for(var i = 0; i < header.length; i++) {
+		// 			if(header[i] === key) {
+		// 				index = i;
+		// 				break;
+		// 			}
+		// 		}
+		// 		if(index === -1) {
+		// 			bus.$emit("set_up_tb_data", header, content);
+		// 			//this.set_up_tb_data(header, content);
+		// 		} else {
+		// 			var filtered_content = [];
+		// 			var dict = {};
+		// 			for(var i in values) {
+		// 				dict[values[i]] = true;
+		// 			}
+		// 			for(var i in content) {
+		// 				if(dict[content[i][index]] === true) {
+		// 					filtered_content.push(content[i]);
+		// 				}
+		// 			}
+		// 			bus.$emit("set_up_tb_data", header, filtered_content);
+		// 			//this.set_up_tb_data(header, filtered_content);
+		// 		}
+		// 	}
+		// },
 	},
+
 	created: function() {
 		var _this = this;
-		bus.$on("set_up_tb_data", function(header, content){
+		bus.$on("set_up_table_data", function(header, content){
 			var width = [];
-			for(var i = 0; i < header.length; i++) {
-				width.push(0);
-			}
 
 			for(var i = 0; i < header.length; i++) {
-				if(header[i].length + 2 > width[i]) {
-					width[i] = header[i].length + 2;
-				}
+				width.push( header[i].length + 3);
 				for(var j in content) {
 					if(content[j][i].length > width[i]) {
 						width[i] = content[j][i].length;
@@ -171,9 +169,9 @@ export default {
 			_this.tb.sum_tb_wdh = sum;
 		});
 
-		bus.$on("check_changed", function(checked_types) {
-			_this.filter_and_setup_tb_data(cache_header, cache_content, "材质类别",checked_types);
-		});
+		// bus.$on("check_changed", function(checked_types) {
+		// 	_this.filter_and_setup_tb_data(cache_header, cache_content, "材质类别",checked_types);
+		// });
 
 		bus.$on("sort_table_asc", function(index) {
 			_this.index = index;
@@ -228,7 +226,7 @@ export default {
 						name:type,
 						count:data[type].names.length,
 						text: text,
-						color:color_toc_ss_string(data[type].color ),
+						color:color_to_css_string(data[type].color ),
 					});
 				}
 				triger_filter_objects(data);
@@ -261,9 +259,12 @@ export default {
 	background:url(../../assets/drop_down.png);
 	border:0;
 }
+.table_line {
+}
 .table_blcok {
 	background-color: rgb(222,235,247);
 	display: inline-block;
+	vertical-align: middle;
 	height: 20px;
 	margin: 1px;
 }
