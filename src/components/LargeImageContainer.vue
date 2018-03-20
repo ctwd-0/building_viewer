@@ -10,7 +10,7 @@
 			>
 		</div>
 		<div id="bottom_bar">
-			<label>{{index + "/" + photo_array.length}}</label>
+			<label>{{(index+1) + "/" + photo_array.length}}</label>
 			<label v-if="!editing">{{text}}</label>
 			<textarea v-if="editing" v-model="text"></textarea>
 			<button v-if="!editing" @click="edit()">修改</button>

@@ -5,7 +5,7 @@
 		>
 			<div
 				class="table_selector_header"
-				v-for="(name, index) in table_filter.names"
+				v-for="(name, index) in names"
 				v-on:click="on_table_selector_change(index)"
 			>
 				{{name}}
@@ -16,16 +16,22 @@
 		>
 			<div
 				class="table_selector_header"
-				v-for="(name, index) in table_filter.all_headers[table_filter.current_index]"
+				v-for="(name, index) in headers"
 			>
 				<input
 					type="checkbox"
-					v-bind:disabled="name.disabled"
-					v-bind:checked="name.checked"
-					v-on:change="on_table_meta_change(index)"
+					:disabled="name.disabled"
+					:id="'checkbox'+index"
+					:value="name.name"
+					v-model="model"
 				>
 				<label>{{name.name}}</label>
+
 			</div>
+			<!--
+			<span>names: {{ model }}</span>
+			<span>current_index: {{ current_index }}</span>
+			-->
 		</div>
 	</div>
 </template>
@@ -37,48 +43,37 @@ export default {
 	},
 	methods: {
 		on_table_selector_change(index) {
-			this.table_filter.current_index = index;
+			let old_index = this.current_index;
+			let new_index = index;
+			this.models.splice(old_index, 1, this.model);
+			this.model = this.models[new_index];
+			this.current_index = index;
 		},
 		
-		on_table_meta_change(index) {
-			var i = this.table_filter.current_index;
-			this.table_filter.all_headers[i][index].checked = !this.table_filter.all_headers[i][index].checked;
-		},
+		// on_table_meta_change(index) {
+		// 	var i = this.current_index;
+		// 	this.all_headers[i][index].checked = !this.all_headers[i][index].checked;
+		// },
 	},
 	data () {
 		return {
-			table_filter:{
-				names:["默认","模式1"],
-				current_index: 0,
-				all_headers:[
-					[
-						{checked:true, name:"构件编号",disabled:true},
-						{checked:true, name:"构件类别"},
-						{checked:true, name:"构件类型"},
-						{checked:true, name:"方位"},
-						{checked:true, name:"所属部件"},
-						{checked:true, name:"材质类别"},
-						{checked:true, name:"材质类型"},
-						{checked:true, name:"保存状态"},
-						{checked:true, name:"病害类型"},
-						{checked:true, name:"干预情况"},
-						{checked:true, name:"备注"},
-					],
-					[
-						{checked:true, name:"构件编号",disabled:true},
-						{checked:false, name:"构件类别"},
-						{checked:false, name:"构件类型"},
-						{checked:false, name:"方位"},
-						{checked:false, name:"所属部件"},
-						{checked:false, name:"材质类别"},
-						{checked:false, name:"材质类型"},
-						{checked:false, name:"保存状态"},
-						{checked:false, name:"病害类型"},
-						{checked:false, name:"干预情况"},
-						{checked:false, name:"备注"},
-					],
-				],
-			},
+			names:["默认","模式1"],
+			current_index: 0,
+			model:["构件编号"],
+			models:[["构件编号"],["构件编号"]],
+			headers:[
+					{name:"构件编号",disabled:true},
+					{name:"构件类别"},
+					{name:"构件类型"},
+					{name:"方位"},
+					{name:"所属部件"},
+					{name:"材质类别"},
+					{name:"材质类型"},
+					{name:"保存状态"},
+					{name:"病害类型"},
+					{name:"干预情况"},
+					{name:"备注"},
+			],
 		};
 	},
 }
