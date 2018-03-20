@@ -59,9 +59,13 @@ export default {
 	},
 	methods: {
 		click_photo(index) {
-			bus.$emit("click_photo", this.photo_array[index].src);
-			//this.li.show = true;
-			//this.li.src = this.photo_array[index].src;
+			//bus.$emit("click_photo", this.photo_array[index].src);
+			bus.$emit("click_photo", 
+				{
+					index:index,
+					photo_array: this.photo_array,
+				}
+			);
 		},
 		change_photo_sel(index) {
 			this.photo_sel = index;
