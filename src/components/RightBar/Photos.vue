@@ -76,11 +76,9 @@ export default {
 
 			var _this = this;
 			$.ajax({
-				type: 'POST',
-				url: "http://"+json_server+"/polls/getImage",
+				type: 'GET',
+				url: "http://"+json_server+"/image/get_image",
 				data: {
-					username: "admin",
-					password: "gugong",
 					model_id: model_id,
 					cat_index: index,
 				},
@@ -109,17 +107,14 @@ export default {
 			if(m_id !== 'g_-1' && m_id !== 'g_7' && m_id !== 'o') {
 				return;
 			}
-
 			if(m_id == model_id) {
 				return;
 			} else {
 				model_id = m_id;
 				$.ajax({
-					type: 'POST',
-					url: "http://"+json_server+"/polls/getImage",
+					type: 'GET',
+					url: "http://"+json_server+"/image/get_image",
 					data: {
-						username: "admin",
-						password: "gugong",
 						model_id: model_id,
 						cat_index: this.photo_sel,
 					},

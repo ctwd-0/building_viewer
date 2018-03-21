@@ -34,7 +34,7 @@ export default {
 	},
 
 	methods: {
-		
+
 	},
 
 	computed: {
@@ -43,12 +43,8 @@ export default {
 
 	mounted() {
 		$.ajax({
-			type: 'POST',
-			url: "http://"+json_server+"/polls/init",
-			data: {
-				username: "admin",
-				password: "gugong",
-			},
+			type: 'GET',
+			url: "http://"+json_server+"/table/init",
 			crossDomain: true,
 			success: function( result ) {
 				//cache_header = result['header'];
@@ -69,11 +65,9 @@ export default {
 		});
 
 		$.ajax({
-			type: 'POST',
-			url: "http://"+json_server+"/polls/getImage",
+			type: 'GET',
+			url: "http://"+json_server+"/image/get_image",
 			data: {
-				username: "admin",
-				password: "gugong",
 				model_id: model_id,
 				cat_index: 0,
 			},
