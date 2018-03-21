@@ -49,17 +49,6 @@ export default {
 		return {
 			index : 0,
 			tb : {
-				// wdh:[120,100,100,100,120,100,170,100],
-				// sum_tb_wdh: 940,
-				// hds:["编号","构件类别","材质","保存状况","病害类型","材质类别","轴网位置/原图编号","干预情况"],
-				// cts:[
-				// 	["TFK-02-12-01","柱","铸钢","一般","表面锈蚀","钢","D3D4之间","未干预"],
-				// 	["TFK-02-12-02","梁","铸钢","病害轻微","断裂","钢","D3D4之间","加固/修补"],
-				// 	["TFK-02-12-03","板","轧钢","病害轻微","表面锈蚀、断裂","钢","D4E4之间","除锈"],
-				// 	["TFK-01-12-01","梁","铸钢","病害严重","变形、位移","钢","B3B4之间","更换"],
-				// 	["DCC-04-12-01","梁","铸钢","病害严重","变形、位移","钢","C3C4之间","更换"],
-				// 	["DCC-02-12-01","板","轧钢","病害严重","缺失","钢","C3C4之间","新加"],
-				// ],
 				wdh:[],
 				hds:[],
 				cts:[],
@@ -102,40 +91,6 @@ export default {
 			left -= 80;
 			bus.$emit("open_menu", left,index);
 		},
-		
-		// filter_and_setup_tb_data(header, content, key, values) {
-		// 	if(values === undefined 
-		// 		|| values === null
-		// 		|| values.length === 0) {
-		// 		bus.$emit("set_up_tb_data", header, content);
-		// 		//this.set_up_tb_data(header, content);
-		// 	} else {
-		// 		var index = -1;
-		// 		for(var i = 0; i < header.length; i++) {
-		// 			if(header[i] === key) {
-		// 				index = i;
-		// 				break;
-		// 			}
-		// 		}
-		// 		if(index === -1) {
-		// 			bus.$emit("set_up_tb_data", header, content);
-		// 			//this.set_up_tb_data(header, content);
-		// 		} else {
-		// 			var filtered_content = [];
-		// 			var dict = {};
-		// 			for(var i in values) {
-		// 				dict[values[i]] = true;
-		// 			}
-		// 			for(var i in content) {
-		// 				if(dict[content[i][index]] === true) {
-		// 					filtered_content.push(content[i]);
-		// 				}
-		// 			}
-		// 			bus.$emit("set_up_tb_data", header, filtered_content);
-		// 			//this.set_up_tb_data(header, filtered_content);
-		// 		}
-		// 	}
-		// },
 	},
 
 	created: function() {
@@ -168,10 +123,6 @@ export default {
 			_this.tb.cts = content;
 			_this.tb.sum_tb_wdh = sum;
 		});
-
-		// bus.$on("check_changed", function(checked_types) {
-		// 	_this.filter_and_setup_tb_data(cache_header, cache_content, "材质类别",checked_types);
-		// });
 
 		bus.$on("sort_table_asc", function(index) {
 			_this.index = index;
