@@ -7,10 +7,10 @@
 				:options="options"
 			/>
 			<button @click="search_click">检索</button>
-			<button>新建</button>
+			<button @click="new_query">新建</button>
 			<button @click="edit_click">编辑</button>
-			<button>保存</button>
-			<button>删除</button>
+			<button @click="save_current">保存</button>
+			<button @click="delete_current">删除</button>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -28,14 +28,50 @@ export default {
 		return {
 			query_string: "",
 			current_name: "",
-			options: ["条件1","条件2","条件3","条件4"],
+			options: [],
 		};
 	},
 	methods: {
+		new_query: function() {
+
+		},
 		edit_click: function() {
 			bus.$emit("edit_json", this.query_string);
 		},
+		delete_current: function() {
 
+		},
+		save_current: function() {
+			if (this.current_name == ""){
+				alert("保存名不能为空")
+				return
+			} else if (this.options.indexOf(this.current_name) !== -1) {
+				alert("保存名与已有命名重复")
+				return
+			} else if (!this.query_legal(this.query_string)) {
+				alert("检索条件格式不正确")
+				return
+			}
+			$.ajax({
+				type: 'POST',
+				url: "http://"+json_server+"/query/add",
+				data: {
+					name:this.current_name,
+					query:this.query_string,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == true) {
+						if(result["names"] !== undefined && result["names"] instanceof Array) {
+							bus.$emit("init:options", result["names"]);
+						}
+						alert("保存成功")
+					} else {
+						alert("保存失败：" + result["reason"])
+					}
+				},
+			});
+		},
 		search_click: function() {
 			$.ajax({
 				type: 'POST',
@@ -54,6 +90,49 @@ export default {
 					});
 				},
 			});
+		},
+		check_data : function(obj) {
+			if(obj instanceof Object) {
+				for(let key in obj) {
+					if(key === "key" || key === "val" || key === "op" || key === "exps") {
+						continue;
+					} else {
+						return false;
+					}
+				}
+				if(obj.key !== undefined) {
+					if(obj.val !== undefined && obj.op === undefined && obj.exps=== undefined) {
+						if(typeof(obj.key) === "string" && typeof(obj.val) === "string") {
+							return true;
+						}
+					}
+				} else {
+					if(obj.val === undefined && obj.op !== undefined && obj.op !== undefined) {
+						if(obj.op === "or" || obj.op === "and") {
+							if(obj.exps instanceof Array) {
+								for(var index in obj.exps) {
+									if(!this.check_data(obj.exps[index])) {
+										return false;
+									}
+								}
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		},
+		query_legal(query) {
+			try {
+				let tempdata = JSON.parse(query);
+				if(this.check_data(tempdata)) {
+					return true
+				}
+			} catch (err) {
+				return false
+			}
+			return false
 		}
 	},
 	mounted: function() {
@@ -61,7 +140,20 @@ export default {
 		bus.$on("query:finish", function(query) {
 			_this.query_string = query;
 		});
-	}
+		bus.$on("init:options", function(options) {
+			_this.options = options;
+		});
+		$.ajax({
+			type: 'GET',
+			url: "http://"+json_server+"/query/init",
+			crossDomain: true,
+			success: function( result ) {
+				if(result["names"] !== undefined && result["names"] instanceof Array) {
+					bus.$emit("init:options", result["names"]);
+				}
+			},
+		});
+	},
 }
 </script>
 

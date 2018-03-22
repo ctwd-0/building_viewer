@@ -66,7 +66,7 @@ export default {
 				],
 			};
 		},
-		check_data(obj) {
+		check_data : function(obj) {
 			if(obj instanceof Object) {
 				for(let key in obj) {
 					if(key === "key" || key === "val" || key === "op" || key === "exps") {
@@ -115,7 +115,7 @@ export default {
 					};
 				}
 			} catch (err) {
-				console.log(err);
+				//console.log(err);
 				alert("检索条件有文法错误，已被清空");
 				_this.data = {
 					key:"",
