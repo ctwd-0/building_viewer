@@ -47,16 +47,9 @@ export default {
 			url: "http://"+json_server+"/table/init",
 			crossDomain: true,
 			success: function( result ) {
-				//cache_header = result['header'];
-				//cache_content = result['content'];
 				let header = result['header'];
 				let content = result['content'];
-				for(let i = 0 ; i < header.length; i++) {
-					if(header[i] === "构件编号（表单中显示）") {
-						header[i] = "构件编号"
-					}
-				}
-				//cut_data(header, content);
+				cut_data(header, content);
 				bus.$emit("new_table_content_arrive", {
 					header:header,
 					content:content,

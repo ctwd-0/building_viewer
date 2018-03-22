@@ -9,7 +9,13 @@ global.bus = global.the_fucking_bus;
 global.model_id = 'g_-1';
 global.cache_header = [];
 global.cache_content = [];
-
+global.cut_data = function(header, content) {
+	for(let i = 0 ; i < header.length; i++) {
+		if(header[i] === "构件编号（表单中显示）") {
+			header[i] = "构件编号"
+		}
+	}
+}
 global.fix_absolute_uri = function(uri) {
 	if(uri.charAt(0) === '/' || uri.charAt(0) === '\\' ) {
 		return uri.substring(1);

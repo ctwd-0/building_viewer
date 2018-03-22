@@ -102,7 +102,6 @@ export default {
 	created: function(){
 		var _this = this;
 		bus.$on("edit_json", function(query) {
-			console.log(1);
 			_this.show = true;
 			try {
 				let tempdata = JSON.parse(query);

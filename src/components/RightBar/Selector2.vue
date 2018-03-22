@@ -6,6 +6,7 @@
 				v-model="current_name"
 				:options="options"
 			/>
+			<button @click="search_click">检索</button>
 			<button>新建</button>
 			<button @click="edit_click">编辑</button>
 			<button>保存</button>
@@ -31,8 +32,28 @@ export default {
 		};
 	},
 	methods: {
-		edit_click:function() {
+		edit_click: function() {
 			bus.$emit("edit_json", this.query_string);
+		},
+
+		search_click: function() {
+			$.ajax({
+				type: 'POST',
+				url: "http://"+json_server+"/search",
+				data: {
+					query:this.query_string,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					let header = result['header'];
+					let content = result['content'];
+					cut_data(header, content);
+					bus.$emit("new_table_content_arrive", {
+						header:header,
+						content:content,
+					});
+				},
+			});
 		}
 	},
 	mounted: function() {
