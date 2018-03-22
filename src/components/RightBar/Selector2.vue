@@ -5,6 +5,7 @@
 			<SelectInput
 				v-model="current_name"
 				:options="options"
+				@clickon="click_on($event)"
 			/>
 			<button @click="search_click">检索</button>
 			<button @click="new_query">新建</button>
@@ -39,7 +40,28 @@ export default {
 			bus.$emit("edit_json", this.query_string);
 		},
 		delete_current: function() {
-
+			if (this.current_name == ""){
+				alert("删除名不能为空")
+				return
+			}
+			$.ajax({
+				type: 'POST',
+				url: "http://"+json_server+"/query/delete",
+				data: {
+					name:this.current_name,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == true) {
+						if(result["names"] !== undefined && result["names"] instanceof Array) {
+							bus.$emit("init:options", result["names"]);
+						}
+						alert("删除成功")
+					} else {
+						alert("删除失败：" + result["reason"])
+					}
+				},
+			});
 		},
 		save_current: function() {
 			if (this.current_name == ""){
@@ -133,6 +155,23 @@ export default {
 				return false
 			}
 			return false
+		},
+
+		click_on(val) {
+			//console.log(val);
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/query/get",
+				data: {
+					name: val,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["query"] !== undefined) {
+						bus.$emit("query:loaded", result["query"]);
+					}
+				},
+			});
 		}
 	},
 	mounted: function() {
@@ -142,6 +181,9 @@ export default {
 		});
 		bus.$on("init:options", function(options) {
 			_this.options = options;
+		});
+		bus.$on("query:loaded", function(query) {
+			_this.query_string = query;
 		});
 		$.ajax({
 			type: 'GET',

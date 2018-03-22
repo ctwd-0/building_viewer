@@ -782,6 +782,8 @@
        */
       select(option) {
         this.inner_search = option
+        this.$emit('clickon', option)
+
         this.onAfterSelect(option)
       },
 

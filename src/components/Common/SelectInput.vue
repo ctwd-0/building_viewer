@@ -7,6 +7,7 @@
 			:options="options"
 			:clearSearchOnSelect="false"
 			@updatesearch="update_search($event)"
+			@clickon="click_on($event)"
 		>
 		</VSelect>
 	</div>
@@ -23,6 +24,7 @@ export default {
 		value: String,
 		options: Array,
 		width: Number,
+		onChange:Function,
 	},
 	data () {
 		return {
@@ -31,6 +33,9 @@ export default {
 	methods: {
 		update_search(val) {
 			this.$emit('input', val);
+		},
+		click_on(val) {
+			this.$emit("clickon", val);
 		}
 	},
 	
