@@ -151,6 +151,7 @@ export default {
 	},
 	data () {
 		return {
+			from_server: false,
 			is_newing:false,
 			new_selector_name:"",
 			names:["默认"],
@@ -193,6 +194,7 @@ export default {
 			_this.model = [];
 			_this.names = [];
 			_this.current_index = 0;
+			_this.from_server = true;
 
 			let current_set = false;
 			for(let key in data.header) {
@@ -246,7 +248,11 @@ export default {
 	watch: {
 		model(val) {
 			this.cut_data();
-			this.save_model();
+			if(!this.from_server) {
+				this.save_model();
+			} else {
+				this.from_server = false;
+			}
 		}
 	}
 }
