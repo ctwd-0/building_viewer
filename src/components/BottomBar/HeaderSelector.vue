@@ -6,10 +6,18 @@
 			<div
 				class="table_selector_header"
 				v-for="(name, index) in names"
-				v-on:click="on_table_selector_change(index)"
 			>
-				{{name}}
+				<span @click="table_selector_change(index)"> {{name}} </span>
+				<button @click="delete_selector(index)">删</button>
 			</div>
+			<span v-if="is_newing">
+				<input v-model="new_selector_name">
+				<button @click="commit_new_selector">确定</button>
+				<button @click="cancel_new_selector">取消</button>
+			</span>
+			<span v-if="!is_newing">
+				<button @click="new_selector">新建</button>
+			</span>
 		</div>
 		<div
 			id="header_selector_content"
@@ -42,7 +50,60 @@ export default {
 	components: {
 	},
 	methods: {
-		on_table_selector_change(index) {
+		delete_selector(index) {
+			let name = this.names[index];
+			let _this = this;
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/filter/delete",
+				data :{
+					name:name,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == false) {
+						alert(result["reason"]);
+					} else {
+						_this.$emit("selector_arrive", result);
+						//alert("删除成功");
+					}
+				},
+			});
+		},
+		new_selector() {
+			this.new_selector_name = "";
+			this.is_newing = true;
+		},
+		cancel_new_selector() {
+			this.is_newing = false;
+		},
+		commit_new_selector() {
+			if(this.new_selector_name == "") {
+				alert("名称不能为空");
+				return;
+			}
+			if(this.names.indexOf(this.new_selector_name) !== -1) {
+				alert("名称重复");
+				return;
+			}
+			var _this = this;
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/filter/add",
+				data :{
+					name:this.new_selector_name,
+					model:JSON.stringify(this.model),
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["reason"] === undefined) {
+						_this.$emit("selector_arrive", result);
+					}
+				},
+			});
+			this.is_newing = false;
+		},
+		table_selector_change(index) {
 			let old_index = this.current_index;
 			let new_index = index;
 			this.models.splice(old_index, 1, this.model);
@@ -84,15 +145,14 @@ export default {
 				},
 				crossDomain: true,
 				success: function( result ) {
-					if(result["reason"] === undefined) {
-						_this.$emit("selector_arrive", result);
-					}
 				},
 			});
 		}
 	},
 	data () {
 		return {
+			is_newing:false,
+			new_selector_name:"",
 			names:["默认"],
 			current_index: 0,
 			model:["构件编号"],
