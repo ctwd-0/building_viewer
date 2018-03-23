@@ -51,6 +51,9 @@ export default {
 		},
 
 		cut_data() {
+			if(!this.has_data_t) {
+				return;
+			}
 			let header = [];
 			let content_t = [];
 			for(let i = 0; i < this.data_t.header.length; i++) {
@@ -69,14 +72,31 @@ export default {
 				}
 			}
 			bus.$emit("set_up_table_data", header, content);
+		},
+
+		save_model() {
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/filter/update",
+				data :{
+					name:this.names[this.current_index],
+					model:JSON.stringify(this.model),
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["reason"] === undefined) {
+						_this.$emit("selector_arrive", result);
+					}
+				},
+			});
 		}
 	},
 	data () {
 		return {
-			names:["默认","模式1"],
+			names:["默认"],
 			current_index: 0,
 			model:["构件编号"],
-			models:[["构件编号"],["构件编号"]],
+			models:[["构件编号"]],
 			headers:[
 				{name:"构件编号",disabled:true},
 				{name:"构件类别"},
@@ -90,16 +110,61 @@ export default {
 				{name:"干预情况"},
 				{name:"备注"},
 			],
-			data_t:{},
+			data_t: {},
+			has_data_t: false,
 		};
 	},
 
-	created: function() {
+	mounted: function() {
 		var _this = this;
-		bus.$on("selector_arrive", function(data) {
+		$.ajax({
+			type: 'GET',
+			url: "http://"+json_server+"/filter/init",
+			crossDomain: true,
+			success: function( result ) {
+				if(result["reason"] === undefined) {
+					_this.$emit("selector_arrive", result);
+				}
+			},
+		});
+		this.$on("selector_arrive", function(data) {
+			_this.headers = [];
+			_this.models = [];
+			_this.model = [];
+			_this.names = [];
+			_this.current_index = 0;
+
+			let current_set = false;
+			for(let key in data.header) {
+				if(data.header[key] == "构件编号" ) {
+					_this.headers.push({
+						name:data.header[key],
+						disabled:true
+					});
+				} else {
+					_this.headers.push({
+						name:data.header[key],
+					});
+				}
+			}
+
+			for(let key in data.filter) {
+				let flt = data.filter[key]
+				if(flt.default === true && !current_set) {
+					_this.current_index = key
+					current_set = true;
+				}
+				_this.names.push(flt.name);
+				_this.models.push(flt.model);
+			}
+
+			_this.model = _this.models[_this.current_index];
+
+			if(_this.has_data_t) {
+				_this.cut_data();
+			}
 
 		});
-
 		bus.$on("new_table_content_arrive", function(data){
 			let content = [];
 			for(let i = 0; i < data.header.length; i++) {
@@ -112,13 +177,16 @@ export default {
 				header:data.header,
 				content:content,
 			};
+			_this.has_data_t = true,
 			_this.cut_data();
 		});
 
 	},
+
 	watch: {
 		model(val) {
 			this.cut_data();
+			this.save_model();
 		}
 	}
 }

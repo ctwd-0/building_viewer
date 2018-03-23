@@ -93,7 +93,7 @@ export default {
 		},
 	},
 
-	created: function() {
+	mounted: function() {
 		var _this = this;
 		bus.$on("set_up_table_data", function(header, content){
 			var width = [];
