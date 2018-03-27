@@ -52,12 +52,26 @@ export default {
 	},
 	methods: {
 		login_click: function (event) {
-			//alert(this.username);
-			if(this.username === 'admin' && this.password === 'gugong') {
-				location.href="viewer.html";
-			} else {
-				alert("用户名或密码错误。");
+			if (this.username == "" || this.password == "") {
+				alert("用户名和密码不能为空");
+				return;
 			}
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/user/login",
+				data :{
+					name:this.username,
+					password:hex_md5(this.password),
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == false) {
+						alert(result["reason"]);
+					} else {
+						location.href="viewer.html";
+					}
+				},
+			});
 		},
 	},
 }
