@@ -7,8 +7,8 @@
 			<div v-for="(user, index) in users">
 				<button @click="delete_user(index)">删除用户</button>
 				<label>用户名：</label><label>{{user.name}}</label>
-				<label>写权限</label><input type="checkbox" v-model="user.write">
-				<label>禁用</label><input type="checkbox" v-model="user.banned">
+				<label>写权限</label><input @change="state_change(index)" type="checkbox" v-model="user.write">
+				<label>禁用</label><input @change="state_change(index)" type="checkbox" v-model="user.banned">
 				<input v-model="user.password">
 				<button @click="set_password(index)">重设密码</button>
 			</div>
@@ -50,6 +50,35 @@ export default {
 			this.new_username = "";
 			this.new_password = "";
 			this.adding = false;
+		},
+		state_change(index) {
+			let name = this.users[index].name.trim();
+			let write = this.users[index].write;
+			let banned = this.users[index].banned;
+			let _this = this;
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/admin/update",
+				xhrFields:{
+					withCredentials:true
+				},
+				data :{
+					name:name,
+					write:write,
+					banned:banned
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == false) {
+						alert(result["reason"]);
+					} else {
+						if(result.users !== undefined) {
+							_this.$emit("user_arrive", result.users);
+						}
+						alert("更新成功");
+					}
+				},
+			});
 		},
 		set_password(index) {
 			let name = this.users[index].name.trim();
