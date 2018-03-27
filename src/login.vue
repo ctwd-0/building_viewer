@@ -63,6 +63,9 @@ export default {
 					name:this.username,
 					password:hex_md5(this.password),
 				},
+				xhrFields:{
+					withCredentials:true
+				},
 				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == false) {
