@@ -5,7 +5,7 @@
 		<center>
 		<div id="user_list">
 			<div v-for="(user, index) in users">
-				<button>删除用户</button>
+				<button @click="delete_user(index)">删除用户</button>
 				<label>用户名：</label><label>{{user.name}}</label>
 				<label>写权限</label><input type="checkbox" v-model="user.write">
 				<label>禁用</label><input type="checkbox" v-model="user.banned">
@@ -51,9 +51,34 @@ export default {
 			this.new_password = "";
 			this.adding = false;
 		},
+		delete_user(index) {
+			let _this = this;
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/admin/remove_user",
+				xhrFields:{
+					withCredentials:true
+				},
+				data :{
+					name:this.users[index].name,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == false) {
+						alert(result["reason"]);
+					} else {
+						if(result.users !== undefined) {
+							_this.$emit("user_arrive", result.users);
+						}
+						alert("删除成功");
+					}
+				},
+			});
+		},
 		commit_add_user() {
 			let name = this.new_username.trim();
 			let password = this.new_password.trim();
+			let _this = this;
 			if(name == "" || password == "") {
 				alert("用户名及密码不能为空");
 				return;
@@ -73,8 +98,12 @@ export default {
 					if(result["success"] == false) {
 						alert(result["reason"]);
 					} else {
+						if(result.users !== undefined) {
+							_this.$emit("user_arrive", result.users);
+						}
 						alert("添加成功");
 					}
+					_this.adding = false;
 				},
 			});
 		},
