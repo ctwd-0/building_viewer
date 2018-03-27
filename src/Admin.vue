@@ -10,7 +10,7 @@
 				<label>写权限</label><input type="checkbox" v-model="user.write">
 				<label>禁用</label><input type="checkbox" v-model="user.banned">
 				<input v-model="user.password">
-				<button>重设密码</button>
+				<button @click="set_password(index)">重设密码</button>
 			</div>
 		</div>
 		<hr/>
@@ -50,6 +50,35 @@ export default {
 			this.new_username = "";
 			this.new_password = "";
 			this.adding = false;
+		},
+		set_password(index) {
+			let name = this.users[index].name.trim();
+			let password = this.users[index].password.trim();
+			let _this = this;
+			if(name == "" || password == "") {
+				alert("用户名及密码不能为空");
+				return;
+			}
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/admin/password",
+				xhrFields:{
+					withCredentials:true
+				},
+				data :{
+					name:name,
+					password:hex_md5(password),
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"] == false) {
+						alert(result["reason"]);
+					} else {
+						alert("密码修改成功");
+					}
+					_this.adding = false;
+				},
+			});
 		},
 		delete_user(index) {
 			let _this = this;
