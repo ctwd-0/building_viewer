@@ -6,7 +6,7 @@
 			<img
 				opacity="1"
 				height="720px"
-				v-bind:src="photo_array[index].src"
+				v-bind:src="photo_array[index].thumbnail_path"
 			>
 		</div>
 		<div id="bottom_bar">
