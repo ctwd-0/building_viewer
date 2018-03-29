@@ -14,13 +14,21 @@
 		</div>
 		<div id="photo_tab_content">
 			<div id="photo_content">
-				<input 
-					type="file" 
-					name="file_input" 
-					accept="application/pdf,image/jpeg,image/jpg,image/png" 
-					style="max-width:180px"
-					ref="file_input">
-				<button @click="upload" ref="upload_button" :disabled="uploading">上传</button>
+				<div>
+					<input 
+						type="file" 
+						name="file_input" 
+						accept="application/pdf,image/jpeg,image/jpg,image/png" 
+						style="max-width:180px"
+						ref="file_input">
+					<button @click="upload" ref="upload_button" :disabled="uploading">上传</button>
+				</div>
+				<div v-if="uploading && !waiting">
+					<label>{{uploading_progress}}</label>
+				</div>
+				<div v-if="uploading && waiting">
+					<label>{{waiting_info}}</label>
+				</div>
 				<img
 					class="single_photo"
 					v-for="(item, index) in photo_array"
@@ -58,6 +66,12 @@ export default {
 					let myXhr = $.ajaxSettings.xhr();
 					if(myXhr.upload){
 						myXhr.upload.addEventListener('progress', function(e) {
+							if(e.lengthComputable) {
+								_this.uploading_progress = "文件上传中。进度：" 
+									+ e.loaded / e.total * 100 + "%";
+							} else {
+								_this.uploading_progress = "正在上传服务器，请稍候。";
+							}
 							//console.log(e.lengthComputable, e.loaded, e.total)
 						}, false);
 					}
@@ -109,6 +123,8 @@ export default {
 	},
 	data () {
 		return {
+			uploading_progress: "",
+			waiting_info: "服务器正在生成缩略图，请稍候。",
 			uploading:false,
 			waiting: false,
 			token:"",
@@ -138,6 +154,7 @@ export default {
 			if(val > 600) {
 				_this.waiting = false;
 				_this.uploading = false;
+				_this.uploading_progress = "";
 				_this.token = "";
 				return;
 			}
