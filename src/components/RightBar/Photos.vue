@@ -20,7 +20,7 @@
 					accept="application/pdf,image/jpeg,image/jpg,image/png" 
 					style="max-width:180px"
 					ref="file_input">
-				<button @click="upload" ref="upload_button">上传</button>
+				<button @click="upload" ref="upload_button" :disabled="uploading">上传</button>
 				<img
 					class="single_photo"
 					v-for="(item, index) in photo_array"
@@ -42,7 +42,7 @@ export default {
 				alert("请先选择文件")
 				return
 			}
-			_this.$refs.upload_button.disabled = true;
+			this.uploading = true;
 			let file = new FormData();
 			file.append('file', this.$refs.file_input.files[0]);
 			file.append('model_id', model_id);
@@ -64,12 +64,19 @@ export default {
 					return myXhr;
 				},
 				success: function(data) {
-					_this.$refs.file_input.value = "";
-					_this.$refs.upload_button.disabled = false;
-					console.log(data);
+					if (data.success) {
+						_this.$refs.file_input.value = "";
+						//_this.uploading = false;
+						//console.log(data);
+						_this.waiting = true;
+						_this.token = data.token;
+						_this.$emit("waiting_image", 0);
+					} else {
+						_this.uploading = false;
+					}
 				},
 				error: function(err) {
-					_this.$refs.upload_button.disabled = false;
+					_this.uploading = false;
 				}
 			});
 		},
@@ -102,6 +109,9 @@ export default {
 	},
 	data () {
 		return {
+			uploading:false,
+			waiting: false,
+			token:"",
 			file: null,
 			model_id: 'g_-1',
 			photo_sel: 0,
@@ -121,8 +131,35 @@ export default {
 			photo_array:[],
 		};
 	},
-	created:function() {
+	mounted:function() {
 		var _this = this;
+		this.$on("waiting_image", function(val) {
+			console.log(val)
+			if(val > 600) {
+				_this.waiting = false;
+				_this.uploading = false;
+				_this.token = "";
+				return;
+			}
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/file/is_ready",
+				data: {
+					token: _this.token,
+					model_id: model_id,
+					category: this.photo_tag_array[this.photo_sel].text,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result.success) {
+						_this.$emit("waiting_image", Infinity)
+						_this.photo_array = result.files;
+					} else {
+						setTimeout(function(){_this.$emit("waiting_image", val+1)},100);
+					}
+				},
+			});
+		});
 		bus.$on("photo_array", function(photo_array) {
 			_this.photo_array = photo_array;
 		});
