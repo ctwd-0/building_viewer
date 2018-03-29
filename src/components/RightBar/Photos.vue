@@ -43,8 +43,10 @@ export default {
 				return
 			}
 			_this.$refs.upload_button.disabled = true;
-			let file = new FormData()
-			file.append('file', this.$refs.file_input.files[0])
+			let file = new FormData();
+			file.append('file', this.$refs.file_input.files[0]);
+			file.append('model_id', model_id);
+			file.append('category', this.photo_tag_array[this.photo_sel].text);
 			$.ajax({
 				type: 'POST',
 				url: "http://"+json_server+"/file/upload",
@@ -64,6 +66,7 @@ export default {
 				success: function(data) {
 					_this.$refs.file_input.value = "";
 					_this.$refs.upload_button.disabled = false;
+					console.log(data);
 				},
 				error: function(err) {
 					_this.$refs.upload_button.disabled = false;
