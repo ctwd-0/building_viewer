@@ -12,7 +12,7 @@
 		<div id="bottom_bar">
 			<label>{{(index+1) + "/" + photo_array.length}}</label>
 			<label v-if="!editing">{{text}}</label>
-			<textarea v-if="editing" v-model="text"></textarea>
+			<textarea v-if="editing" v-model="new_text"></textarea>
 			<button v-if="!editing" @click="edit()">修改</button>
 			<button v-if="editing" @click="save()">保存</button>
 		</div>
@@ -36,15 +36,33 @@ export default {
 			editing:false,
 			index: 0,
 			photo_array:[],
-			text:"这是简介",
+			new_text: "",
 		};
 	},
 	methods: {
 		edit() {
+			this.new_text = this.text;
 			this.editing = true;
 		},
 		save() {
 			this.editing = false;
+			this.photo_array[this.index].description = this.new_text;
+			$.ajax({
+				type: 'POST',
+				url: "http://"+json_server+"/file/update_description",
+				data: {
+					id: this.photo_array[this.index]._id,
+					description: this.new_text,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					alert("保存成功");
+				},
+				error: function( err ) {
+
+				},
+			});
+			this.new_text = "";
 		},
 		change(e) {
 			console.log(e);
@@ -80,6 +98,16 @@ export default {
 			_this.photo_array = data.photo_array;
 			_this.index = data.index;
 		});
+	},
+
+	computed: {
+		text: function() {
+			if (this.index < this.photo_array.length) {
+				return this.photo_array[this.index].description;
+			} else {
+				return "";
+			}
+		}
 	},
 }
 </script>
