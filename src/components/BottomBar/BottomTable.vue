@@ -110,8 +110,10 @@ export default {
 			for(var i in width) {
 				width[i] *= 18;
 			}
-			width[0] /=18;
-			width[0] *= 10;
+			if(content !== undefined && content.length > 0) {
+				width[0] /=18;
+				width[0] *= 10;
+			}
 			var sum = 0;
 			for(var i in width) {
 				sum += width[i];

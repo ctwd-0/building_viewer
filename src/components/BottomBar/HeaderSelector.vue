@@ -203,6 +203,8 @@ export default {
 						name:data.header[key],
 						disabled:true
 					});
+				} else if (data.header[key] == "构件编号"){
+					
 				} else {
 					_this.headers.push({
 						name:data.header[key],
