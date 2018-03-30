@@ -34,7 +34,8 @@ export default {
 	},
 	methods: {
 		new_query: function() {
-
+			this.current_name = "新建检索条件";
+			this.query_string = "{\n  \"key\": \"\",\n  \"val\": \"\"\n}";
 		},
 		edit_click: function() {
 			bus.$emit("edit_json", this.query_string);
@@ -156,7 +157,6 @@ export default {
 			}
 			return false
 		},
-
 		click_on(val) {
 			//console.log(val);
 			$.ajax({

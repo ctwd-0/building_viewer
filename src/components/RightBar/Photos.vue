@@ -95,7 +95,12 @@ export default {
 			});
 		},
 		click_photo(index) {
-			bus.$emit("click_photo", {index:index, photo_array: this.photo_array});
+			if (this.photo_array[index].type === "pdf") {
+				window.open("dist/pdf/viewer.html?file=" 
+					+ this.photo_array[index].original_path)
+			} else {
+				bus.$emit("click_photo", {index:index, photo_array: this.photo_array});
+			}
 		},
 		change_photo_sel(index) {
 			this.photo_sel = index;
@@ -150,8 +155,7 @@ export default {
 	mounted:function() {
 		var _this = this;
 		this.$on("waiting_image", function(val) {
-			console.log(val)
-			if(val > 600) {
+			if(val > 100) {
 				_this.waiting = false;
 				_this.uploading = false;
 				_this.uploading_progress = "";
@@ -172,7 +176,7 @@ export default {
 						_this.$emit("waiting_image", Infinity)
 						_this.photo_array = result.files;
 					} else {
-						setTimeout(function(){_this.$emit("waiting_image", val+1)},100);
+						setTimeout(function(){_this.$emit("waiting_image", val+1)}, 500);
 					}
 				},
 			});
