@@ -3,10 +3,9 @@
 		<div id="photo_tab_header">
 			<ul>
 				<li
-					v-for="(item, index) in photo_tag_array"
+					v-for="(item, index) in folders"
 					v-bind:item="item"
 					v-bind:index="index"
-					v-bind:key="item.key"
 					v-bind:class="{photo_selected:item.sel, photo_not_selected:!item.sel}"
 					v-on:click="change_photo_sel(index)"
 				>{{item.text}}</li>
@@ -54,7 +53,7 @@ export default {
 			let file = new FormData();
 			file.append('file', this.$refs.file_input.files[0]);
 			file.append('model_id', model_id);
-			file.append('category', this.photo_tag_array[this.photo_sel].text);
+			file.append('category', this.folders[this.photo_sel].text);
 			$.ajax({
 				type: 'POST',
 				url: "http://"+json_server+"/file/upload",
@@ -104,10 +103,10 @@ export default {
 		},
 		change_photo_sel(index) {
 			this.photo_sel = index;
-			for(var item in this.photo_tag_array) {
-				this.photo_tag_array[item].sel = false;
+			for(var item in this.folders) {
+				this.folders[item].sel = false;
 			}
-			this.photo_tag_array[index].sel = true;
+			this.folders[index].sel = true;
 
 			var _this = this;
 			$.ajax({
@@ -115,7 +114,7 @@ export default {
 				url: "http://"+json_server+"/file/get_files",
 				data: {
 					model_id: model_id,
-					category: this.photo_tag_array[this.photo_sel].text,
+					category: this.folders[this.photo_sel].text,
 				},
 				crossDomain: true,
 				success: function( result ) {
@@ -136,19 +135,17 @@ export default {
 			file: null,
 			model_id: 'g_-1',
 			photo_sel: 0,
-			photo_tag_array:[{
-				key:0,
-				text:"图纸",
-				sel:true,
-			},{
-				key:1,
-				text:"照片",
-				sel:false,
-			},{
-				key:2,
-				text:"正射影像",
-				sel:false,
-			}],
+			folders:[{text:"加载中",sel:true}],
+			// folders:[{
+			// 	text:"图纸",
+			// 	sel:true,
+			// },{
+			// 	text:"照片",
+			// 	sel:false,
+			// },{
+			// 	text:"正射影像",
+			// 	sel:false,
+			// }],
 			photo_array:[],
 		};
 	},
@@ -168,7 +165,7 @@ export default {
 				data: {
 					token: _this.token,
 					model_id: model_id,
-					category: this.photo_tag_array[this.photo_sel].text,
+					category: this.folders[this.photo_sel].text,
 				},
 				crossDomain: true,
 				success: function( result ) {
@@ -181,8 +178,18 @@ export default {
 				},
 			});
 		});
-		bus.$on("photo_array", function(photo_array) {
+
+		_this.$on("photo_array", function(photo_array) {
 			_this.photo_array = photo_array;
+		});
+
+		_this.$on("folders", function(folders,index) {
+			let make_folders = []
+			for (let key in folders) {
+				make_folders.push({text:folders[key], sel:false});
+			}
+			make_folders[0].sel = true;
+			_this.folders = make_folders;
 		});
 
 		bus.$on("change_photo", function(m_id){
@@ -198,7 +205,7 @@ export default {
 					url: "http://"+json_server+"/file/get_files",
 					data: {
 						model_id: model_id,
-						category: this.photo_tag_array[this.photo_sel].text,
+						category: this.folders[this.photo_sel].text,
 					},
 					crossDomain: true,
 					success: function( result ) {
@@ -208,6 +215,21 @@ export default {
 					},
 				});
 			}
+		});
+
+		$.ajax({
+			type: 'GET',
+			url: "http://"+json_server+"/folder/init",
+			data: {
+				model_id: model_id,
+			},
+			crossDomain: true,
+			success: function( result ) {
+				if(result.success) {
+					_this.$emit("folders", result.folders);
+					_this.$emit("photo_array", result.files);
+				}
+			},
 		});
 	}
 }

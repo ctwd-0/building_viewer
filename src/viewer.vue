@@ -56,29 +56,6 @@ export default {
 				});
 			},
 		});
-
-		$.ajax({
-			type: 'GET',
-			url: "http://"+json_server+"/file/get_files",
-			data: {
-				model_id: "g_-1",
-				category: "图纸",
-			},
-			crossDomain: true,
-			success: function( result ) {
-				// var content_array = []
-
-				// for (var i in result['content']) {
-				// 	content_array.push({
-				// 		key:i,
-				// 		src: fix_absolute_uri(result['content'][i]),
-				// 	});
-				// }
-				if(result.success) {
-					bus.$emit("photo_array", result.files);
-				}
-			},
-		});
 	}
 }
 
