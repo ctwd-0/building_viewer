@@ -1,15 +1,30 @@
 <template>
 	<div id="photos">
-		<div id="photo_tab_header">
-			<ul>
-				<li
-					v-for="(item, index) in folders"
-					v-bind:item="item"
-					v-bind:index="index"
-					v-bind:class="{photo_selected:item.sel, photo_not_selected:!item.sel}"
-					v-on:click="change_photo_sel(index)"
-				>{{item.text}}</li>
-			</ul>
+		<div id="photo_tab_header"v-bind:style="{overflow:'hidden'}">
+			<span v-bind:style="{height:'26px'}" @click="left_click">L</span>
+			<div v-bind:style="{display: 'inline-block', width:'235px', overflow: 'hidden'}">
+				<ul v-bind:style="{width: '1000px', position: 'relative', left: list_left + 'px'}">
+					<li
+						v-for="(item, index) in folders"
+						v-bind:item="item"
+						v-bind:index="index"
+						v-bind:class="{photo_selected:item.sel, photo_not_selected:!item.sel}"
+						v-on:click="change_photo_sel(index)"
+					>{{item.text}}</li>
+					<li 
+						v-if="!adding_folder" 
+						v-bind:class="{photo_not_selected:true}"
+						v-on:click="adding_folder=true"
+					>+</li>
+					<li v-if="adding_folder">
+						<label>名：</label>
+						<input type="text" v-model="new_folder_name" v-bind:style="{display:'inline', width: '80px'}">
+						<button @click="commit_adding_folder">好</button>
+						<button @click="commit_adding_folder">不</button>
+					</li>
+				</ul>
+			</div>
+			<span v-bind:style="{height:'26px'}" @click="right_click">R</span>
 		</div>
 		<div id="photo_tab_content">
 			<div id="photo_content">
@@ -43,6 +58,48 @@ export default {
 	components: {
 	},
 	methods: {
+		commit_adding_folder() {
+			var _this = this;
+			if (this.new_folder_name.trim() === "") {
+				alert("名称不能为空");
+				return
+			}
+			for(let key in this.folders) {
+				if (this.folders[key].text == this.new_folder_name) {
+					alert("与已经有的名称重复");
+					return
+				}
+			}
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/folder/add",
+				data: {
+					model_id: model_id,
+					folder_name: this.new_folder_name,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result.success) {
+						_this.$emit("folders", result.folders);
+						_this.$emit("photo_array", result.files);
+					}
+				},
+			});
+			this.adding_folder = false;
+		},
+		cancel_adding_folder() {
+			this.new_folder_name = "";
+			this.adding_folder = false;
+		},
+		left_click() {
+			this.list_left += 100;
+			if (this.list_left > 0) {
+				this.list_left = 0;
+			}
+		},
+		right_click() {
+			this.list_left -= 100;
+		},
 		upload() {
 			let _this = this;
 			if (this.$refs.file_input.files.length === 0) {
@@ -125,8 +182,11 @@ export default {
 			});
 		},
 	},
+	
 	data () {
 		return {
+			adding_folder: false,
+			new_folder_name: "",
 			uploading_progress: "",
 			waiting_info: "服务器正在生成缩略图，请稍候。",
 			uploading:false,
@@ -135,6 +195,7 @@ export default {
 			file: null,
 			model_id: 'g_-1',
 			photo_sel: 0,
+			list_left: 0,
 			folders:[{text:"加载中",sel:true}],
 			// folders:[{
 			// 	text:"图纸",
@@ -149,6 +210,7 @@ export default {
 			photo_array:[],
 		};
 	},
+
 	mounted:function() {
 		var _this = this;
 		this.$on("waiting_image", function(val) {
@@ -189,6 +251,8 @@ export default {
 				make_folders.push({text:folders[key], sel:false});
 			}
 			make_folders[0].sel = true;
+			_this.photo_sel = 0;
+			_this.list_left = 0;
 			_this.folders = make_folders;
 		});
 
@@ -274,9 +338,12 @@ ul {
 
 .photo_selected {
 	float: left;
+	display: inline;
 	background-color: rgb(222,235,247);
+	padding-left: 5px;
+	padding-right: 5px;
 	font-size: 20px;
-	width: 88px;
+	/*width: 88px;*/
 	line-height: 25px;
 	text-align: center;
 	border-right: 1px solid rgb(65,113,156);
@@ -287,8 +354,11 @@ ul {
 
 .photo_not_selected {
 	float: left;
+	display: inline;
 	background-color: rgb(189,215,238);
-	width: 88px;
+	padding-left: 5px;
+	padding-right: 5px;
+	/*width: 88px;*/
 	font-size: 20px;
 	line-height: 25px;
 	text-align: center;
