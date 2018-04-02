@@ -132,7 +132,7 @@ export default {
 					}
 				}
 			}
-			bus.$emit("set_up_table_data", header, content);
+			bus.$emit("set_up_table_data", header, content, this.data_t.header);
 		},
 
 		save_model() {
@@ -147,8 +147,137 @@ export default {
 				success: function( result ) {
 				},
 			});
+		},
+		
+		remove_garbage(header, filter) {
+			let result = []
+			for(let key in filter) {
+				if (header.indexOf(filter[key]) !== -1 && result.indexOf(filter[key]) === -1) {
+						result.push(filter[key])
+				}
+			}
+			return result
+		},
+
+		selector_arrive(data) {
+			this.headers = [];
+			this.models = [];
+			this.model = [];
+			this.names = [];
+			this.current_index = 0;
+			this.from_server = true;
+
+			let current_set = false;
+			for(let key in data.header) {
+				if(data.header[key] == "构件编号" ) {
+					this.headers.push({
+						name:data.header[key],
+						disabled:true
+					});
+				} else if (data.header[key] == "模型编号"){
+					
+				} else {
+					this.headers.push({
+						name:data.header[key],
+					});
+				}
+			}
+
+			for(let key in data.filter) {
+				let flt = data.filter[key]
+				if(flt.default === true && !current_set) {
+					this.current_index = key
+					current_set = true;
+				}
+				this.names.push(flt.name);
+				this.models.push(this.remove_garbage(data.header, flt.model));
+			}
+
+			this.model = this.models[this.current_index];
+
+			if(this.has_data_t) {
+				this.cut_data();
+			}
+		},
+
+		new_table_content_arrive(data) {
+			let content = [];
+			for(let i = 0; i < data.header.length; i++) {
+				content.push([]);
+				for(let j = 0 ; j < data.content.length; j++) {
+					content[i].push(data.content[j][i]);
+				}
+			}
+			this.data_t = {
+				header:data.header,
+				content:content,
+				ids:data.ids,
+			};
+			this.has_data_t = true,
+			this.cut_data();
+		},
+
+		new_column_added(new_column) {
+			if(this.has_data_t) {
+				this.data_t.header.push(new_column)
+				this.headers.push({name:new_column})
+				this.model.push(new_column)
+				let blank_array = [];
+				for(let i = 0; i < this.data_t.content[0].length; i++) {
+					blank_array.push("");
+				}
+				this.data_t.content.push(blank_array)
+				this.cut_data();
+			}
+		},
+
+		column_renamed(old_column, new_column) {
+			if(this.has_data_t) {
+				let index = this.data_t.header.indexOf(old_column)
+				let index2 = -1
+				for(let idx in this.headers) {
+					if (this.headers[idx].name == old_column) {
+						index2 = idx
+						break
+					}
+				}
+				if (index != -1 && index2 != -1) {
+					this.data_t.header[index] = new_column
+					this.headers[index2].name = new_column
+					let index3 = this.model.indexOf(old_column)
+					if (index3 !== -1) {
+						this.model.splice(index3, 1)
+					}
+					this.model.push(new_column)
+					this.cut_data()
+				}
+			}
+		},
+
+		column_deleted(deleted_column) {
+			if(this.has_data_t) {
+				let index = this.data_t.header.indexOf(deleted_column)
+				let index2 = -1
+				for(let idx in this.headers) {
+					if (this.headers[idx].name == deleted_column) {
+						index2 = idx
+						break
+					}
+				}
+				if (index != -1 && index2 != -1) {
+					this.data_t.header.splice(index, 1)
+					this.data_t.content.splice(index, 1)
+					this.headers.splice(index2,1)
+					let index3 = this.model.indexOf(deleted_column)
+					if( index3 != -1) {
+						this.model.splice(index3, 1)
+					}
+					this.cut_data()
+				}
+			}
 		}
 	},
+
 	data () {
 		return {
 			from_server: false,
@@ -188,63 +317,26 @@ export default {
 				}
 			},
 		});
+
 		this.$on("selector_arrive", function(data) {
-			_this.headers = [];
-			_this.models = [];
-			_this.model = [];
-			_this.names = [];
-			_this.current_index = 0;
-			_this.from_server = true;
-
-			let current_set = false;
-			for(let key in data.header) {
-				if(data.header[key] == "构件编号" ) {
-					_this.headers.push({
-						name:data.header[key],
-						disabled:true
-					});
-				} else if (data.header[key] == "构件编号"){
-					
-				} else {
-					_this.headers.push({
-						name:data.header[key],
-					});
-				}
-			}
-
-			for(let key in data.filter) {
-				let flt = data.filter[key]
-				if(flt.default === true && !current_set) {
-					_this.current_index = key
-					current_set = true;
-				}
-				_this.names.push(flt.name);
-				_this.models.push(flt.model);
-			}
-
-			_this.model = _this.models[_this.current_index];
-
-			if(_this.has_data_t) {
-				_this.cut_data();
-			}
-
+			_this.selector_arrive(data);
 		});
+
 		bus.$on("new_table_content_arrive", function(data){
-			let content = [];
-			for(let i = 0; i < data.header.length; i++) {
-				content.push([]);
-				for(let j = 0 ; j < data.content.length; j++) {
-					content[i].push(data.content[j][i]);
-				}
-			}
-			_this.data_t = {
-				header:data.header,
-				content:content,
-			};
-			_this.has_data_t = true,
-			_this.cut_data();
+			_this.new_table_content_arrive(data)
+		});
+		
+		bus.$on("new_column_added", function(new_column){
+			_this.new_column_added(new_column)
 		});
 
+		bus.$on("column_renamed", function(old_column, new_column){
+			_this.column_renamed(old_column, new_column)
+		});
+
+		bus.$on("column_deleted", function(deleted_column){
+			_this.column_deleted(deleted_column)
+		});
 	},
 
 	watch: {

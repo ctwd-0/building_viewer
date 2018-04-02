@@ -6,8 +6,8 @@
 	>
 		<div
 			class="table_menu_button"
-			v-for="(text, index) in btns"
-			v-on:click="on_table_menu_button(index)"
+			v-for="(text, idx) in btns"
+			v-on:click="on_table_menu_button(idx)"
 		>
 			{{text}}
 		</div>
@@ -20,18 +20,24 @@ export default {
 	components: {
 	},
 	methods: {
-		on_table_menu_button(index) {
+		on_table_menu_button(idx) {
 			this.show = false;
-			if(index === 0) {
+			if(idx === 0) {
 				//"递增排序"
 				bus.$emit("sort_table_asc", this.index);
-			} else if(index === 1) {
+			} else if(idx === 1) {
 				//"递减排序"
 				bus.$emit("sort_table_desc", this.index);
-			} else if(index === 2) {
+			} else if(idx === 2) {
 				//"过滤此列"
 				//this.filter_by(this.index);
 				bus.$emit("filter_by", this.index);
+			} else if (idx === 3) {
+				//"重命名列"
+				bus.$emit("rename_column", this.index);
+			} else if (idx === 4) {
+				//"删除此列"
+				bus.$emit("remove_column", this.index);
 			}
 		},
 	},
@@ -40,7 +46,7 @@ export default {
 			show:false,
 			left:0,
 			index:0,
-			btns:["递增排序", "递减排序", "过滤此列"],
+			btns:["递增排序", "递减排序", "过滤此列", "重命名列", "删除此列"],
 		};
 	},
 
