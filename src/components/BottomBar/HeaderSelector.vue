@@ -124,15 +124,18 @@ export default {
 				}
 			}
 			let content = [];
+			let ids = [];
 			if(content_t.length > 0) {
 				for(let i = 0; i < content_t[0].length; i++) {
 					content.push([]);
+					ids.push(this.data_t.ids[i])
 					for(let j = 0; j < content_t.length; j++) {
 						content[i].push(content_t[j][i]);
 					}
 				}
 			}
-			bus.$emit("set_up_table_data", header, content, this.data_t.header);
+
+			bus.$emit("set_up_table_data", header, content, ids, this.data_t.header);
 		},
 
 		save_model() {
@@ -275,6 +278,16 @@ export default {
 					this.cut_data()
 				}
 			}
+		},
+
+		update_single_value(column_name, row_id, new_value){
+			if(this.has_data_t) {
+				let column = this.data_t.header.indexOf(column_name)
+				let row = this.data_t.ids.indexOf(row_id)
+				if (column !== -1 && row !== -1) {
+					this.data_t.content[column][row] = new_value
+				}
+			}
 		}
 	},
 
@@ -336,6 +349,10 @@ export default {
 
 		bus.$on("column_deleted", function(deleted_column){
 			_this.column_deleted(deleted_column)
+		});
+
+		bus.$on("update_single_value", function(column_name, row_id, new_value) {
+			_this.update_single_value(column_name, row_id, new_value);
 		});
 	},
 

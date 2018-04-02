@@ -25,7 +25,9 @@
 					class="table_header_label"
 					v-bind:style="{width : '50px'}"
 					v-on:click="add_column"
-				>增加列</label>
+				>
+					增加列
+				</label>
 		</div>
 		<div id="table_content">
 			<div 
@@ -37,6 +39,7 @@
 					class="table_blcok" 
 					v-bind:style="{width : tb.wdh[index] + 'px'}"
 					v-for="(field, index) in line"
+					v-on:dblclick.prevent="modify_value(line_no, index)"
 				>
 					{{field}}
 				</label>
@@ -54,6 +57,7 @@ export default {
 		return {
 			index : 0,
 			all_headers: [],
+			ids:[],
 			tb : {
 				wdh:[],
 				hds:[],
@@ -64,6 +68,35 @@ export default {
 	},
 
 	methods: {
+		modify_value(line_no, index) {
+			let column_name = this.tb.hds[index]
+			let id = this.ids[line_no]
+
+			let new_value = prompt("请输入新的值", "")
+			if (new_value == null) {
+				return
+			}
+			new_value = new_value.trim()
+			var _this = this
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/table/update",
+				data :{
+					id:id,
+					column:column_name,
+					value:new_value,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"]) {
+						_this.tb.cts[line_no].splice(index, 1, new_value)
+						//_this.tb.cts[line_no][index] = new_value
+						bus.$emit("update_single_value", column_name, id, new_value)
+					}
+				},
+			});
+		},
+
 		add_column() {
 			let new_column = prompt("请输入新列的名称", "")
 			if(new_column === null) {
@@ -245,7 +278,8 @@ export default {
 			bus.$emit("show_filter_example", width, contents);
 		},
 		
-		set_up_table_data(header, content, all_headers){
+		set_up_table_data(header, content, ids, all_headers){
+			this.ids = ids;
 			var width = [];
 
 			for(var i = 0; i < header.length; i++) {
@@ -279,8 +313,8 @@ export default {
 
 	mounted: function() {
 		var _this = this;
-		bus.$on("set_up_table_data", function(header, content, all_headers) {
-			_this.set_up_table_data(header, content, all_headers)
+		bus.$on("set_up_table_data", function(header, content, ids, all_headers) {
+			_this.set_up_table_data(header, content, ids, all_headers)
 		});
 
 		bus.$on("sort_table_asc", function(index) {

@@ -10,10 +10,12 @@ global.bus = global.the_fucking_bus;
 global.model_id = 'g_-1';
 global.cache_header = [];
 global.cache_content = [];
-global.cut_data = function(header, content) {
+global.cut_data = function(header) {
 	for(let i = 0 ; i < header.length; i++) {
 		if(header[i] === "构件编号（表单中显示）") {
 			header[i] = "构件编号"
+		} else if (header[i] === "模型编号（rhino中对应编号，表单中表头、值均不显示）") {
+			header[i] = "模型编号"
 		}
 	}
 }

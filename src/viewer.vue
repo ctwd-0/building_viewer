@@ -48,11 +48,11 @@ export default {
 			crossDomain: true,
 			success: function( result ) {
 				let header = result['header'];
-				let content = result['content'];
-				cut_data(header, content);
+				cut_data(header);
 				bus.$emit("new_table_content_arrive", {
-					header:header,
-					content:content,
+					header: header,
+					content: result.content,
+					ids: result.ids,
 				});
 			},
 		});
