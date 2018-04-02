@@ -2,18 +2,18 @@
 	<div>
 		<div 
 			id="table_header"
-			v-bind:style="{width : tb.sum_tb_wdh + 80 + 'px'}"
+			v-bind:style="{width : sum_table_width + 80 + 'px'}"
 		>
 			<div 
 				class="table_header"
-				v-bind:style="{width : tb.wdh[index] + 'px'}"
-				v-for="(hd, index) in tb.hds"
+				v-bind:style="{width : width[index] + 'px'}"
+				v-for="(header, index) in headers"
 			>
 				<label
 					class="table_header_label"
-					v-bind:style="{width : tb.wdh[index] - 23 + 'px'}"
+					v-bind:style="{width : width[index] - 23 + 'px'}"
 				>
-					{{hd}}
+					{{header}}
 				</label>
 				<button
 					class="table_header_button"
@@ -32,12 +32,12 @@
 		<div id="table_content">
 			<div 
 				class="table_line"
-				v-bind:style="{width : tb.sum_tb_wdh + 'px'}"
-				v-for="(line, line_no) in tb.cts"
+				v-bind:style="{width : sum_table_width + 'px'}"
+				v-for="(line, line_no) in contents"
 			>
 				<label 
 					class="table_blcok" 
-					v-bind:style="{width : tb.wdh[index] + 'px'}"
+					v-bind:style="{width : width[index] + 'px'}"
 					v-for="(field, index) in line"
 					v-on:dblclick.prevent="modify_value(line_no, index)"
 				>
@@ -57,19 +57,17 @@ export default {
 		return {
 			index : 0,
 			all_headers: [],
-			ids:[],
-			tb : {
-				wdh:[],
-				hds:[],
-				cts:[],
-				sum_tb_wdh: 0,
-			},
+			ids: [],
+			width: [],
+			headers: [],
+			contents: [],
+			sum_table_width: 0,
 		};
 	},
 
 	methods: {
 		modify_value(line_no, index) {
-			let column_name = this.tb.hds[index]
+			let column_name = this.headers[index]
 			let id = this.ids[line_no]
 
 			let new_value = prompt("请输入新的值", "")
@@ -89,8 +87,8 @@ export default {
 				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
-						_this.tb.cts[line_no].splice(index, 1, new_value)
-						//_this.tb.cts[line_no][index] = new_value
+						_this.contents[line_no].splice(index, 1, new_value)
+						//_this.contents[line_no][index] = new_value
 						bus.$emit("update_single_value", column_name, id, new_value)
 					}
 				},
@@ -138,7 +136,7 @@ export default {
 				alert("新列名不能为空")
 				return
 			}
-			if (new_column === this.tb.hds[index]) {
+			if (new_column === this.headers[index]) {
 				alert("新列名与旧列名相同")
 				return
 			}
@@ -153,24 +151,24 @@ export default {
 				type: 'GET',
 				url: "http://"+json_server+"/table/rename_column",
 				data :{
-					old: this.tb.hds[index],
+					old: this.headers[index],
 					new: new_column,
 				},
 				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
-						bus.$emit("column_renamed", _this.tb.hds[index], new_column);
+						bus.$emit("column_renamed", _this.headers[index], new_column);
 					}
 				},
 			});
 		},
 
 		remove_column(index) {
-			if (this.tb.hds[index] === "构件编号") {
+			if (this.headers[index] === "构件编号") {
 				alert("不能删除构件编号列")
 				return
 			}
-			let del = confirm("确认要删除这列“"+ this.tb.hds[index]+ "”么？删除的列将不能恢复");
+			let del = confirm("确认要删除这列“"+ this.headers[index]+ "”么？删除的列将不能恢复");
 			if (!del) {
 				return
 			}
@@ -179,12 +177,12 @@ export default {
 				type: 'GET',
 				url: "http://"+json_server+"/table/remove_column",
 				data :{
-					column: this.tb.hds[index],
+					column: this.headers[index],
 				},
 				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
-						bus.$emit("column_deleted", _this.tb.hds[index]);
+						bus.$emit("column_deleted", _this.headers[index]);
 					}
 				},
 			});
@@ -220,7 +218,7 @@ export default {
 		on_table_header_button(index) {
 			var left = 5;
 			for(var i = 0; i <= index; i++) {
-				left += this.tb.wdh[i] + 2;
+				left += this.width[i] + 2;
 			}
 			left -= 2;
 			left -= 80;
@@ -233,8 +231,8 @@ export default {
 				return ;
 			}
 			var name_index = -1;
-			for(var i = 0; i < _this.tb.hds.length; i++) {
-				if(_this.tb.hds[i] === '构件编号') {
+			for(var i = 0; i < _this.headers.length; i++) {
+				if(_this.headers[i] === '构件编号') {
 					name_index = i;
 					break;
 				}
@@ -245,8 +243,8 @@ export default {
 			}
 			var data = {};
 			var color_index = 0;
-			for(var i = 0; i < _this.tb.cts.length; i++) {
-				var type = _this.tb.cts[i][index];
+			for(var i = 0; i < _this.contents.length; i++) {
+				var type = _this.contents[i][index];
 				if(data[type] === undefined) {
 					data[type] = {};
 					data[type].names = [];
@@ -257,7 +255,7 @@ export default {
 						data[type].color = random_color();
 					}
 				}
-				data[type].names.push(_this.tb.cts[i][name_index]);
+				data[type].names.push(_this.contents[i][name_index]);
 			}
 			var max_len = 0;
 			var contents = [];
@@ -303,10 +301,10 @@ export default {
 				sum += width[i];
 			}
 			sum += width.length * 3;
-			this.tb.hds = header;
-			this.tb.wdh = width;
-			this.tb.cts = content;
-			this.tb.sum_tb_wdh = sum;
+			this.headers = header;
+			this.width = width;
+			this.contents = content;
+			this.sum_table_width = sum;
 			this.all_headers = all_headers;
 		}
 	},
@@ -319,12 +317,12 @@ export default {
 
 		bus.$on("sort_table_asc", function(index) {
 			_this.index = index;
-			_this.tb.cts.sort(_this.sort_asc_index);
+			_this.contents.sort(_this.sort_asc_index);
 		});
 
 		bus.$on("sort_table_desc", function(index) {
 			_this.index = index;
-			_this.tb.cts.sort(_this.sort_desc_index);
+			_this.contents.sort(_this.sort_desc_index);
 		});
 
 		bus.$on("filter_by", function(index) {

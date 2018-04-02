@@ -49,6 +49,7 @@ export default {
 	name: 'header_selector',
 	components: {
 	},
+	
 	methods: {
 		delete_selector(index) {
 			let name = this.names[index];
