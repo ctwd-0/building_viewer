@@ -106,8 +106,8 @@ export default {
 				return
 			}
 			if (new_column === this.tb.hds[index]) {
-					alert("新列名与旧列名相同")
-					return
+				alert("新列名与旧列名相同")
+				return
 			}
 			for (let key in this.all_headers) {
 				if (this.all_headers[key] === new_column) {

@@ -10,6 +10,8 @@
 						v-bind:index="index"
 						v-bind:class="{photo_selected:item.sel, photo_not_selected:!item.sel}"
 						v-on:click="change_photo_sel(index)"
+						v-on:dblclick="rename_folder(index)"
+						v-on:contextmenu.prevent="remove_folder(index)"
 					>{{item.text}}</li>
 					<li 
 						v-if="!adding_folder" 
@@ -20,7 +22,7 @@
 						<label>名：</label>
 						<input type="text" v-model="new_folder_name" v-bind:style="{display:'inline', width: '80px'}">
 						<button @click="commit_adding_folder">好</button>
-						<button @click="commit_adding_folder">不</button>
+						<button @click="cancel_adding_folder">不</button>
 					</li>
 				</ul>
 			</div>
@@ -58,6 +60,118 @@ export default {
 	components: {
 	},
 	methods: {
+		rename_folder(index) {
+			let new_folder = prompt("请输入新文件夹的名称：", "")
+			if(new_folder === null) {
+				return
+			}
+			new_folder = new_folder.trim()
+			let old_folder = this.folders[index].text
+			if (new_folder === "") {
+				alert("新文件夹名不能为空")
+				return
+			}
+			if (new_folder === old_folder) {
+				alert("新文件夹名与旧文件夹相同")
+				return
+			}
+			for (let key in this.folders) {
+				if (this.folders[key].text === new_folder) {
+					alert("已存在该文件夹")
+					return
+				}
+			}
+
+			let _this = this
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/folder/rename",
+				data :{
+					model_id: model_id,
+					new: new_folder,
+					old: old_folder,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"]) {
+						_this.folder_renamed(old_folder, new_folder)
+					}
+				},
+			});
+		},
+
+		folder_renamed(old_folder, new_folder) {
+			for (let key in this.folders) {
+				if (this.folders[key].text === old_folder) {
+					this.folders[key].text = new_folder
+					return
+				}
+			}
+		},
+		
+		remove_folder(index) {
+			let new_folder = prompt("请输入被删除文件夹将被移动到的文件夹：", "")
+			if(new_folder === null) {
+				return
+			}
+			new_folder = new_folder.trim()
+			let old_folder = this.folders[index].text
+			if (new_folder === "") {
+				alert("文件夹不能为空")
+				return
+			}
+			if (new_folder === old_folder) {
+				alert("新文件夹名与旧文件夹相同")
+				return
+			}
+
+			let _this = this
+			$.ajax({
+				type: 'GET',
+				url: "http://"+json_server+"/folder/remove",
+				data :{
+					model_id: model_id,
+					new: new_folder,
+					old: old_folder,
+				},
+				crossDomain: true,
+				success: function( result ) {
+					if(result["success"]) {
+						_this.folder_removed(old_folder, new_folder)
+					}
+				},
+			});
+		},
+
+		folder_removed(old_folder, new_folder) {
+			let index1 = -1;
+			for (let key in this.folders) {
+				if (this.folders[key].text === old_folder) {
+					index1 = key
+				}
+			}
+			if (index1 !== -1) {
+				this.folders.splice(index1, 1)
+				let index2 = -1
+				for (let key in this.folders) {
+					if (this.folders[key].text === new_folder) {
+						index2 = key
+					}
+				}
+				if (index2 === -1) {
+					this.folders.push({text:new_folder, sel:true})
+					index2 = this.folders.length - 1
+				} else {
+					this.photo_sel = index2
+				}
+				this.change_photo_sel(index2)
+			}
+		},
+
+		show_menu(index) {
+
+		},
+
 		commit_adding_folder() {
 			var _this = this;
 			if (this.new_folder_name.trim() === "") {
@@ -87,19 +201,23 @@ export default {
 			});
 			this.adding_folder = false;
 		},
+
 		cancel_adding_folder() {
 			this.new_folder_name = "";
 			this.adding_folder = false;
 		},
+
 		left_click() {
 			this.list_left += 100;
 			if (this.list_left > 0) {
 				this.list_left = 0;
 			}
 		},
+
 		right_click() {
 			this.list_left -= 100;
 		},
+		
 		upload() {
 			let _this = this;
 			if (this.$refs.file_input.files.length === 0) {
@@ -150,6 +268,7 @@ export default {
 				}
 			});
 		},
+
 		click_photo(index) {
 			if (this.photo_array[index].type === "pdf") {
 				window.open("dist/pdf/viewer.html?file=" 
@@ -158,12 +277,14 @@ export default {
 				bus.$emit("click_photo", {index:index, photo_array: this.photo_array});
 			}
 		},
+
 		change_photo_sel(index) {
 			this.photo_sel = index;
 			for(var item in this.folders) {
 				this.folders[item].sel = false;
 			}
 			this.folders[index].sel = true;
+			this.photo_array = [];
 
 			var _this = this;
 			$.ajax({
@@ -197,22 +318,27 @@ export default {
 			photo_sel: 0,
 			list_left: 0,
 			folders:[{text:"加载中",sel:true}],
-			// folders:[{
-			// 	text:"图纸",
-			// 	sel:true,
-			// },{
-			// 	text:"照片",
-			// 	sel:false,
-			// },{
-			// 	text:"正射影像",
-			// 	sel:false,
-			// }],
 			photo_array:[],
 		};
 	},
 
 	mounted:function() {
 		var _this = this;
+		$.ajax({
+			type: 'GET',
+			url: "http://"+json_server+"/folder/init",
+			data: {
+				model_id: model_id,
+			},
+			crossDomain: true,
+			success: function( result ) {
+				if(result.success) {
+					_this.$emit("folders", result.folders);
+					_this.$emit("photo_array", result.files);
+				}
+			},
+		});
+
 		this.$on("waiting_image", function(val) {
 			if(val > 100) {
 				_this.waiting = false;
@@ -241,11 +367,11 @@ export default {
 			});
 		});
 
-		_this.$on("photo_array", function(photo_array) {
+		this.$on("photo_array", function(photo_array) {
 			_this.photo_array = photo_array;
 		});
 
-		_this.$on("folders", function(folders,index) {
+		this.$on("folders", function(folders,index) {
 			let make_folders = []
 			for (let key in folders) {
 				make_folders.push({text:folders[key], sel:false});
@@ -279,21 +405,6 @@ export default {
 					},
 				});
 			}
-		});
-
-		$.ajax({
-			type: 'GET',
-			url: "http://"+json_server+"/folder/init",
-			data: {
-				model_id: model_id,
-			},
-			crossDomain: true,
-			success: function( result ) {
-				if(result.success) {
-					_this.$emit("folders", result.folders);
-					_this.$emit("photo_array", result.files);
-				}
-			},
 		});
 	}
 }
