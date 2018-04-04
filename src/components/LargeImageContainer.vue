@@ -130,7 +130,6 @@ export default {
 			}
 		},
 		image_size() {
-			console.log("image_size")
 			let div_width = this.main_div_width()
 			let div_height = this.main_div_height()
 			let max_height = div_height
@@ -173,7 +172,6 @@ export default {
 			bus.$emit("large_image_container_reisize")
 		})
 		bus.$on("large_image_container_reisize", function() {
-			console.log("resize")
 			_this.$refs.image.width = _this.image_size().width
 			_this.$refs.image.height = _this.image_size().height
 			let div_height = _this.main_div_height()
@@ -230,7 +228,7 @@ export default {
 #quit {
 	position: absolute;
 	display: block;
-	background-color: #595959;
+	background-color: #222;
 	background-image: url(/dist/ui/arrows.png);
 	background-position: -42px -70px;
 	background-repeat: no-repeat;

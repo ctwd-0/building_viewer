@@ -45,19 +45,26 @@
 				<div v-if="uploading && waiting">
 					<label>{{waiting_info}}</label>
 				</div>
-				<img
-					class="single_photo"
-					v-for="(item, index) in photo_array"
-					v-on:click="click_photo(index)"
-					v-bind:src="item.thumbnail_path">
+				<PhotoFrame 
+					v-for="(item, index) in photo_array" 
+					:key="index"
+					:data="item"
+					:index="index"
+					:clickPhoto="click_photo"
+					:width="236"
+					:height="178"
+				>
+				</PhotoFrame>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
+import PhotoFrame from '../Common/PhotoFrame.vue'
 export default {
 	name: 'phtots',
 	components: {
+		PhotoFrame,
 	},
 	methods: {
 		rename_folder(index) {
@@ -270,12 +277,13 @@ export default {
 		},
 
 		click_photo(index) {
-			if (this.photo_array[index].type === "pdf") {
-				window.open("dist/pdf/viewer.html?file=" 
-					+ this.photo_array[index].original_path)
-			} else {
-				bus.$emit("click_photo", {index:index, photo_array: this.photo_array});
-			}
+			bus.$emit("click_photo", {index:index, photo_array: this.photo_array});
+			// if (this.photo_array[index].type === "pdf") {
+			// 	window.open("dist/pdf/viewer.html?file=" 
+			// 		+ this.photo_array[index].original_path)
+			// } else {
+			// 	bus.$emit("click_photo", {index:index, photo_array: this.photo_array});
+			// }
 		},
 
 		change_photo_sel(index) {
