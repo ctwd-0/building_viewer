@@ -12,17 +12,14 @@
 						v-on:click="change_photo_sel(index)"
 						v-on:dblclick="rename_folder(index)"
 						v-on:contextmenu.prevent="remove_folder(index)"
-					>{{item.text}}</li>
+					>
+						{{item.text}}
+					</li>
 					<li 
-						v-if="!adding_folder" 
 						v-bind:class="{photo_not_selected:true}"
-						v-on:click="adding_folder=true"
-					>+</li>
-					<li v-if="adding_folder">
-						<label>名：</label>
-						<input type="text" v-model="new_folder_name" v-bind:style="{display:'inline', width: '80px'}">
-						<button @click="commit_adding_folder">好</button>
-						<button @click="cancel_adding_folder">不</button>
+						v-on:click="add_folder"
+					>
+						+
 					</li>
 				</ul>
 			</div>
@@ -179,14 +176,19 @@ export default {
 
 		},
 
-		commit_adding_folder() {
+		add_folder() {
 			var _this = this;
-			if (this.new_folder_name.trim() === "") {
-				alert("名称不能为空");
+			let new_folder = prompt("请输入新文件夹的名字：", "")
+			if(new_folder === null) {
+				return
+			}
+			new_folder = new_folder.trim()
+			if (new_folder === "") {
+				alert("文件夹不能为空")
 				return
 			}
 			for(let key in this.folders) {
-				if (this.folders[key].text == this.new_folder_name) {
+				if (this.folders[key].text == new_folder) {
 					alert("与已经有的名称重复");
 					return
 				}
@@ -196,22 +198,21 @@ export default {
 				url: "http://"+json_server+"/folder/add",
 				data: {
 					model_id: model_id,
-					folder_name: this.new_folder_name,
+					folder_name: new_folder,
 				},
 				crossDomain: true,
 				success: function( result ) {
 					if(result.success) {
-						_this.$emit("folders", result.folders);
-						_this.$emit("photo_array", result.files);
+						_this.folder_added(new_folder)
 					}
 				},
 			});
-			this.adding_folder = false;
 		},
 
-		cancel_adding_folder() {
-			this.new_folder_name = "";
-			this.adding_folder = false;
+		folder_added(new_folder) {
+			let index = -1;
+			this.folders.push({text:new_folder, sel:false})
+			this.change_photo_sel(this.folders.length-1)
 		},
 
 		left_click() {
@@ -314,8 +315,6 @@ export default {
 	
 	data () {
 		return {
-			adding_folder: false,
-			new_folder_name: "",
 			uploading_progress: "",
 			waiting_info: "服务器正在生成缩略图，请稍候。",
 			uploading:false,
@@ -442,7 +441,7 @@ ul {
 	border-right: 1px solid rgb(65,113,156);
 	border-bottom: 1px solid rgb(65,113,156);
 	border-left: 1px solid rgb(65,113,156);
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 #photo_content {
