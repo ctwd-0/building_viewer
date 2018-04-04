@@ -34,11 +34,21 @@
 			</a>
 		</div>
 		<div id="bottom_bar">
-			<label>{{(index+1) + "/" + photo_array.length}}</label>
-			<label v-if="!editing">{{text}}</label>
-			<textarea v-if="editing" v-model="new_text"></textarea>
-			<button v-if="!editing" @click="edit()">修改</button>
-			<button v-if="editing" @click="save()">保存</button>
+			<p :class="['index_left']">
+				<strong>{{(index+1)}}</strong>
+				{{"/" + photo_array.length}}
+			</p>
+			<p :class="['description_right']" v-if="!editing">{{text}}</p>
+			<textarea 
+				:class="['textarea_right']"
+				v-if="editing"
+				v-model="new_text"
+				v-bind:style="{width:text_area_width + 'px'}"
+			>
+			</textarea>
+			<a title="编辑" class="edit_button" v-if="!editing" @click="edit()" href="javascript:;"></a>
+			<a title="保存" class="save_button" v-if="editing" @click="save()" href="javascript:;"></a>
+			<a title="取消" class="cancel_button" v-if="editing" @click="cancel()" href="javascript:;"></a>
 		</div>
 		<a href="javascript:;" id="quit" title="返回" @click="hide()">
 		</a>
@@ -69,7 +79,10 @@ export default {
 		main_div_height() {
 			return window.innerHeight - 118;
 		},
-
+		cancel() {
+			this.editing = false;
+			this.new_text = "";
+		},
 		edit() {
 			this.new_text = this.text;
 			this.editing = true;
@@ -86,24 +99,31 @@ export default {
 				},
 				crossDomain: true,
 				success: function( result ) {
-					alert("保存成功");
+					if (result.success) {
+						alert("保存成功");
+					} else {
+						alert("保存失败");
+					}
 				},
 				error: function( err ) {
-
+					alert("网络错误");
 				},
 			});
 			this.new_text = "";
 		},
 		hide() {
+			this.cancel();
 			this.show = false;
 		},
 		prev_photo() {
+			this.cancel();
 			this.index--;
 			if(this.index < 0) {
 				this.index = 0;
 			}
 		},
 		next_photo() {
+			this.cancel();
 			this.index++;
 			if(this.index >= this.photo_array.length) {
 				this.index = this.photo_array.length -1;
@@ -137,6 +157,9 @@ export default {
 				}
 			}
 		},
+		func_text_area_width() {
+			return this.main_div_width() - 164 - 120- 50
+		}
 	},
 
 	mounted: function(){
@@ -173,6 +196,9 @@ export default {
 		image_height() {
 			return this.image_size().height
 		},
+		text_area_width() {
+			return this.func_text_area_width()
+		},
 		p_image_padding_top() {
 			let div_height = this.main_div_height()
 			let image_height = this.image_height
@@ -205,7 +231,7 @@ export default {
 	position: absolute;
 	display: block;
 	background-color: #595959;
-	background-image: url(/dist/ui/index_z_394972b.png);
+	background-image: url(/dist/ui/arrows.png);
 	background-position: -42px -70px;
 	background-repeat: no-repeat;
 	width: 38px;
@@ -217,7 +243,7 @@ export default {
 
 #prev {
 	position: absolute;
-	background-image: url(/dist/ui/index_z_394972b.png);
+	background-image: url(/dist/ui/arrows.png);
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 	width: 37px;
@@ -229,7 +255,7 @@ export default {
 
 #next {
 	position: absolute;
-	background-image: url(/dist/ui/index_z_394972b.png);
+	background-image: url(/dist/ui/arrows.png);
 	background-position: -37px 0px;
 	background-repeat: no-repeat;
 	width: 37px;
@@ -278,5 +304,65 @@ export default {
 .ease-out-enter, .ease-out-leave-to {
   opacity: 0;
 }
-
+.index_left {
+	width: 164px;
+	line-height: 118px;
+	text-align: center;
+	font-size: 28px;
+	padding-left: 50px;
+	float: left;
+	margin: 0;
+	color: #666;
+}
+.index_left strong {
+	color: #2be;
+	font-style: italic;
+}
+.description_right {
+	min-height: 48px;
+	line-height: 24px;
+	padding-top: 21px;
+	padding-right: 120px;
+	margin: 0;
+}
+.textarea_right {
+	resize: none;
+	margin-top: 21px;
+	width: 1000px;
+	height: 76px;
+}
+.edit_button {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	background-image: url(/dist/ui/btns.png);
+	filter: invert(1);
+	background-position: -913px -163px;
+	background-repeat: no-repeat;
+	right: 40px;
+	top: 50%;
+	margin-top: -20px;
+}
+.save_button {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	background-image: url(/dist/ui/btns.png);
+	filter: invert(1);
+	background-position: -413px -80px;
+	background-repeat: no-repeat;
+	right: 40px;
+	top: 13px;
+}
+.cancel_button {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	background-image: url(/dist/ui/btns.png);
+	filter: invert(1);
+	background-position: -497px -80px;
+	background-repeat: no-repeat;
+	right: 40px;
+	bottom: 13px;
+}
 </style>
