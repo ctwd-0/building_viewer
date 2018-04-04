@@ -17,9 +17,9 @@
 		></a>
 		<transition name="slide_out">
 			<a v-if="bar_showing" href="javascript:;" class="button_bar" @mouseleave="bar_showing=false">
-				<a href="javascript:;" class="button_download" @click="download_file"></a>
-				<a v-if="data.type === 'pdf'" href="javascript:;" class="button_preview" @click="preview_pdf"></a>
-				<a href="javascript:;" class="button_delete" @click="delete_file"></a>
+				<a href="javascript:;" class="button_download" title="下载" @click="download_file"></a>
+				<a v-if="data.type === 'pdf'" href="javascript:;" class="button_preview" title="预览" @click="preview_pdf"></a>
+				<a href="javascript:;" class="button_delete" title="删除" @click="delete_file"></a>
 			</a>
 		</transition>
 	</p>

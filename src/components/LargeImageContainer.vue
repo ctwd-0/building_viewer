@@ -18,7 +18,7 @@
 				@mouseleave="left_arrow = false"
 			>
 				<transition name="ease-out">
-					<i v-if="left_arrow" id="prev" @click="prev_photo()"></i>
+					<i v-if="left_arrow" id="prev"></i>
 				</transition>
 			</a>
 			<a
@@ -29,7 +29,7 @@
 				@mouseleave="right_arrow = false"
 			>
 				<transition name="ease-out">
-					<i v-if="right_arrow" id="next" @click="next_photo()"></i>
+					<i v-if="right_arrow" id="next"></i>
 				</transition>
 			</a>
 		</div>
@@ -38,15 +38,23 @@
 				<strong>{{(index+1)}}</strong>
 				{{"/" + photo_array.length}}
 			</p>
-			<p :class="['description_right']" v-if="!editing">{{text}}</p>
+			<p v-if="!editing" class="description_right" >{{text}}</p>
 			<textarea 
-				:class="['textarea_right']"
 				v-if="editing"
+				class="textarea_right"
 				v-model="new_text"
 				v-bind:style="{width:text_area_width + 'px'}"
 			>
 			</textarea>
-			<a title="编辑" class="edit_button" v-if="!editing" @click="edit()" href="javascript:;"></a>
+			<a 
+				v-if="photo_array.length && !editing && photo_array[index].type == 'pdf'" href="javascript:;"
+				title="预览" class="preview_button"  @click="preview()" 
+			></a>
+			<a 
+				v-if="!editing" @click="edit()" href="javascript:;"
+				title="编辑" class="edit_button"
+				:style="{bottom: edit_button_bottom + 'px'}"
+			></a>
 			<a title="保存" class="save_button" v-if="editing" @click="save()" href="javascript:;"></a>
 			<a title="取消" class="cancel_button" v-if="editing" @click="cancel()" href="javascript:;"></a>
 		</div>
@@ -69,15 +77,22 @@ export default {
 			index: 0,
 			photo_array: [],
 			new_text: "",
+			edit_button_bottom: 39,
 		};
 	},
 	methods: {
+		compute_edit_button_bottom() {
+			this.edit_button_bottom = this.photo_array.length && this.photo_array[this.index].type == 'pdf' ? 13 : 39
+		},
 		main_div_width() {
 			return window.innerWidth;
 		},
 
 		main_div_height() {
 			return window.innerHeight - 118;
+		},
+		preview() {
+
 		},
 		cancel() {
 			this.editing = false;
@@ -157,7 +172,7 @@ export default {
 			}
 		},
 		func_text_area_width() {
-			return this.main_div_width() - 164 - 120- 50
+			return this.main_div_width() - 164 - 120 - 50
 		}
 	},
 
@@ -203,6 +218,12 @@ export default {
 			return (div_height - image_height) / 2
 		}
 	},
+
+	watch: {
+		index(val) {
+			this.compute_edit_button_bottom()
+		}
+	}
 }
 </script>
 
@@ -329,6 +350,17 @@ export default {
 	width: 1000px;
 	height: 76px;
 }
+.preview_button {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	background-image: url(/dist/ui/btns.png);
+	filter: invert(1);
+	background-position: -997px -80px;
+	background-repeat: no-repeat;
+	right: 40px;
+	top: 13px;
+}
 .edit_button {
 	position: absolute;
 	width: 40px;
@@ -338,8 +370,7 @@ export default {
 	background-position: -913px -163px;
 	background-repeat: no-repeat;
 	right: 40px;
-	top: 50%;
-	margin-top: -20px;
+	bottom: 39px;
 }
 .save_button {
 	position: absolute;
