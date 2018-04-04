@@ -1,9 +1,9 @@
 <template>
 	<div id="photos">
-		<div id="photo_tab_header"v-bind:style="{overflow:'hidden'}">
-			<span v-bind:style="{height:'26px'}" @click="left_click">L</span>
-			<div v-bind:style="{display: 'inline-block', width:'235px', overflow: 'hidden'}">
-				<ul v-bind:style="{width: '1000px', position: 'relative', left: list_left + 'px'}">
+		<div id="photo_tab_header"v-bind:style="{position:'relative',overflow:'hidden'}">
+			<a class="arrow_left" @click="left_click"></a>
+			<div v-bind:style="{display: 'inline-block', marginLeft: '13px', width:'240px', overflow: 'hidden'}">
+				<ul v-bind:style="{display: 'block', whiteSpace:'nowrap',  position: 'relative', left: list_left + 'px'}">
 					<li
 						v-for="(item, index) in folders"
 						v-bind:item="item"
@@ -23,7 +23,7 @@
 					</li>
 				</ul>
 			</div>
-			<span v-bind:style="{height:'26px'}" @click="right_click">R</span>
+			<a class="arrow_right" @click="right_click"></a>
 		</div>
 		<div id="photo_tab_content">
 			<div id="photo_content">
@@ -455,13 +455,12 @@ ul {
 }
 
 .photo_selected {
-	float: left;
-	display: inline;
+	list-style: none;
+	display: inline-block;
 	background-color: rgb(222,235,247);
 	padding-left: 5px;
 	padding-right: 5px;
 	font-size: 20px;
-	/*width: 88px;*/
 	line-height: 25px;
 	text-align: center;
 	border-right: 1px solid rgb(65,113,156);
@@ -471,15 +470,35 @@ ul {
 }
 
 .photo_not_selected {
-	float: left;
-	display: inline;
+	list-style: none;
+	display: inline-block;
 	background-color: rgb(189,215,238);
 	padding-left: 5px;
 	padding-right: 5px;
-	/*width: 88px;*/
 	font-size: 20px;
 	line-height: 25px;
 	text-align: center;
 	border-bottom: 1px solid rgb(65,113,156);
+}
+
+.arrow_left {
+	position: absolute;
+	left:0;
+	top:0;
+	width: 13px;
+	height: 26px;
+	background-image: url(/dist/ui/arrows.png);
+	background-size: 72.5px;
+	background-position: 0px -41px;
+}
+.arrow_right {
+	position: absolute;
+	right:0;
+	top:0;
+	width: 13px;
+	height: 26px;
+	background-image: url(/dist/ui/arrows.png);
+	background-size: 72.5px;
+	background-position: -13px -41px;
 }
 </style>
