@@ -488,8 +488,8 @@ ul {
 	width: 13px;
 	height: 26px;
 	background-image: url(/dist/ui/arrows.png);
-	background-size: 72.5px;
-	background-position: 0px -41px;
+	background-size: 70px;
+	background-position: 0px -39px;
 }
 .arrow_right {
 	position: absolute;
@@ -498,7 +498,7 @@ ul {
 	width: 13px;
 	height: 26px;
 	background-image: url(/dist/ui/arrows.png);
-	background-size: 72.5px;
-	background-position: -13px -41px;
+	background-size: 70px;
+	background-position: -12px -39px;
 }
 </style>
