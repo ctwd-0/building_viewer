@@ -2,7 +2,7 @@
 	<div id="photos">
 		<div id="photo_tab_header"v-bind:style="{position:'relative',overflow:'hidden'}">
 			<a class="arrow_left" @click="left_click"></a>
-			<div v-bind:style="{display: 'inline-block', marginLeft: '13px', width:'240px', overflow: 'hidden'}">
+			<div v-bind:style="{display: 'inline-block', marginLeft: '15px', width:'236px', overflow: 'hidden'}">
 				<ul v-bind:style="{display: 'block', whiteSpace:'nowrap',  position: 'relative', left: list_left + 'px'}">
 					<li
 						v-for="(item, index) in folders"

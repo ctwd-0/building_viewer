@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import Login from './login.vue'
-import Viewer from './viewer.vue'
-import Admin from './admin.vue'
+import Login from './Login.vue'
+import Viewer from './Viewer2.vue'
+import Admin from './Admin.vue'
 
 global.json_server = "localhost:8000";
 //global.json_server = "13.125.98.199:8000";
