@@ -6,6 +6,8 @@
 			<div class="bottom" :style="{width:webgl_width + 'px', height: real_bottom_height + 'px'}">
 				<div class="bottom_resize" :style="{width:webgl_width + 'px'}" draggable="true" @dragstart="start_drag($event, 'bottom')">
 				</div>
+				<div v-if="bottom_show" class="bottom_container" :style="{width:(webgl_width - 2 ) + 'px', height: (real_bottom_height - button_size - 3 - 2 )+ 'px'}">
+				</div>
 				<div class="bottom_tab_area" :style="{width:webgl_width + 'px'}">
 					<label :class="{'bottom_tab':bottom_index !== index, 'bottom_tab_selected': bottom_index === index}" v-for="(tag, index) in bottom_tags" @click="bottom_click(index)">{{tag}}</label>
 				</div>
@@ -13,22 +15,24 @@
 			<div class="right" :style="{width:real_right_width + 'px', height: inner_height + 'px'}">
 				<div class="right_resize" :style="{height: inner_height + 'px'}" draggable="true" @dragstart="start_drag($event, 'right')">
 				</div>
-				<Files
-					v-if="right_index === 0 && right_show"
-					:width="right_width"
-					:height="inner_height"
-					:rightWidth="button_size"
-					:leftWidth="3"
-				>
-				</Files>
-				<Tools
-					v-if="right_index === 1 && right_show"
-					:width="right_width"
-					:height="inner_height"
-					:rightWidth="button_size"
-					:leftWidth="3"
-				>
-				</Tools>
+				<div v-if="right_show" class="right_container" :style="{width:(real_right_width - 2 - button_size - 3) + 'px', height: (inner_height - 2 )+ 'px'}">
+					<Files
+						v-if="right_index === 0 && right_show"
+						:width="right_width"
+						:height="inner_height"
+						:rightWidth="button_size"
+						:leftWidth="3"
+					>
+					</Files>
+					<Tools
+						v-if="right_index === 1 && right_show"
+						:width="right_width"
+						:height="inner_height"
+						:rightWidth="button_size"
+						:leftWidth="3"
+					>
+					</Tools>
+				</div>
 				<div class="right_tab_area" :style="{height: inner_height + 'px'}">
 					<label :class="{'right_tab':right_index !== index, 'right_tab_selected': right_index === index}" v-for="(tag, index) in right_tags" @click="right_click(index)">{{tag}}</label>
 				</div>
@@ -234,7 +238,7 @@ export default {
 	width: 3px;
 	left: 0;
 	top: 0;
-	background-color: red;
+	background-color: white;
 	cursor: e-resize;
 }
 
@@ -243,22 +247,13 @@ export default {
 	height: 3px;
 	top: 0;
 	left: 0;
-	background-color: red;
+	background-color: white;
 	cursor: s-resize;
-}
-
-.right {
-	position: absolute;
-	background-color: orange;
-	right: 0;
-	top: 0;
-	margin-right: 3px; 
-	margin-top: 3px; 
 }
 
 .right_tab_area {
 	position: absolute;
-	background-color: cyan;
+	background-color: white;
 	right: 0;
 	top: 0;
 	width: 26px;
@@ -266,27 +261,17 @@ export default {
 
 .bottom_tab_area {
 	position: absolute;
-	background-color: green;
+	background-color: white;
 	left: 0;
 	bottom: 0;
 	height: 26px;
 }
-/*
-.right_tab {
-	display: inline-block;
-	font-size: 17px;
-	writing-mode: vertical-lr;
-	background-color: black;
-	color: white;
-	padding: 2px;
-}
-*/
+
 .right_tab {
 	display: inline-block;
 	font-size: 17px;
 	writing-mode: horizontal-tb;
-	background-color: black;
-	color: white;
+	color: black;
 	padding-left: 4px;
 	padding-bottom: 2px;
 	padding-top: 2px;
@@ -295,40 +280,68 @@ export default {
 .bottom_tab {
 	display: inline-block;
 	font-size: 17px;
-	background-color: black;
 	writing-mode: horizontal-tb;
-	color: white;
+	color: black;
 	padding: 2px;
 }
 
 .right_tab_selected {
+	position: relative;
+	left: -1px;
 	display: inline-block;
 	font-size: 17px;
 	writing-mode: horizontal-tb;
-	background-color: gray;
-	color: white;
+	background-color: rgb(245,245,245);
+	border-top: 1px solid rgb(200,200,200);
+	border-right: 1px solid rgb(200,200,200);
+	border-bottom: 1px solid rgb(200,200,200);
+	border-left: 1px solid rgb(245,245,245);
 	padding-left: 4px;
 	padding-bottom: 2px;
 	padding-top: 2px;
 }
 
 .bottom_tab_selected {
+	position: relative;
+	top: -1px;
 	display: inline-block;
 	font-size: 17px;
-	background-color: gray;
+	background-color: rgb(245,245,245);
+	border-left: 1px solid rgb(200,200,200);
+	border-right: 1px solid rgb(200,200,200);
+	border-bottom: 1px solid rgb(200,200,200);
+	border-top: 1px solid rgb(245,245,245);
 	writing-mode: horizontal-tb;
-	color: white;
 	padding: 2px;
 }
 .bottom {
 	position: absolute;
-	background-color: pink;
 	left: 0;
 	bottom: 0;
 	margin-left: 3px; 
 	margin-bottom: 3px;
+	background-color: rgb(245,245,245);
 }
-
+.right_container {
+	position: relative;
+	display: inline-block;
+	left: 3px;
+	border: 1px solid rgb(200,200,200);
+}
+.bottom_container {
+	position: relative;
+	display: inline-block;
+	top: 3px;
+	border: 1px solid rgb(200,200,200);
+}
+.right {
+	position: absolute;
+	background-color: rgb(245,245,245);
+	right: 0;
+	top: 0;
+	margin-right: 3px; 
+	margin-top: 3px; 
+}
 .outer_div {
 	position: absolute;
 	top: 0;

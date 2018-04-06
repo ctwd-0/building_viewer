@@ -430,7 +430,7 @@ ul {
 	margin: 0;
 }
 .files {
-	left: 8px;
+	left: 5px;
 	top: 8px;
 	position: absolute;
 }

@@ -43,5 +43,6 @@ export default {
 <style scoped>
 .tools {
 	position: absolute;
+	left: -3px;
 }
 </style>
