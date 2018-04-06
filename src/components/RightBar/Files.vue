@@ -1,5 +1,5 @@
 <template>
-	<div class="files" :style="{height:height + 'px', marginLeft:leftWidth + 'px', width: (innerWidth) + 'px'}">
+	<div class="files" :style="{height:height + 'px', width: (innerWidth) + 'px'}">
 		<div class="tab_header" :style="{width:(innerWidth) + 'px'}">
 			<a class="arrow_left" @click="left_click"></a>
 			<div class="tab_header_content" :style="{width:(innerWidth - 30) + 'px'}">
@@ -430,7 +430,7 @@ ul {
 	margin: 0;
 }
 .files {
-	left: 5px;
+	left: 6px;
 	top: 8px;
 	position: absolute;
 }

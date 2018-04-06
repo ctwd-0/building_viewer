@@ -1,18 +1,12 @@
 <template>
-	<div>
-		<div 
-			id="table_header"
-			v-bind:style="{width : sum_table_width + 80 + 'px'}"
-		>
+	<div class="bottom_table" :style="{height: innerHeigh - 20 + 'px', width: width - 20 + 'px'}">
+		<div class="table_header" v-bind:style="{width : sum_table_width + 80 + 'px'}">
 			<div 
 				class="table_header"
-				v-bind:style="{width : width[index] + 'px'}"
+				v-bind:style="{width : widths[index] + 'px'}"
 				v-for="(header, index) in headers"
 			>
-				<label
-					class="table_header_label"
-					v-bind:style="{width : width[index] - 23 + 'px'}"
-				>
+				<label class="table_header_label" v-bind:style="{width : widths[index] - 23 + 'px'}">
 					{{header}}
 				</label>
 				<button
@@ -21,15 +15,11 @@
 				>
 				</button>
 			</div>
-				<label
-					class="table_header_label"
-					v-bind:style="{width : '50px'}"
-					v-on:click="add_column"
-				>
+				<label class="table_header_label" v-bind:style="{width : '50px'}" v-on:click="add_column">
 					增加列
 				</label>
 		</div>
-		<div id="table_content">
+		<div class="table_content">
 			<div 
 				class="table_line"
 				v-bind:style="{width : sum_table_width + 'px'}"
@@ -37,7 +27,7 @@
 			>
 				<label 
 					class="table_blcok" 
-					v-bind:style="{width : width[index] + 'px'}"
+					v-bind:style="{width : widths[index] + 'px'}"
 					v-for="(field, index) in line"
 					v-on:dblclick.prevent="modify_value(line_no, index)"
 				>
@@ -45,26 +35,43 @@
 				</label>
 			</div>
 		</div>
+		<TableMenu/>
 	</div>
 </template>
 
 <script>
+import TableMenu from './TableMenu.vue'
 export default {
-	name: 'table_header',
+	name: 'bottom_table',
 	components: {
+		TableMenu
 	},
 	data () {
 		return {
-			index : 0,
+			innerHeigh: 200,
+			index: 0,
 			all_headers: [],
 			ids: [],
-			width: [],
+			widths: [],
 			headers: [],
 			contents: [],
 			sum_table_width: 0,
 		};
 	},
 
+	props: {
+		width: Number,
+		height: Number,
+		topHeight: Number,
+		bottomHeight: Number,
+	},
+
+	watch: {
+		height(val) {
+			this.innerHeigh = this.height - this.bottomHeight - this.topHeight
+		}
+	},
+	
 	methods: {
 		modify_value(line_no, index) {
 			let column_name = this.headers[index]
@@ -218,7 +225,7 @@ export default {
 		on_table_header_button(index) {
 			var left = 5;
 			for(var i = 0; i <= index; i++) {
-				left += this.width[i] + 2;
+				left += this.widths[i] + 2;
 			}
 			left -= 2;
 			left -= 80;
@@ -278,31 +285,31 @@ export default {
 		
 		set_up_table_data(header, content, ids, all_headers){
 			this.ids = ids;
-			var width = [];
+			var widths = [];
 
 			for(var i = 0; i < header.length; i++) {
-				width.push( header[i].length + 3);
+				widths.push( header[i].length + 3);
 				for(var j in content) {
-					if(content[j][i].length > width[i]) {
-						width[i] = content[j][i].length;
+					if(content[j][i].length > widths[i]) {
+						widths[i] = content[j][i].length;
 					}
 				}
 			}
 
-			for(var i in width) {
-				width[i] *= 18;
+			for(var i in widths) {
+				widths[i] *= 18;
 			}
 			if(content !== undefined && content.length > 0) {
-				width[0] /=18;
-				width[0] *= 10;
+				widths[0] /=18;
+				widths[0] *= 10;
 			}
 			var sum = 0;
-			for(var i in width) {
-				sum += width[i];
+			for(var i in widths) {
+				sum += widths[i];
 			}
-			sum += width.length * 3;
+			sum += widths.length * 3;
 			this.headers = header;
-			this.width = width;
+			this.widths = widths;
 			this.contents = content;
 			this.sum_table_width = sum;
 			this.all_headers = all_headers;
@@ -310,6 +317,7 @@ export default {
 	},
 
 	mounted: function() {
+		this.innerHeigh = this.height - this.bottomHeight - this.topHeight
 		var _this = this;
 		bus.$on("set_up_table_data", function(header, content, ids, all_headers) {
 			_this.set_up_table_data(header, content, ids, all_headers)
@@ -341,6 +349,15 @@ export default {
 </script>
 
 <style scoped>
+
+.bottom_table {
+	overflow: auto;
+	margin-top: 4px;
+	margin-left: 4px;
+	padding: 4px;
+	border: 1px solid rgb(65,113,156);
+}
+
 .table_header {
 	background-color: rgb(222,235,247);
 	display: inline-block;
@@ -361,8 +378,11 @@ export default {
 	background:url(../../assets/drop_down.png);
 	border:0;
 }
+
 .table_line {
+
 }
+
 .table_blcok {
 	background-color: rgb(222,235,247);
 	display: inline-block;

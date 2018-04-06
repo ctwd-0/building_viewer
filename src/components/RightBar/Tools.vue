@@ -1,5 +1,5 @@
 <template>
-	<div class="tools" :style="{height:height + 'px', marginLeft:leftWidth + 'px', width: (innerWidth) + 'px'}">
+	<div class="tools" :style="{height:height + 'px', width: (innerWidth) + 'px'}">
 		<Selector2 :width="innerWidth"/>
 		<Direct :width="innerWidth"/>
 	</div>
@@ -43,6 +43,5 @@ export default {
 <style scoped>
 .tools {
 	position: absolute;
-	left: -3px;
 }
 </style>

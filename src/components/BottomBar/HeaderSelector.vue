@@ -1,7 +1,7 @@
 <template>
-	<div id="header_selector">
+	<div class="header_selector">
 		<div
-			id="header_selector_header"
+			class="header_selector_header"
 		>
 			<div
 				class="table_selector_header"
@@ -20,7 +20,7 @@
 			</span>
 		</div>
 		<div
-			id="header_selector_content"
+			class="header_selector_content"
 		>
 			<div
 				class="table_selector_header"

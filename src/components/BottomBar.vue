@@ -1,8 +1,7 @@
 <template>
-	<div id="bottom_bar">
+	<div class="bottom_bar">
 		<HeaderSelector/>
 		<BottomTable/>
-		<TableMenu/>
 		<div id="table_comment">
 		</div>
 	</div>
@@ -31,7 +30,7 @@ export default {
 
 <style scoped>
 
-#bottom_bar {
+.bottom_bar {
 	position: absolute;
 	width: 75%;
 	height: 20%;

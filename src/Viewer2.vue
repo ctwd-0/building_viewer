@@ -6,7 +6,23 @@
 			<div class="bottom" :style="{width:webgl_width + 'px', height: real_bottom_height + 'px'}">
 				<div class="bottom_resize" :style="{width:webgl_width + 'px'}" draggable="true" @dragstart="start_drag($event, 'bottom')">
 				</div>
-				<div v-if="bottom_show" class="bottom_container" :style="{width:(webgl_width - 2 ) + 'px', height: (real_bottom_height - button_size - 3 - 2 )+ 'px'}">
+				<div class="bottom_container" v-show="bottom_show" :style="{width:(webgl_width - 2 ) + 'px', height: (real_bottom_height - button_size - 3 - 2 )+ 'px'}">
+					<BottomTable
+						v-show="bottom_index === 0 && bottom_show"
+						:width="webgl_width"
+						:height="bottom_height"
+						:bottomHeight="button_size"
+						:topHeight="3"
+					>
+					</BottomTable>
+					<HeaderSelector
+						v-show="bottom_index === 1 && bottom_show"
+						:width="webgl_width"
+						:height="bottom_height"
+						:bottomHeight="button_size"
+						:topHeight="3"
+					>
+					</HeaderSelector>
 				</div>
 				<div class="bottom_tab_area" :style="{width:webgl_width + 'px'}">
 					<label :class="{'bottom_tab':bottom_index !== index, 'bottom_tab_selected': bottom_index === index}" v-for="(tag, index) in bottom_tags" @click="bottom_click(index)">{{tag}}</label>
@@ -15,9 +31,9 @@
 			<div class="right" :style="{width:real_right_width + 'px', height: inner_height + 'px'}">
 				<div class="right_resize" :style="{height: inner_height + 'px'}" draggable="true" @dragstart="start_drag($event, 'right')">
 				</div>
-				<div v-if="right_show" class="right_container" :style="{width:(real_right_width - 2 - button_size - 3) + 'px', height: (inner_height - 2 )+ 'px'}">
+				<div v-show="right_show" class="right_container" :style="{width:(real_right_width - 2 - button_size - 3) + 'px', height: (inner_height - 2 )+ 'px'}">
 					<Files
-						v-if="right_index === 0 && right_show"
+						v-show="right_index === 0 && right_show"
 						:width="right_width"
 						:height="inner_height"
 						:rightWidth="button_size"
@@ -25,7 +41,7 @@
 					>
 					</Files>
 					<Tools
-						v-if="right_index === 1 && right_show"
+						v-show="right_index === 1 && right_show"
 						:width="right_width"
 						:height="inner_height"
 						:rightWidth="button_size"
@@ -46,17 +62,19 @@
 <script>
 
 import WebglWrapper from './components/WebglWrapper.vue'
-import BottomBar from './components/BottomBar.vue'
 import LargeImageContainer from './components/LargeImageContainer.vue'
 import Editor from './components/Editor.vue'
 import Files from './components/RightBar/Files.vue'
 import Tools from './components/RightBar/Tools.vue'
+import BottomTable from './components/BottomBar/BottomTable.vue'
+import HeaderSelector from './components/BottomBar/HeaderSelector.vue'
 
 export default {
 	name: 'viewer',
 	components: {
 		WebglWrapper,
-		BottomBar,
+		BottomTable,
+		HeaderSelector,
 		LargeImageContainer,
 		Editor,
 		Files,
@@ -218,6 +236,20 @@ export default {
 		this.$on("viewer2_reisize", function() {
 			this.calculate_paras();
 		})
+		$.ajax({
+			type: 'GET',
+			url: "http://"+json_server+"/table/init",
+			crossDomain: true,
+			success: function( result ) {
+				let header = result['header'];
+				cut_data(header);
+				bus.$emit("new_table_content_arrive", {
+					header: header,
+					content: result.content,
+					ids: result.ids,
+				});
+			},
+		});
 	}
 }
 
