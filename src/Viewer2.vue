@@ -3,13 +3,6 @@
 		<div class="main_frame" :style="{width:inner_width + 'px', height: inner_height + 'px'}">
 			<div class="webgl" :style="{width:webgl_width + 'px', height: webgl_height + 'px'}">
 			</div>
-			<div class="right" :style="{width:real_right_width + 'px', height: inner_height + 'px'}">
-				<div class="right_resize" :style="{height: inner_height + 'px'}" draggable="true" @dragstart="start_drag($event, 'right')">
-				</div>
-				<div class="right_tab_area" :style="{height: inner_height + 'px'}">
-					<label :class="{'right_tab':right_index !== index, 'right_tab_selected': right_index === index}" v-for="(tag, index) in right_tags" @click="right_click(index)">{{tag}}</label>
-				</div>
-			</div>
 			<div class="bottom" :style="{width:webgl_width + 'px', height: real_bottom_height + 'px'}">
 				<div class="bottom_resize" :style="{width:webgl_width + 'px'}" draggable="true" @dragstart="start_drag($event, 'bottom')">
 				</div>
@@ -17,7 +10,24 @@
 					<label :class="{'bottom_tab':bottom_index !== index, 'bottom_tab_selected': bottom_index === index}" v-for="(tag, index) in bottom_tags" @click="bottom_click(index)">{{tag}}</label>
 				</div>
 			</div>
+			<div class="right" :style="{width:real_right_width + 'px', height: inner_height + 'px'}">
+				<div class="right_resize" :style="{height: inner_height + 'px'}" draggable="true" @dragstart="start_drag($event, 'right')">
+				</div>
+				<Files
+					v-if="right_index === 0 && right_show"
+					:width="right_width"
+					:height="inner_height"
+					:rightWidth="button_size"
+					:leftWidth="3"
+				>
+				</Files>
+				<div class="right_tab_area" :style="{height: inner_height + 'px'}">
+					<label :class="{'right_tab':right_index !== index, 'right_tab_selected': right_index === index}" v-for="(tag, index) in right_tags" @click="right_click(index)">{{tag}}</label>
+				</div>
+			</div>
 		</div>
+		<Editor/>
+		<LargeImageContainer/>
 	</div>
 </template>
 
@@ -28,6 +38,7 @@ import BottomBar from './components/BottomBar.vue'
 import RightBar from './components/RightBar.vue'
 import LargeImageContainer from './components/LargeImageContainer.vue'
 import Editor from './components/Editor.vue'
+import Files from './components/RightBar/Files.vue'
 
 export default {
 	name: 'viewer',
@@ -36,7 +47,8 @@ export default {
 		BottomBar,
 		RightBar,
 		LargeImageContainer,
-		Editor
+		Editor,
+		Files
 	},
 	data () {
 		return {

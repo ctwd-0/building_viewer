@@ -1,13 +1,13 @@
 <template>
 	<div id="large_image_container" v-show="show">
-		<div v-if="photo_array.length" id="main" ref="main_div">
+		<div v-if="file_array.length" id="main" ref="main_div">
 			<p v-bind:style="{paddingTop:p_image_padding_top + 'px', margin: 0}" ref="p_image">
 				<img
 					ref="image"
 					opacity="1"
 					v-bind:width="image_width + 'px'"
 					v-bind:height="image_height + 'px'"
-					v-bind:src="photo_array[index].thumbnail_path"
+					v-bind:src="file_array[index].thumbnail_path"
 				>
 			</p>
 			<a 
@@ -36,7 +36,7 @@
 		<div id="bottom_bar">
 			<p :class="['index_left']">
 				<strong>{{(index+1)}}</strong>
-				{{"/" + photo_array.length}}
+				{{"/" + file_array.length}}
 			</p>
 			<p v-if="!editing" class="description_right" >{{text}}</p>
 			<textarea 
@@ -47,7 +47,7 @@
 			>
 			</textarea>
 			<a 
-				v-if="photo_array.length && !editing && photo_array[index].type == 'pdf'" href="javascript:;"
+				v-if="file_array.length && !editing && file_array[index].type == 'pdf'" href="javascript:;"
 				title="预览" class="preview_button"  @click="preview()" 
 			></a>
 			<a 
@@ -75,14 +75,14 @@ export default {
 			show: false,
 			editing: false,
 			index: 0,
-			photo_array: [],
+			file_array: [],
 			new_text: "",
 			edit_button_bottom: 39,
 		};
 	},
 	methods: {
 		compute_edit_button_bottom() {
-			this.edit_button_bottom = this.photo_array.length && this.photo_array[this.index].type == 'pdf' ? 13 : 39
+			this.edit_button_bottom = this.file_array.length && this.file_array[this.index].type == 'pdf' ? 13 : 39
 		},
 		main_div_width() {
 			return window.innerWidth;
@@ -92,7 +92,9 @@ export default {
 			return window.innerHeight - 118;
 		},
 		preview() {
-
+			if(this.file_array[this.index].type == "pdf") {
+				window.open("dist/pdf/viewer.html?file=" + this.file_array[this.index].original_path)
+			}
 		},
 		cancel() {
 			this.editing = false;
@@ -104,12 +106,12 @@ export default {
 		},
 		save() {
 			this.editing = false;
-			this.photo_array[this.index].description = this.new_text;
+			this.file_array[this.index].description = this.new_text;
 			$.ajax({
 				type: 'POST',
 				url: "http://"+json_server+"/file/update_description",
 				data: {
-					id: this.photo_array[this.index]._id,
+					id: this.file_array[this.index]._id,
 					description: this.new_text,
 				},
 				crossDomain: true,
@@ -140,8 +142,8 @@ export default {
 		next_photo() {
 			this.cancel();
 			this.index++;
-			if(this.index >= this.photo_array.length) {
-				this.index = this.photo_array.length -1;
+			if(this.index >= this.file_array.length) {
+				this.index = this.file_array.length -1;
 			}
 		},
 		image_size() {
@@ -149,8 +151,8 @@ export default {
 			let div_height = this.main_div_height()
 			let max_height = div_height
 			let max_width = div_width - 2*(37 + 20 * 2)
-			let ori_width = this.photo_array[this.index].thumbnail_width
-			let ori_height = this.photo_array[this.index].thumbnail_height
+			let ori_width = this.file_array[this.index].thumbnail_width
+			let ori_height = this.file_array[this.index].thumbnail_height
 			if (ori_width <= max_width && ori_height <= max_height) {
 				let try_width = ori_width * max_height / ori_height
 				if(try_width <= max_width) {
@@ -180,7 +182,7 @@ export default {
 		var _this = this;
 		bus.$on("click_photo", function(data) {
 			_this.show = true;
-			_this.photo_array = data.photo_array;
+			_this.file_array = data.file_array;
 			_this.index = data.index;
 		});
 		window.addEventListener("resize", function() {
@@ -197,8 +199,8 @@ export default {
 
 	computed: {
 		text: function() {
-			if (this.index < this.photo_array.length) {
-				return this.photo_array[this.index].description;
+			if (this.index < this.file_array.length) {
+				return this.file_array[this.index].description;
 			} else {
 				return "";
 			}
