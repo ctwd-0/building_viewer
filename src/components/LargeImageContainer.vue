@@ -185,15 +185,14 @@ export default {
 			_this.file_array = data.file_array;
 			_this.index = data.index;
 		});
-		window.addEventListener("resize", function() {
-			bus.$emit("large_image_container_reisize")
-		})
 		bus.$on("large_image_container_reisize", function() {
-			_this.$refs.image.width = _this.image_size().width
-			_this.$refs.image.height = _this.image_size().height
-			let div_height = _this.main_div_height()
-			let image_height = _this.image_size().height
-			_this.$refs.p_image.style.paddingTop = ((div_height - image_height) / 2) + 'px'
+			if(_this.show) {
+				_this.$refs.image.width = _this.image_size().width
+				_this.$refs.image.height = _this.image_size().height
+				let div_height = _this.main_div_height()
+				let image_height = _this.image_size().height
+				_this.$refs.p_image.style.paddingTop = ((div_height - image_height) / 2) + 'px'
+			}
 		})
 	},
 

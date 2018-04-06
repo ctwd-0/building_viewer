@@ -1,5 +1,5 @@
 <template>
-	<div id="webgl_wrapper">
+	<div class="webgl_wrapper" :style="{height: height + 'px', width: width+ 'px'}">
 		<div id="webgl">
 		</div>
 		<FilterExample/>
@@ -14,6 +14,10 @@ export default {
 	components: {
 		FilterExample,
 	},
+	props:{
+		width:Number,
+		height:Number,
+	},
 	data () {
 		return {
 		};
@@ -24,23 +28,13 @@ export default {
 </script>
 
 <style scoped>
-#webgl_wrapper{
+.webgl_wrapper{
 	position: absolute;
-	margin-top: 10px;
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	width: 75%;
-	height: 75%;
-	border: 1px solid black;
 }
 
 #webgl {
 	background-color: black;
 	width: 100%;
 	height: 100%;
-	margin: 0;
-	padding: 0;
-
 }
 </style>

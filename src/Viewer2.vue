@@ -2,6 +2,11 @@
 	<div class = "outer_div" @drop="drop($event)" @dragover="allow_drop($event)">
 		<div class="main_frame" :style="{width:inner_width + 'px', height: inner_height + 'px'}">
 			<div class="webgl" :style="{width:webgl_width + 'px', height: webgl_height + 'px'}">
+				<WebglWrapper
+					:width="webgl_width"
+					:height="webgl_height"
+				>
+				</WebglWrapper>
 			</div>
 			<div class="bottom" :style="{width:webgl_width + 'px', height: real_bottom_height + 'px'}">
 				<div class="bottom_resize" :style="{width:webgl_width + 'px'}" draggable="true" @dragstart="start_drag($event, 'bottom')">
@@ -62,12 +67,12 @@
 <script>
 
 import WebglWrapper from './components/WebglWrapper.vue'
-import LargeImageContainer from './components/LargeImageContainer.vue'
-import Editor from './components/Editor.vue'
 import Files from './components/RightBar/Files.vue'
 import Tools from './components/RightBar/Tools.vue'
 import BottomTable from './components/BottomBar/BottomTable.vue'
 import HeaderSelector from './components/BottomBar/HeaderSelector.vue'
+import Editor from './components/Editor.vue'
+import LargeImageContainer from './components/LargeImageContainer.vue'
 
 export default {
 	name: 'viewer',

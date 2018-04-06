@@ -405,15 +405,15 @@ export default {
 				model_id = m_id;
 				$.ajax({
 					type: 'GET',
-					url: "http://"+json_server+"/file/get_files",
+					url: "http://"+json_server+"/folder/init",
 					data: {
 						model_id: model_id,
-						category: this.folders[this.file_sel].text,
 					},
 					crossDomain: true,
 					success: function( result ) {
 						if(result.success) {
-							_this.file_array = result.files;
+							_this.$emit("folders", result.folders);
+							_this.$emit("file_array", result.files);
 						}
 					},
 				});
