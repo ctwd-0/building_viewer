@@ -2,8 +2,8 @@
 	<div class="editor_content">
 		<div v-if="value.op === undefined" class="single_content">
 			<button @click="upgrade_self">升变</button>
-			<input type="text" v-model="value.key">
-			<input type="text" v-model="value.val">
+			<input type="text" class="input" v-model="value.key">
+			<input type="text" class="input" v-model="value.val">
 			<button @click="delete_self">删除</button>
 		</div>
 		<div v-else class="single_content">
@@ -36,7 +36,7 @@ export default {
 	},
 	methods: {
 		upgrade_self() {
-			this.$emit("upgrade:self");
+			this.$emit("upgrade:self")
 		},
 		add_exp() {
 			if(this.value.exps !== undefined && this.value.exps.length !==undefined) {
@@ -49,18 +49,18 @@ export default {
 		change_op() {
 			if(this.value.op !== undefined) {
 				if(this.value.op === "and") {
-					this.value.op = "or";
+					this.value.op = "or"
 				} else if(this.value.op === "or") {
-					this.value.op ="and";
+					this.value.op ="and"
 				}
 			}
 		},
 		delete_self() {
-			this.$emit("delete:self");
+			this.$emit("delete:self")
 		},
 		delete_child(index) {
 			if(this.value.exps !== undefined) {
-				this.value.exps.splice(index, 1);
+				this.value.exps.splice(index, 1)
 			}
 		},
 		upgrade_child(index) {
@@ -70,10 +70,10 @@ export default {
 					{key:this.value.exps[index].key, val: this.value.exps[index].val},
 				],
 			}
-			this.value.exps.splice(index, 1, obj);
+			this.value.exps.splice(index, 1, obj)
 		}
 	},
-	created: function(){
+	mounted: function(){
 	},
 }
 </script>
@@ -86,5 +86,8 @@ export default {
 	padding-bottom: 3px;
 	border: 1px solid #999;
 	background-color: #ffe;
+}
+.input {
+	width: 100px;
 }
 </style>

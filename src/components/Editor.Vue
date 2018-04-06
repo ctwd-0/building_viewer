@@ -1,11 +1,22 @@
 <template>
 	<div id="editor" v-show="show">
-		<div id="editor_content">
-			<EditorContent v-model="data"
-				@delete:self="delete_self()"
-				@upgrade:self="upgrade_self()"
-			/>
-			<textarea v-model="data_string"></textarea>
+		<div id="editor_content" :style="{maxHeight: height + 'px'}" ref="content">
+			<div class="left" ref="left">
+				<label>编辑条件：</label>
+				<EditorContent 
+					v-model="data"
+					@delete:self="delete_self()"
+					@upgrade:self="upgrade_self()"
+				/>
+			</div>
+			<div class="right" :style="{width:text_width + 5 + 'px'}">
+				<label>预览：</label>
+				<textarea 
+					class="textarea" v-model="data_string" 
+					:style="{height:text_height + 'px', width:text_width + 'px'}"
+				></textarea>
+			</div>
+			<div style="clear:both"></div>
 			<center>
 				<button class="return_button" @click="hide">完成编辑</button>
 			</center>
@@ -23,7 +34,11 @@ export default {
 	},
 	data () {
 		return {
-			show:false,
+			show: false,
+			text_change: false,
+			height: 600,
+			text_height: 27,
+			text_width: 249,
 			data:{
 				op: "or",
 				exps:[
@@ -45,16 +60,22 @@ export default {
 		};
 	},
 	methods: {
+		calc_height() {
+			this.height = window.innerHeight - 100;
+		},
+
 		hide() {
 			bus.$emit("query:finish", JSON.stringify(this.data, null, "  "));
 			this.show = false;
 		},
+
 		delete_self() {
 			this.data = {
 				key:"",
 				val:"",
 			};
 		},
+
 		upgrade_self() {
 			this.data = {
 				op: "and",
@@ -66,6 +87,7 @@ export default {
 				],
 			};
 		},
+
 		check_data : function(obj) {
 			if(obj instanceof Object) {
 				for(let key in obj) {
@@ -99,8 +121,14 @@ export default {
 			return false;
 		}
 	},
-	created: function(){
+
+	mounted: function(){
 		var _this = this;
+		this.calc_height()
+		bus.$on("editor_resize", function() {
+			_this.calc_height()
+		})
+
 		bus.$on("edit_json", function(query) {
 			_this.show = true;
 			try {
@@ -115,7 +143,6 @@ export default {
 					};
 				}
 			} catch (err) {
-				//console.log(err);
 				alert("检索条件有文法错误，已被清空");
 				_this.data = {
 					key:"",
@@ -125,11 +152,31 @@ export default {
 			}
 		});
 	},
+
 	computed: {
 		data_string: function() {
 			return JSON.stringify(this.data, null, "  ");
 		}
-	}
+	},
+
+	updated: function() {
+		if(this.$refs.content.clientHeight === 0) {
+			return
+		}
+		if(!this.text_change) {
+			let new_height = this.$refs.left.clientHeight - 41
+			if(new_height < 27) {
+				new_height = 27
+			}
+			if(new_height !== this.text_height) {
+				this.text_height = new_height
+				this.text_change = true
+			}
+		} else {
+			this.text_change = false
+		}
+
+	},
 }
 </script>
 
@@ -144,13 +191,33 @@ export default {
 	z-index: 10001;
 }
 #editor_content {
+	position: relative;
 	width: 800px;
-	max-height: 800px;
-	overflow-y: scroll;
+	overflow-y: auto;
 	background-color: rgb(222,235,247);
 	border: 1px solid rgb(65,113,156);
 	margin: 50px auto;
 }
+.left {
+	margin-top: 5px;
+	margin-left: 5px;
+	padding: 5px;
+	float:left;
+	border: 1px solid rgb(65,113,156);
+	width: 490px;
+}
+.textarea{
+	resize: none;
+}
+.right {
+	float: left;
+	margin-left: 5px;
+	margin-top: 5px;
+	padding: 5px;
+	border: 1px solid rgb(65,113,156);
+}
 .return_button{
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 </style>

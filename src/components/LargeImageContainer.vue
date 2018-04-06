@@ -185,7 +185,7 @@ export default {
 			_this.file_array = data.file_array;
 			_this.index = data.index;
 		});
-		bus.$on("large_image_container_reisize", function() {
+		bus.$on("large_image_container_resize", function() {
 			if(_this.show) {
 				_this.$refs.image.width = _this.image_size().width
 				_this.$refs.image.height = _this.image_size().height

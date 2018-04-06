@@ -1,6 +1,6 @@
 <template>
 	<div class="bottom_table" :style="{height: innerHeigh - 20 + 'px', width: width - 20 + 'px'}">
-		<div class="table_header" v-bind:style="{width : sum_table_width + 80 + 'px'}">
+		<div class="table_header_and_add" v-bind:style="{width : sum_table_width + 20 + 'px'}">
 			<div 
 				class="table_header"
 				v-bind:style="{width : widths[index] + 'px'}"
@@ -15,9 +15,7 @@
 				>
 				</button>
 			</div>
-				<label class="table_header_label" v-bind:style="{width : '50px'}" v-on:click="add_column">
-					增加列
-				</label>
+			<label class="table_header_label" :style="{width : '20px'}" v-on:click="add_column">+</label>
 		</div>
 		<div class="table_content">
 			<div 
@@ -238,8 +236,8 @@ export default {
 				return ;
 			}
 			var name_index = -1;
-			for(var i = 0; i < _this.headers.length; i++) {
-				if(_this.headers[i] === '构件编号') {
+			for(var i = 0; i < this.headers.length; i++) {
+				if(this.headers[i] === '构件编号') {
 					name_index = i;
 					break;
 				}
@@ -250,8 +248,8 @@ export default {
 			}
 			var data = {};
 			var color_index = 0;
-			for(var i = 0; i < _this.contents.length; i++) {
-				var type = _this.contents[i][index];
+			for(var i = 0; i < this.contents.length; i++) {
+				var type = this.contents[i][index];
 				if(data[type] === undefined) {
 					data[type] = {};
 					data[type].names = [];
@@ -262,7 +260,7 @@ export default {
 						data[type].color = random_color();
 					}
 				}
-				data[type].names.push(_this.contents[i][name_index]);
+				data[type].names.push(this.contents[i][name_index]);
 			}
 			var max_len = 0;
 			var contents = [];
@@ -358,6 +356,9 @@ export default {
 	border: 1px solid rgb(65,113,156);
 }
 
+.table_header_and_add {
+
+}
 .table_header {
 	background-color: rgb(222,235,247);
 	display: inline-block;

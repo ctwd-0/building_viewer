@@ -235,10 +235,11 @@ export default {
 		var _this = this;
 		this.calculate_paras_init();
 		window.addEventListener("resize", function() {
-			bus.$emit("large_image_container_reisize")
-			_this.$emit("viewer2_reisize")
+			bus.$emit("large_image_container_resize")
+			bus.$emit("editor_resize")
+			_this.$emit("viewer2_resize")
 		})
-		this.$on("viewer2_reisize", function() {
+		this.$on("viewer2_resize", function() {
 			this.calculate_paras();
 		})
 		$.ajax({

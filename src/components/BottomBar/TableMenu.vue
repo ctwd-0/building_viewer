@@ -70,7 +70,7 @@ export default {
 	position: absolute;
 	background-color: white;
 	display: inline-block;
-	top: 64px;
+	top: 31px;
 	width: 80px;
 	box-shadow:2px 2px 3px #aaaaaa
 }
