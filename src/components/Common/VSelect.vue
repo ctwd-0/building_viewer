@@ -844,6 +844,7 @@
             if (!this.disabled) {
               this.open = true
               this.$refs.search.focus()
+              this.$refs.search.setSelectionRange(0,this.inner_search.length)
             }
           }
         }

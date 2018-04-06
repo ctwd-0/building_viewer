@@ -2,8 +2,8 @@
 	<div class="files" :style="{height:height + 'px', marginLeft:leftWidth + 'px', width: (innerWidth) + 'px'}">
 		<div class="tab_header" :style="{width:(innerWidth) + 'px'}">
 			<a class="arrow_left" @click="left_click"></a>
-			<div class="tab_header_content" :style="{width:(width - rightWidth - leftWidth - 30) + 'px'}">
-				<ul v-bind:style="{display: 'block', whiteSpace:'nowrap',  position: 'relative', left: list_left + 'px'}">
+			<div class="tab_header_content" :style="{width:(innerWidth - 30) + 'px'}">
+				<ul :style="{display: 'block', whiteSpace:'nowrap',  position: 'relative', left: list_left + 'px'}">
 					<li
 						v-for="(item, index) in folders"
 						v-bind:item="item"
@@ -23,7 +23,7 @@
 			</div>
 			<a class="arrow_right" @click="right_click"></a>
 		</div>
-		<div class="file_content" :style="{width:(innerWidth - 3) + 'px', height: (height - 27) + 'px'}">
+		<div class="file_content" :style="{width:(innerWidth - 3) + 'px', height: (height - 43) + 'px'}">
 			<div class="inner_file_content">
 				<div style="margin-lft:auto, margin-right:auto">
 					<input 
@@ -330,12 +330,12 @@ export default {
 
 	watch: {
 		width(val, old) {
-			this.innerWidth = this.width - this.rightWidth - this.leftWidth;
+			this.innerWidth = this.width - this.rightWidth - this.leftWidth - 16;
 		}
 	},
 
 	mounted:function() {
-		this.innerWidth = this.width - this.rightWidth - this.leftWidth;
+		this.innerWidth = this.width - this.rightWidth - this.leftWidth - 16;
 		var _this = this;
 		$.ajax({
 			type: 'GET',
@@ -430,6 +430,8 @@ ul {
 	margin: 0;
 }
 .files {
+	left: 8px;
+	top: 8px;
 	position: absolute;
 }
 

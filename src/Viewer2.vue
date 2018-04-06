@@ -21,6 +21,14 @@
 					:leftWidth="3"
 				>
 				</Files>
+				<Tools
+					v-if="right_index === 1 && right_show"
+					:width="right_width"
+					:height="inner_height"
+					:rightWidth="button_size"
+					:leftWidth="3"
+				>
+				</Tools>
 				<div class="right_tab_area" :style="{height: inner_height + 'px'}">
 					<label :class="{'right_tab':right_index !== index, 'right_tab_selected': right_index === index}" v-for="(tag, index) in right_tags" @click="right_click(index)">{{tag}}</label>
 				</div>
@@ -35,20 +43,20 @@
 
 import WebglWrapper from './components/WebglWrapper.vue'
 import BottomBar from './components/BottomBar.vue'
-import RightBar from './components/RightBar.vue'
 import LargeImageContainer from './components/LargeImageContainer.vue'
 import Editor from './components/Editor.vue'
 import Files from './components/RightBar/Files.vue'
+import Tools from './components/RightBar/Tools.vue'
 
 export default {
 	name: 'viewer',
 	components: {
 		WebglWrapper,
 		BottomBar,
-		RightBar,
 		LargeImageContainer,
 		Editor,
-		Files
+		Files,
+		Tools
 	},
 	data () {
 		return {

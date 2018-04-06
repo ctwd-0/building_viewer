@@ -1,17 +1,19 @@
 <template>
-	<div id="selector2">
-		<div id="selector_content">
-			<textarea id="query_string" v-model="query_string" wrap="off"/>
+	<div class="selector2" :style="{width:width - 20 + 'px'}">
+		<div class="selector_content" :style="{width:width - 20 + 'px'}">
+			<label class="selector_label" >检索条件：</label>
+			<textarea class="query_string" :style="{width:width - 36 + 'px'}" v-model="query_string" wrap="off"/>
 			<SelectInput
+				class="select_input"
 				v-model="current_name"
 				:options="options"
 				@clickon="click_on($event)"
 			/>
-			<button @click="search_click">检索</button>
-			<button @click="new_query">新建</button>
-			<button @click="edit_click">编辑</button>
-			<button @click="save_current">保存</button>
-			<button @click="delete_current">删除</button>
+			<button class="buttons" @click="search_click">检索</button>
+			<button class="buttons" @click="new_query">新建</button>
+			<button class="buttons" @click="edit_click">编辑</button>
+			<button class="buttons" @click="save_current">保存</button>
+			<button class="buttons" @click="delete_current">删除</button>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -24,6 +26,9 @@ export default {
 	name: 'selector2',
 	components: {
 		SelectInput,
+	},
+	props:{
+		width: Number,
 	},
 	data () {
 		return {
@@ -200,33 +205,34 @@ export default {
 </script>
 
 <style scoped>
-#selector2 {
-	width: 260px;
-	margin: 10px;
-	margin-bottom: 2px;
+.select_input {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+.buttons {
+	margin: 5px;
+}
+.selector2 {
+	position: relative;
+	margin: 8px;
 	display: inline-block;
 }
 
-#selector_tab_header {
-	float: left;
+.selector_label {
+	display: block;
+	margin-left: 5px;
+	margin-top: 5px;
+	font-size: 17px;
 }
-
-#selector_content {
-	float: left;
-	width: 260px;
-	height: 200px;
+.selector_content {
 	background-color: rgb(222,235,247);
-	border-bottom: 1px solid rgb(65,113,156);
-	border-top: 1px solid rgb(65,113,156);
-	border-left: 1px solid rgb(65,113,156);
-	border-right: 1px solid rgb(65,113,156);
+	border: 1px solid rgb(65,113,156);
 }
 
-#query_string {
+.query_string {
 	resize: none;
-	width: 250px;
-	height: 100px;
-	margin: 2px;
+	height: 300px;
+	margin: 5px;
 }
 
 .selector_line {

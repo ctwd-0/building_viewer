@@ -1,9 +1,9 @@
 <template>
-	<div id="direct">
-		<div class="direct_lable">{{lable_direct}}</div>
+	<div class="direct" :style="{width:width - 20 + 'px'}">
+		<div class="direct_lable">编号入口：</div>
 		<div class="direct_input_line">
-			<input type="text" v-model="direct_id">
-			<button id="direct_button" @click="direct_click">{{direct_button_text}}</button>
+			<input type="text" v-model="direct_id" :style="{width:width - 82 + 'px'}" >
+			<button class="direct_button" @click="direct_click">进入</button>
 		</div>
 	</div>
 </template>
@@ -13,10 +13,11 @@ export default {
 	name: 'direct',
 	components: {
 	},
+	props:{
+		width: Number,
+	},
 	data () {
 		return {
-			lable_direct:"编号入口（直接输入编号）",
-			direct_button_text:"进入",
 			direct_id: "",
 		};
 	},
@@ -46,30 +47,30 @@ export default {
 </script>
 
 <style scoped>
-#direct {
-	margin: 10px auto;
-	width: 270px;
+.direct {
+	position: relative;
+	margin: 8px;
+	background-color: rgb(222,235,247);
+	border: 1px solid rgb(65,113,156);
 }
 
 .direct_lable {
+	display: inline-block;
 	margin: 5px;
-	font-size: 20px;
-	text-align: center;
+	font-size: 18px;
 	background-color: rgb(222,235,247);
 }
 
 .direct_input_line {
-	margin: 8px auto;
-	text-align: center;
+	margin: 5px;
 }
 
-#direct > div > input {
+.direct > div > input {
 	height: 20px;
-	width: 208px;
 	vertical-align: middle;
 }
 
-#direct_button {
+.direct_button {
 	height: 26px;
 	vertical-align: middle;
 }
