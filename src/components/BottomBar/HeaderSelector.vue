@@ -36,10 +36,6 @@
 				<label>{{name.name}}</label>
 
 			</div>
-			<!--
-			<span>names: {{ model }}</span>
-			<span>current_index: {{ current_index }}</span>
-			-->
 		</div>
 	</div>
 </template>
@@ -377,5 +373,10 @@ export default {
 
 .table_selector_content{
 	display: inline-block;
+}
+.header_selector {
+	padding: 4px;
+	margin: 4px;
+	border: 1px solid rgb(65,113,156);
 }
 </style>

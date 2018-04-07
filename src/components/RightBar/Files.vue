@@ -25,7 +25,7 @@
 		</div>
 		<div class="file_content" :style="{width:(innerWidth - 3) + 'px', height: (height - 43) + 'px'}">
 			<div class="inner_file_content">
-				<div style="margin-lft:auto, margin-right:auto">
+				<div class="uploader">
 					<input 
 						type="file" 
 						name="file_input" 
@@ -451,9 +451,7 @@ ul {
 .file_content {
 	margin: auto;
 	background-color: rgb(222,235,247);
-	border-right: 1px solid rgb(65,113,156);
-	border-bottom: 1px solid rgb(65,113,156);
-	border-left: 1px solid rgb(65,113,156);
+	border: 1px solid rgb(65,113,156);
 	overflow-y: auto;
 }
 
@@ -462,7 +460,8 @@ ul {
 }
 
 .selected {
-	list-style: none;
+	position: relative;
+	top: 1px;
 	display: inline-block;
 	background-color: rgb(222,235,247);
 	padding-left: 5px;
@@ -473,11 +472,12 @@ ul {
 	border-right: 1px solid rgb(65,113,156);
 	border-top: 1px solid rgb(65,113,156);
 	border-left: 1px solid rgb(65,113,156);
+	border-bottom: 1px solid rgb(222,235,247);
 	color: rgb(132,60,12);
+	z-index: 1;
 }
 
 .not_selected {
-	list-style: none;
 	display: inline-block;
 	background-color: rgb(189,215,238);
 	padding-left: 5px;
@@ -485,7 +485,6 @@ ul {
 	font-size: 20px;
 	line-height: 25px;
 	text-align: center;
-	border-bottom: 1px solid rgb(65,113,156);
 }
 
 .arrow_left {
@@ -507,5 +506,11 @@ ul {
 	background-image: url(/dist/ui/arrows.png);
 	background-size: 70px;
 	background-position: -12px -39px;
+}
+.uploader{
+	display: inline-block;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	margin-left: 5px;
 }
 </style>
