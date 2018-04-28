@@ -2,8 +2,9 @@
 	<div class="editor_content">
 		<div v-if="value.op === undefined" class="single_content">
 			<button @click="upgrade_self">升变</button>
-			<input type="text" class="input" v-model="value.key">
-			<input type="text" class="input" v-model="value.val">
+			<input type="text" class="input" placeholder="属性" v-model="value.key">
+			<label>=</label>
+			<input type="text" class="input" placeholder="值" v-model="value.val">
 			<button @click="delete_self">删除</button>
 		</div>
 		<div v-else class="single_content">
@@ -80,10 +81,11 @@ export default {
 
 <style>
 .single_content{
-	margin: 3px;
-	padding-left: 25px;
-	padding-top: 3px;
-	padding-bottom: 3px;
+	/*margin: 2px;*/
+	padding-left: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-right: 2px;
 	border: 1px solid #999;
 	background-color: #ffe;
 }

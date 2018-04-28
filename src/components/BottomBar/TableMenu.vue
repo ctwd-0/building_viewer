@@ -61,6 +61,9 @@ export default {
 				_this.left = left;
 			}
 		});
+		bus.$on("hide_menu", function() {
+			_this.show = false;
+		});
 	}
 }
 </script>

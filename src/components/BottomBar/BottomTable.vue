@@ -11,7 +11,7 @@
 				</label>
 				<button
 					class="table_header_button"
-					v-on:click="on_table_header_button(index)"
+					@click.stop="on_table_header_button(index)"
 				>
 				</button>
 			</div>

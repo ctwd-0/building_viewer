@@ -1,5 +1,5 @@
 <template>
-	<div class = "outer_div" @drop="drop($event)" @dragover="allow_drop($event)">
+	<div class = "outer_div" @drop="drop($event)" @dragover="allow_drop($event)" @click="outer_div_click">
 		<div class="main_frame" :style="{width:inner_width + 'px', height: inner_height + 'px'}">
 			<div class="webgl" :style="{width:webgl_width + 'px', height: webgl_height + 'px'}">
 				<WebglWrapper
@@ -109,6 +109,10 @@ export default {
 	},
 
 	methods: {
+		outer_div_click() {
+			bus.$emit("hide_menu");
+		},
+
 		right_click(index) {
 			if(this.right_show) {
 				if(index === this.right_index) {

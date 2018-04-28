@@ -4,20 +4,13 @@
 			class="header_selector_header"
 		>
 			<div
-				class="table_selector_header"
+				:class="{'header_selected': current_index === index, 'header_not_selected':current_index !== index}"
 				v-for="(name, index) in names"
 			>
-				<span @click="table_selector_change(index)"> {{name}} </span>
+				<label class="header_selected_label" @click="table_selector_change(index)"> {{name}} </label>
 				<button @click="delete_selector(index)">删</button>
 			</div>
-			<span v-if="is_newing">
-				<input v-model="new_selector_name">
-				<button @click="commit_new_selector">确定</button>
-				<button @click="cancel_new_selector">取消</button>
-			</span>
-			<span v-if="!is_newing">
-				<button @click="new_selector">新建</button>
-			</span>
+			<label @click="new_selector" class="label_add_header">+</label>
 		</div>
 		<div
 			class="header_selector_content"
@@ -34,7 +27,6 @@
 					v-model="model"
 				>
 				<label>{{name.name}}</label>
-
 			</div>
 		</div>
 	</div>
@@ -46,8 +38,41 @@ export default {
 	components: {
 	},
 	
+	data () {
+		return {
+			from_server: false,
+			names:["默认"],
+			current_index: 1,
+			model:["构件编号"],
+			models:[["构件编号"]],
+			headers:[
+				{name:"构件编号",disabled:true},
+				{name:"构件类别"},
+				{name:"构件类型"},
+				{name:"方位"},
+				{name:"所属部件"},
+				{name:"材质类别"},
+				{name:"材质类型"},
+				{name:"保存状态"},
+				{name:"病害类型"},
+				{name:"干预情况"},
+				{name:"备注"},
+			],
+			data_t: {},
+			has_data_t: false,
+		};
+	},
+
 	methods: {
 		delete_selector(index) {
+			if (this.names.length === 1) {
+				alert("不能删除最后一个选择器。")
+				return
+			}
+			let del = confirm("确认要删除选择器“"+ this.names[index]+ "”么？删除的选择器将不能恢复");
+			if (!del) {
+				return
+			}
 			let name = this.names[index];
 			let _this = this;
 			$.ajax({
@@ -62,24 +87,26 @@ export default {
 						alert(result["reason"]);
 					} else {
 						_this.$emit("selector_arrive", result);
-						//alert("删除成功");
 					}
 				},
 			});
 		},
+		
 		new_selector() {
-			this.new_selector_name = "";
-			this.is_newing = true;
+			let new_selector = prompt("请输入新的选择器名称", "")
+			if(new_selector === null) {
+				return
+			}
+			new_selector = new_selector.trim()
+			this.commit_new_selector(new_selector);
 		},
-		cancel_new_selector() {
-			this.is_newing = false;
-		},
-		commit_new_selector() {
-			if(this.new_selector_name == "") {
+
+		commit_new_selector(new_selector_name) {
+			if(new_selector_name == "") {
 				alert("名称不能为空");
 				return;
 			}
-			if(this.names.indexOf(this.new_selector_name) !== -1) {
+			if(this.names.indexOf(new_selector_name) !== -1) {
 				alert("名称重复");
 				return;
 			}
@@ -88,7 +115,7 @@ export default {
 				type: 'GET',
 				url: "http://"+json_server+"/filter/add",
 				data :{
-					name:this.new_selector_name,
+					name:new_selector_name,
 					model:JSON.stringify(this.model),
 				},
 				crossDomain: true,
@@ -98,8 +125,8 @@ export default {
 					}
 				},
 			});
-			this.is_newing = false;
 		},
+
 		table_selector_change(index) {
 			let old_index = this.current_index;
 			let new_index = index;
@@ -160,6 +187,7 @@ export default {
 		},
 
 		selector_arrive(data) {
+			console.log(data);
 			this.headers = [];
 			this.models = [];
 			this.model = [];
@@ -183,7 +211,7 @@ export default {
 				}
 			}
 
-			for(let key in data.filter) {
+			for(var key = 0; key < data.filter.length; key++) {
 				let flt = data.filter[key]
 				if(flt.default === true && !current_set) {
 					this.current_index = key
@@ -218,6 +246,7 @@ export default {
 		},
 
 		new_column_added(new_column) {
+			console.log(new_column)
 			if(this.has_data_t) {
 				this.data_t.header.push(new_column)
 				this.headers.push({name:new_column})
@@ -288,33 +317,6 @@ export default {
 		}
 	},
 
-	data () {
-		return {
-			from_server: false,
-			is_newing:false,
-			new_selector_name:"",
-			names:["默认"],
-			current_index: 0,
-			model:["构件编号"],
-			models:[["构件编号"]],
-			headers:[
-				{name:"构件编号",disabled:true},
-				{name:"构件类别"},
-				{name:"构件类型"},
-				{name:"方位"},
-				{name:"所属部件"},
-				{name:"材质类别"},
-				{name:"材质类型"},
-				{name:"保存状态"},
-				{name:"病害类型"},
-				{name:"干预情况"},
-				{name:"备注"},
-			],
-			data_t: {},
-			has_data_t: false,
-		};
-	},
-
 	mounted: function() {
 		var _this = this;
 		$.ajax({
@@ -367,6 +369,38 @@ export default {
 </script>
 
 <style scoped>
+.header_selected{
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	border-left: 1px solid rgb(65,113,156);
+	border-right: 1px solid rgb(65,113,156);
+	border-top: 1px solid rgb(65,113,156);
+	background-color: rgb(222,235,247);
+	z-index: 1;
+	padding: 2px;
+}
+.header_selected_label {
+	display:inline-block;
+	min-width:30px;
+	text-align: center;
+}
+.header_not_selected {
+	display: inline-block;
+	padding: 2px;
+}
+
+.label_add_header {
+	display: inline-block;
+	padding-left: 5px;
+	font-size: 18px;
+}
+.header_selector_content {
+	background-color: rgb(222,235,247);
+	border: 1px solid rgb(65,113,156);
+	z-index: 0;
+}
+
 .table_selector_header{
 	display: inline-block;
 }
