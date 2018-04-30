@@ -187,7 +187,6 @@ export default {
 		},
 
 		selector_arrive(data) {
-			console.log(data);
 			this.headers = [];
 			this.models = [];
 			this.model = [];
@@ -246,7 +245,6 @@ export default {
 		},
 
 		new_column_added(new_column) {
-			console.log(new_column)
 			if(this.has_data_t) {
 				this.data_t.header.push(new_column)
 				this.headers.push({name:new_column})
