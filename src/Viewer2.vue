@@ -105,6 +105,7 @@ export default {
 			bottom_index: 0,
 			right_tags: ["资料", "工具"],
 			bottom_tags: ["数据表", "表头选择"],
+			webgl_need_update: false,
 		};
 	},
 
@@ -160,6 +161,7 @@ export default {
 				delta = event.clientY - event.dataTransfer.getData("start_Y")
 				this.resize_bottom(delta)
 			}
+			this.webgl_need_update = true;
 		},
 
 		resize_right(delta) {
@@ -260,7 +262,14 @@ export default {
 				});
 			},
 		});
-	}
+	},
+
+	updated() {
+		if(this.webgl_need_update) {
+			update_webgl_container()
+			this.webgl_need_update = false;
+		}
+	},
 }
 
 </script>
