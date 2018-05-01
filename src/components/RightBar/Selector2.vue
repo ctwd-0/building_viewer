@@ -231,7 +231,7 @@ export default {
 
 .query_string {
 	resize: none;
-	height: 300px;
+	height: 268px;
 	margin: 5px;
 }
 

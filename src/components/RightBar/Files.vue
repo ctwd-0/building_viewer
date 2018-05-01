@@ -11,7 +11,7 @@
 						v-bind:class="{selected:item.sel, not_selected:!item.sel}"
 						v-on:click="change_folder_sel(index)"
 						v-on:dblclick="rename_folder(index)"
-						v-on:contextmenu.prevent="remove_folder(index)"
+						v-on:contextmenu.prevent="show_menu($event, index)"
 					>
 						{{item.text}}
 					</li>
@@ -52,14 +52,19 @@
 				</PhotoFrame>
 			</div>
 		</div>
+		<FolderMenu/>
 	</div>
 </template>
 <script>
+
 import PhotoFrame from '../Common/PhotoFrame.vue'
+import FolderMenu from './FolderMenu.vue'
+
 export default {
 	name: 'files',
 	components: {
 		PhotoFrame,
+		FolderMenu
 	},
 	props:{
 		width: Number,
@@ -176,8 +181,8 @@ export default {
 			}
 		},
 
-		show_menu(index) {
-
+		show_menu(event, index) {
+			bus.$emit("show_folder_menu", event, index)
 		},
 
 		add_folder() {
@@ -419,6 +424,14 @@ export default {
 				});
 			}
 		});
+
+		bus.$on("folder_remove", function(index) {
+			_this.remove_folder(index)
+		});
+
+		bus.$on("folder_rename", function(index) {
+			_this.rename_folder(index)
+		});
 	}
 }
 </script>
@@ -474,7 +487,6 @@ ul {
 	border-left: 1px solid rgb(65,113,156);
 	border-bottom: 1px solid rgb(222,235,247);
 	color: rgb(132,60,12);
-	z-index: 1;
 }
 
 .not_selected {

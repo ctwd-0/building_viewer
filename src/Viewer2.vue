@@ -112,6 +112,7 @@ export default {
 	methods: {
 		outer_div_click() {
 			bus.$emit("hide_menu");
+			bus.$emit("hide_folder_menu");
 		},
 
 		right_click(index) {
@@ -127,6 +128,7 @@ export default {
 				this.right_index = index
 			}
 			this.set_x_according()
+			this.webgl_need_update = true;
 		},
 		
 		bottom_click(index) {
@@ -142,6 +144,7 @@ export default {
 				this.bottom_index = index
 			}
 			this.set_y_according()
+			this.webgl_need_update = true;
 		},
 
 		start_drag(event, type) {
