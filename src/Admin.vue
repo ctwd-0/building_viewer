@@ -3,7 +3,7 @@
 		<div class="top_bar">
 			<div class="top_bar_left">控制台</div>
 			<div class="top_bar_user" title="管理员用户">{{admin}}</div>
-			<button class="btn btn-info top_bar_logout">退出</button>
+			<button class="btn btn-info top_bar_logout" @click="logout">退出</button>
 		</div>
 		<div class="content_left">
 			<div
