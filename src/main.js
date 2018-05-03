@@ -4,7 +4,6 @@ import Viewer from './Viewer2.vue'
 import Admin from './Admin.vue'
 
 global.json_server = "http://localhost:8000";
-//global.json_server = "http://localhost:8000";
 //global.json_server = "http://13.125.98.199:8000";
 global.the_fucking_bus = new Vue();
 global.bus = global.the_fucking_bus;
