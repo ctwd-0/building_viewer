@@ -93,7 +93,7 @@ export default {
 		},
 		preview() {
 			if(this.file_array[this.index].type == "pdf") {
-				window.open("dist/pdf/viewer.html?file=" + this.file_array[this.index].original_path)
+				window.open("/dist/pdf/viewer.html?file=" + this.file_array[this.index].original_path)
 			}
 		},
 		cancel() {

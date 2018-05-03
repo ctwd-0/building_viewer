@@ -49,7 +49,7 @@ export default {
 		},
 		preview_pdf() {
 			if(this.data.type == "pdf") {
-				window.open("dist/pdf/viewer.html?file=" + this.data.original_path)
+				window.open("/dist/pdf/viewer.html?file=" + this.data.original_path)
 			}
 		},
 		delete_file() {
