@@ -77,11 +77,10 @@ export default {
 			let _this = this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/filter/delete",
+				url: json_server+"/filter/delete",
 				data :{
 					name:name,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == false) {
 						alert(result["reason"]);
@@ -113,12 +112,11 @@ export default {
 			var _this = this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/filter/add",
+				url: json_server+"/filter/add",
 				data :{
 					name:new_selector_name,
 					model:JSON.stringify(this.model),
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["reason"] === undefined) {
 						_this.$emit("selector_arrive", result);
@@ -165,12 +163,11 @@ export default {
 		save_model() {
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/filter/update",
+				url: json_server+"/filter/update",
 				data :{
 					name:this.names[this.current_index],
 					model:JSON.stringify(this.model),
 				},
-				crossDomain: true,
 				success: function( result ) {
 				},
 			});
@@ -319,8 +316,7 @@ export default {
 		var _this = this;
 		$.ajax({
 			type: 'GET',
-			url: "http://"+json_server+"/filter/init",
-			crossDomain: true,
+			url: json_server+"/filter/init",
 			success: function( result ) {
 				if(result["reason"] === undefined) {
 					_this.$emit("selector_arrive", result);

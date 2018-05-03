@@ -58,7 +58,7 @@ export default {
 			}
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/user/login",
+				url: json_server+"/user/login",
 				data :{
 					name:this.username,
 					password:hex_md5(this.password),

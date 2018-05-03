@@ -83,13 +83,12 @@ export default {
 			var _this = this
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/table/update",
+				url: json_server+"/table/update",
 				data :{
 					id:id,
 					column:column_name,
 					value:new_value,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
 						_this.contents[line_no].splice(index, 1, new_value)
@@ -118,11 +117,10 @@ export default {
 			}
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/table/add_column",
+				url: json_server+"/table/add_column",
 				data :{
 					column:new_column,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
 						bus.$emit("new_column_added", new_column)
@@ -154,12 +152,11 @@ export default {
 			let _this = this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/table/rename_column",
+				url: json_server+"/table/rename_column",
 				data :{
 					old: this.headers[index],
 					new: new_column,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
 						bus.$emit("column_renamed", _this.headers[index], new_column);
@@ -180,11 +177,10 @@ export default {
 			let _this= this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/table/remove_column",
+				url: json_server+"/table/remove_column",
 				data :{
 					column: this.headers[index],
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
 						bus.$emit("column_deleted", _this.headers[index]);

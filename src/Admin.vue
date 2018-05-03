@@ -105,11 +105,10 @@ export default {
 		logout() {
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/user/logout",
+				url: json_server+"/user/logout",
 				xhrFields:{
 					withCredentials:true
 				},
-				crossDomain: true,
 				success: function( result ) {
 					//console.log(result)
 					location.href = "/"
@@ -134,7 +133,7 @@ export default {
 			let _this = this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/admin/update",
+				url: json_server+"/admin/update",
 				xhrFields:{
 					withCredentials:true
 				},
@@ -143,7 +142,6 @@ export default {
 					write:write,
 					banned:banned
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == false) {
 						alert(result["reason"]);
@@ -173,7 +171,7 @@ export default {
 			}
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/admin/password",
+				url: json_server+"/admin/password",
 				xhrFields:{
 					withCredentials:true
 				},
@@ -181,7 +179,6 @@ export default {
 					name:name,
 					password:hex_md5(password),
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == false) {
 						alert(result["reason"]);
@@ -203,14 +200,13 @@ export default {
 			let _this = this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/admin/remove_user",
+				url: json_server+"/admin/remove_user",
 				xhrFields:{
 					withCredentials:true
 				},
 				data :{
 					name:this.users[index].name,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == false) {
 						alert(result["reason"]);
@@ -234,7 +230,7 @@ export default {
 			}
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/admin/add_user",
+				url: json_server+"/admin/add_user",
 				xhrFields:{
 					withCredentials:true
 				},
@@ -242,7 +238,6 @@ export default {
 					name:name,
 					password:hex_md5(password),
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == false) {
 						alert(result["reason"]);
@@ -261,11 +256,10 @@ export default {
 		let _this = this;
 		$.ajax({
 			type: 'GET',
-			url: "http://"+json_server+"/admin/init",
+			url: json_server+"/admin/init",
 			xhrFields:{
 				withCredentials:true
 			},
-			crossDomain: true,
 			success: function( result ) {
 				if(result["success"] == false) {
 				} else {

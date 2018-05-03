@@ -98,13 +98,12 @@ export default {
 			let _this = this
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/folder/rename",
+				url: json_server+"/folder/rename",
 				data :{
 					model_id: model_id,
 					new: new_folder,
 					old: old_folder,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
 						_this.folder_renamed(old_folder, new_folder)
@@ -141,13 +140,12 @@ export default {
 			let _this = this
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/folder/remove",
+				url: json_server+"/folder/remove",
 				data :{
 					model_id: model_id,
 					new: new_folder,
 					old: old_folder,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"]) {
 						_this.folder_removed(old_folder, new_folder)
@@ -204,12 +202,11 @@ export default {
 			}
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/folder/add",
+				url: json_server+"/folder/add",
 				data: {
 					model_id: model_id,
 					folder_name: new_folder,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result.success) {
 						_this.folder_added(new_folder)
@@ -248,9 +245,8 @@ export default {
 			file.append('category', this.folders[this.file_sel].text);
 			$.ajax({
 				type: 'POST',
-				url: "http://"+json_server+"/file/upload",
+				url: json_server+"/file/upload",
 				data: file,
-				crossDomain: true,
 				contentType: false,
 				processData: false,
 				xhr: function(){
@@ -301,12 +297,11 @@ export default {
 			var _this = this;
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/file/get_files",
+				url: json_server+"/file/get_files",
 				data: {
 					model_id: model_id,
 					category: this.folders[this.file_sel].text,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result.success) {
 						_this.file_array = result.files;
@@ -344,11 +339,10 @@ export default {
 		var _this = this;
 		$.ajax({
 			type: 'GET',
-			url: "http://"+json_server+"/folder/init",
+			url: json_server+"/folder/init",
 			data: {
 				model_id: model_id,
 			},
-			crossDomain: true,
 			success: function( result ) {
 				if(result.success) {
 					_this.$emit("folders", result.folders);
@@ -367,13 +361,12 @@ export default {
 			}
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/file/is_ready",
+				url: json_server+"/file/is_ready",
 				data: {
 					token: _this.token,
 					model_id: model_id,
 					category: this.folders[this.file_sel].text,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result.success) {
 						_this.$emit("waiting_image", Infinity)
@@ -410,11 +403,10 @@ export default {
 				model_id = m_id;
 				$.ajax({
 					type: 'GET',
-					url: "http://"+json_server+"/folder/init",
+					url: json_server+"/folder/init",
 					data: {
 						model_id: model_id,
 					},
-					crossDomain: true,
 					success: function( result ) {
 						if(result.success) {
 							_this.$emit("folders", result.folders);
@@ -473,8 +465,6 @@ ul {
 }
 
 .selected {
-	position: relative;
-	top: 1px;
 	display: inline-block;
 	background-color: rgb(222,235,247);
 	padding-left: 5px;

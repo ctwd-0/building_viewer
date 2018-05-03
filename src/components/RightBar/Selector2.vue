@@ -52,11 +52,10 @@ export default {
 			}
 			$.ajax({
 				type: 'POST',
-				url: "http://"+json_server+"/query/delete",
+				url: json_server+"/query/delete",
 				data: {
 					name:this.current_name,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == true) {
 						if(result["names"] !== undefined && result["names"] instanceof Array) {
@@ -82,12 +81,11 @@ export default {
 			}
 			$.ajax({
 				type: 'POST',
-				url: "http://"+json_server+"/query/add",
+				url: json_server+"/query/add",
 				data: {
 					name:this.current_name,
 					query:this.query_string,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["success"] == true) {
 						if(result["names"] !== undefined && result["names"] instanceof Array) {
@@ -103,11 +101,10 @@ export default {
 		search_click: function() {
 			$.ajax({
 				type: 'POST',
-				url: "http://"+json_server+"/search",
+				url: json_server+"/search",
 				data: {
 					query:this.query_string,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					let header = result['header'];
 					cut_data(header);
@@ -166,11 +163,10 @@ export default {
 			//console.log(val);
 			$.ajax({
 				type: 'GET',
-				url: "http://"+json_server+"/query/get",
+				url: json_server+"/query/get",
 				data: {
 					name: val,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if(result["query"] !== undefined) {
 						bus.$emit("query:loaded", result["query"]);
@@ -192,8 +188,7 @@ export default {
 		});
 		$.ajax({
 			type: 'GET',
-			url: "http://"+json_server+"/query/init",
-			crossDomain: true,
+			url: json_server+"/query/init",
 			success: function( result ) {
 				if(result["names"] !== undefined && result["names"] instanceof Array) {
 					bus.$emit("init:options", result["names"]);

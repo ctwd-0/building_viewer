@@ -109,12 +109,11 @@ export default {
 			this.file_array[this.index].description = this.new_text;
 			$.ajax({
 				type: 'POST',
-				url: "http://"+json_server+"/file/update_description",
+				url: json_server+"/file/update_description",
 				data: {
 					id: this.file_array[this.index]._id,
 					description: this.new_text,
 				},
-				crossDomain: true,
 				success: function( result ) {
 					if (result.success) {
 						alert("保存成功");

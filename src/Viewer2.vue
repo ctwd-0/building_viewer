@@ -253,8 +253,7 @@ export default {
 		})
 		$.ajax({
 			type: 'GET',
-			url: "http://"+json_server+"/table/init",
-			crossDomain: true,
+			url: json_server+"/table/init",
 			success: function( result ) {
 				let header = result['header'];
 				cut_data(header);
