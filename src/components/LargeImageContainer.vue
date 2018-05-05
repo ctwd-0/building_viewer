@@ -85,11 +85,11 @@ export default {
 			this.edit_button_bottom = this.file_array.length && this.file_array[this.index].type == 'pdf' ? 13 : 39
 		},
 		main_div_width() {
-			return window.innerWidth;
+			return window.innerWidth
 		},
 
 		main_div_height() {
-			return window.innerHeight - 118;
+			return window.innerHeight - 118
 		},
 		preview() {
 			if(this.file_array[this.index].type == "pdf") {
@@ -97,16 +97,16 @@ export default {
 			}
 		},
 		cancel() {
-			this.editing = false;
-			this.new_text = "";
+			this.editing = false
+			this.new_text = ""
 		},
 		edit() {
-			this.new_text = this.text;
-			this.editing = true;
+			this.new_text = this.text
+			this.editing = true
 		},
 		save() {
-			this.editing = false;
-			this.file_array[this.index].description = this.new_text;
+			this.editing = false
+			this.file_array[this.index].description = this.new_text
 			$.ajax({
 				type: 'POST',
 				url: json_server+"/file/update_description",
@@ -116,33 +116,33 @@ export default {
 				},
 				success: function( result ) {
 					if (result.success) {
-						alert("保存成功");
+						alert("保存成功")
 					} else {
-						alert("保存失败");
+						alert(result.reason)
 					}
 				},
 				error: function( err ) {
-					alert("网络错误");
+					alert("网络错误")
 				},
 			});
-			this.new_text = "";
+			this.new_text = ""
 		},
 		hide() {
-			this.cancel();
-			this.show = false;
+			this.cancel()
+			this.show = false
 		},
 		prev_photo() {
-			this.cancel();
-			this.index--;
+			this.cancel()
+			this.index--
 			if(this.index < 0) {
-				this.index = 0;
+				this.index = 0
 			}
 		},
 		next_photo() {
-			this.cancel();
-			this.index++;
+			this.cancel()
+			this.index++
 			if(this.index >= this.file_array.length) {
-				this.index = this.file_array.length -1;
+				this.index = this.file_array.length -1
 			}
 		},
 		image_size() {
@@ -178,12 +178,14 @@ export default {
 	},
 
 	mounted: function(){
-		var _this = this;
+		var _this = this
 		bus.$on("click_photo", function(data) {
-			_this.show = true;
-			_this.file_array = data.file_array;
-			_this.index = data.index;
+			_this.show = true
+			_this.file_array = data.file_array
+			_this.index = data.index
+			_this.compute_edit_button_bottom()
 		});
+
 		bus.$on("large_image_container_resize", function() {
 			if(_this.show) {
 				_this.$refs.image.width = _this.image_size().width
@@ -198,9 +200,9 @@ export default {
 	computed: {
 		text: function() {
 			if (this.index < this.file_array.length) {
-				return this.file_array[this.index].description;
+				return this.file_array[this.index].description
 			} else {
-				return "";
+				return ""
 			}
 		},
 		image_width() {

@@ -45,16 +45,36 @@ export default {
 	},
 	methods: {
 		download_file() {
-
+			var url = json_server+"/file/download";
+			var form = $("<form></form>").attr("action", url).attr("method", "post");
+			form.append($("<input></input>").attr("type", "hidden").attr("name", "id").attr("value", this.data._id));
+			form.appendTo('body').submit().remove();
 		},
+		
+		delete_file() {
+			var _this = this;
+			$.ajax({
+				type: 'POST',
+				url: json_server+"/file/remove",
+				data: {
+					id: this.data._id
+				},
+				success: function( result ) {
+					if(result.success) {
+						bus.$emit("single_file_removed", _this.index, _this.data._id)
+					} else {
+						alert(result.reason)
+					}
+				},
+			});
+		},
+
 		preview_pdf() {
 			if(this.data.type == "pdf") {
 				window.open("/dist/pdf/viewer.html?file=" + this.data.original_path)
 			}
 		},
-		delete_file() {
 
-		},
 		image_size() {
 			let max_width = this.width
 			let max_height = this.height

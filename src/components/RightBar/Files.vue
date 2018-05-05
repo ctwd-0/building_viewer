@@ -255,7 +255,7 @@ export default {
 						myXhr.upload.addEventListener('progress', function(e) {
 							if(e.lengthComputable) {
 								_this.uploading_progress = "文件上传中。进度：" 
-									+ e.loaded / e.total * 100 + "%";
+									+ (e.loaded / e.total * 100).toFixed(2) + "%";
 							} else {
 								_this.uploading_progress = "正在上传服务器，请稍候。";
 							}
@@ -309,6 +309,12 @@ export default {
 				},
 			});
 		},
+
+		single_file_removed(index, id) {
+			if(this.file_array.length > index && this.file_array[index]._id === id) {
+				this.file_array.splice(index, 1)
+			}
+		}
 	},
 	
 	data () {
@@ -371,6 +377,9 @@ export default {
 					if(result.success) {
 						_this.$emit("waiting_image", Infinity)
 						_this.file_array = result.files;
+					} else if(result.finish_with_error) {
+						alert("上传文件处理错误，原因：" + result.finish_with_error_reason)
+						_this.$emit("waiting_image", Infinity)
 					} else {
 						setTimeout(function(){_this.$emit("waiting_image", val+1)}, 500);
 					}
@@ -424,6 +433,10 @@ export default {
 		bus.$on("folder_rename", function(index) {
 			_this.rename_folder(index)
 		});
+
+		bus.$on("single_file_removed", function(index, id) {
+			_this.single_file_removed(index, id)
+		})
 	}
 }
 </script>
