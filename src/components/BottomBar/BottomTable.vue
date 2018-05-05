@@ -227,10 +227,6 @@ export default {
 		},
 
 		filter_by(index) {
-			if(current_model !== 'g_-1') {
-				alert('暂时只支持在顶层过滤');
-				return ;
-			}
 			var name_index = -1;
 			for(var i = 0; i < this.headers.length; i++) {
 				if(this.headers[i] === '构件编号') {
