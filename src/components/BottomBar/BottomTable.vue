@@ -54,6 +54,8 @@ export default {
 			headers: [],
 			contents: [],
 			sum_table_width: 0,
+			table_filter: null,
+			original_content: [],
 		};
 	},
 
@@ -273,15 +275,31 @@ export default {
 			bus.$emit("show_filter_example", width, contents);
 		},
 		
+		filter_content(content, row) {
+			let filtered_content = []
+			if(this.table_filter === null) {
+				for(let key in content) {
+					filtered_content.push(content[key])
+				}
+			} else {
+				for(let key in content) {
+					if(this.table_filter[content[key][0]] !== undefined) {
+						filtered_content.push(content[key])
+					}
+				}
+			}
+			return filtered_content
+		},
+
 		set_up_table_data(header, content, ids, all_headers){
-			this.ids = ids;
 			var widths = [];
+			let filtered_content = this.filter_content(content)
 
 			for(var i = 0; i < header.length; i++) {
 				widths.push( header[i].length + 3);
-				for(var j in content) {
-					if(content[j][i].length > widths[i]) {
-						widths[i] = content[j][i].length;
+				for(var j in filtered_content) {
+					if(filtered_content[j][i].length > widths[i]) {
+						widths[i] = filtered_content[j][i].length;
 					}
 				}
 			}
@@ -289,7 +307,7 @@ export default {
 			for(var i in widths) {
 				widths[i] *= 18;
 			}
-			if(content !== undefined && content.length > 0) {
+			if(filtered_content !== undefined && filtered_content.length > 0) {
 				widths[0] /=18;
 				widths[0] *= 10;
 			}
@@ -300,9 +318,18 @@ export default {
 			sum += widths.length * 3;
 			this.headers = header;
 			this.widths = widths;
-			this.contents = content;
+			this.contents = filtered_content;
+			this.original_content = content;
 			this.sum_table_width = sum;
 			this.all_headers = all_headers;
+			this.ids = ids;
+		},
+
+		setup_table_filter(table_filter) {
+			this.table_filter = table_filter;
+			if(this.all_headers.length !== 0) {
+				this.set_up_table_data(this.headers, this.original_content, this.ids, this.all_headers)
+			}
 		}
 	},
 
@@ -334,6 +361,11 @@ export default {
 		bus.$on("remove_column", function(index) {
 			_this.remove_column(index);
 		});
+
+		bus.$on("table_filter_arrive", function(table_filter) {
+			_this.setup_table_filter(table_filter);
+		});
+
 	},
 }
 </script>

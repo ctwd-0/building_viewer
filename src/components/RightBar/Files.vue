@@ -265,6 +265,7 @@ export default {
 					return myXhr;
 				},
 				success: function(data) {
+					console.log(data);
 					if (data.success) {
 						_this.$refs.file_input.value = "";
 						//_this.uploading = false;
@@ -277,6 +278,7 @@ export default {
 					}
 				},
 				error: function(err) {
+					console.log(data);
 					_this.uploading = false;
 				}
 			});
@@ -374,6 +376,7 @@ export default {
 					category: this.folders[this.file_sel].text,
 				},
 				success: function( result ) {
+					console.log(result);
 					if(result.success) {
 						_this.$emit("waiting_image", Infinity)
 						_this.file_array = result.files;
