@@ -111,7 +111,7 @@ export default {
 
 	methods: {
 		outer_div_click() {
-			bus.$emit("hide_menu");
+			bus.$emit("hide_table_menu");
 			bus.$emit("hide_folder_menu");
 		},
 

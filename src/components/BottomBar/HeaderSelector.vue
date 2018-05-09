@@ -157,7 +157,7 @@ export default {
 				}
 			}
 
-			bus.$emit("set_up_table_data", header, content, ids, this.data_t.header);
+			bus.$emit("setup_table_data", header, content, ids, this.data_t.header, this.data_t.content_t);
 		},
 
 		save_model() {
@@ -235,6 +235,7 @@ export default {
 			this.data_t = {
 				header:data.header,
 				content:content,
+				content_t: data.content,
 				ids:data.ids,
 			};
 			this.has_data_t = true,
@@ -291,10 +292,19 @@ export default {
 				if (index != -1 && index2 != -1) {
 					this.data_t.header.splice(index, 1)
 					this.data_t.content.splice(index, 1)
-					this.headers.splice(index2,1)
+					for (let i in this.data_t.content_t) {
+						this.data_t.content_t[i].splice(index, 1)
+					}
+					this.headers.splice(index2, 1)
 					let index3 = this.model.indexOf(deleted_column)
 					if( index3 != -1) {
 						this.model.splice(index3, 1)
+						for(let i in this.models) {
+							let index4 = this.models[i].indexOf(deleted_column)
+							if (index4 !== -1) {
+								this.models[i].splice(index4, 1);
+							} 
+						}
 					}
 					this.cut_data()
 				}
@@ -307,6 +317,7 @@ export default {
 				let row = this.data_t.ids.indexOf(row_id)
 				if (column !== -1 && row !== -1) {
 					this.data_t.content[column][row] = new_value
+					this.data_t.content_t[row][column] = new_value
 				}
 			}
 		}

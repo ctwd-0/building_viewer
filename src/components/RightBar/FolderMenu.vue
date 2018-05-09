@@ -44,6 +44,7 @@ export default {
 	created:function() {
 		var _this = this;
 		bus.$on("show_folder_menu", function(event, index) {
+			bus.$emit("hide_table_menu");
 			_this.show = true;
 			_this.index = index;
 			_this.left = event.layerX + 16;

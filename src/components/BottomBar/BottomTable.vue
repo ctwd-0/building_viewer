@@ -1,23 +1,18 @@
 <template>
-	<div class="bottom_table" :style="{height: innerHeigh - 20 + 'px', width: width - 20 + 'px'}">
-		<div class="table_header_and_add" v-bind:style="{width : sum_table_width + 20 + 'px'}">
+	<div class="bottom_table" :style="{height: innerHeigh - 20 + 'px', width: width - 20 + 'px'}" @scroll="table_scroll">
+		<div v-show="!object_view" class="table_header_and_add" v-bind:style="{width : sum_table_width + 20 + 'px'}">
 			<div 
 				class="table_header"
 				v-bind:style="{width : widths[index] + 'px'}"
 				v-for="(header, index) in headers"
 			>
-				<label class="table_header_label" v-bind:style="{width : widths[index] - 23 + 'px'}">
+				<label class="table_header_label" :style="{width : widths[index] - 23 + 'px'}" @contextmenu.prevent="show_table_menu($event, index)">
 					{{header}}
 				</label>
-				<button
-					class="table_header_button"
-					@click.stop="on_table_header_button(index)"
-				>
-				</button>
 			</div>
-			<label class="table_header_label" :style="{width : '20px'}" v-on:click="add_column">+</label>
+			<label v-show="all_headers.length !== 0" class="table_header_label" :style="{width : '20px'}" v-on:click="add_column">+</label>
 		</div>
-		<div class="table_content">
+		<div v-show="!object_view" class="table_content">
 			<div 
 				class="table_line"
 				v-bind:style="{width : sum_table_width + 'px'}"
@@ -28,12 +23,24 @@
 					v-bind:style="{width : widths[index] + 'px'}"
 					v-for="(field, index) in line"
 					v-on:dblclick.prevent="modify_value(line_no, index)"
+					:title="field"
 				>
 					{{field}}
 				</label>
 			</div>
 		</div>
 		<TableMenu/>
+		<div v-show="object_view">
+			<div v-show="object_view_values.length === 0">这个构件暂时未绑定数据。</div>
+			<div v-show="object_view_values.length !== 0">
+				<div v-for="obj, index in object_view_values">
+					<label>{{obj.header}}</label>
+					<label>{{obj.content}}</label>
+				</div>
+				<div>备注</div>
+				<p>{{object_view_tips}}</p>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -46,16 +53,22 @@ export default {
 	},
 	data () {
 		return {
+			object_view: false,
 			innerHeigh: 200,
 			index: 0,
 			all_headers: [],
 			ids: [],
+			filtered_ids: [],
+			index_in_all: [],
 			widths: [],
 			headers: [],
 			contents: [],
 			sum_table_width: 0,
 			table_filter: null,
 			original_content: [],
+			all_data: [],
+			object_view_values: [],
+			object_view_tips: "",
 		};
 	},
 
@@ -73,9 +86,13 @@ export default {
 	},
 	
 	methods: {
+		table_scroll() {
+			bus.$emit("hide_table_menu")
+		},
+
 		modify_value(line_no, index) {
 			let column_name = this.headers[index]
-			let id = this.ids[line_no]
+			let id = this.filtered_ids[line_no]
 
 			let new_value = prompt("请输入新的值", "")
 			if (new_value == null) {
@@ -94,6 +111,7 @@ export default {
 				success: function( result ) {
 					if(result["success"]) {
 						_this.contents[line_no].splice(index, 1, new_value)
+						_this.original_content[_this.index_in_all[line_no]].splice(index, 1, new_value)
 						//_this.contents[line_no][index] = new_value
 						bus.$emit("update_single_value", column_name, id, new_value)
 					}
@@ -132,6 +150,15 @@ export default {
 		},
 
 		rename_column(index) {
+			let old_column = this.headers[index];
+			if(old_column === "构件编号") {
+				alert("不能重命名“构件编号”列")
+				return
+			}
+			if(old_column === "备注") {
+				alert("不能重命名“备注”列")
+				return
+			}
 			let new_column = prompt("请输入新的列名", "")
 			if(new_column === null) {
 				return
@@ -156,12 +183,12 @@ export default {
 				type: 'GET',
 				url: json_server+"/table/rename_column",
 				data :{
-					old: this.headers[index],
+					old: old_column,
 					new: new_column,
 				},
 				success: function( result ) {
 					if(result["success"]) {
-						bus.$emit("column_renamed", _this.headers[index], new_column);
+						bus.$emit("column_renamed", old_column, new_column);
 					}
 				},
 			});
@@ -191,9 +218,6 @@ export default {
 			});
 		},
 
-		change_value(row, column) {
-
-		},
 		sort_asc_index(a, b) {
 			var x = a[this.index];
 			var y = b[this.index];
@@ -216,6 +240,10 @@ export default {
 			} else {
 				return -1;
 			}
+		},
+
+		show_table_menu(event, index) {
+			bus.$emit("show_table_menu", event, index);
 		},
 
 		on_table_header_button(index) {
@@ -275,31 +303,49 @@ export default {
 			bus.$emit("show_filter_example", width, contents);
 		},
 		
-		filter_content(content, row) {
+		filter_content(content, ids) {
 			let filtered_content = []
+			let filtered_ids = []
+			let index_in_all = []
 			if(this.table_filter === null) {
 				for(let key in content) {
 					filtered_content.push(content[key])
+					filtered_ids.push(ids[key])
+					index_in_all.push(key)
 				}
 			} else {
 				for(let key in content) {
 					if(this.table_filter[content[key][0]] !== undefined) {
 						filtered_content.push(content[key])
+						filtered_ids.push(ids[key])
+						index_in_all.push(key)
 					}
 				}
 			}
-			return filtered_content
+			return {
+				filtered_content:filtered_content,
+				filtered_ids:filtered_ids,
+				index_in_all:index_in_all,
+			}
 		},
 
-		set_up_table_data(header, content, ids, all_headers){
+		setup_table_data(header, content, ids, all_headers, all_data){
 			var widths = [];
-			let filtered_content = this.filter_content(content)
+			let obj = this.filter_content(content, ids)
+			let filtered_content = obj.filtered_content
+			let filtered_ids = obj.filtered_ids
+			let index_in_all = obj.index_in_all
 
 			for(var i = 0; i < header.length; i++) {
 				widths.push( header[i].length + 3);
 				for(var j in filtered_content) {
 					if(filtered_content[j][i].length > widths[i]) {
 						widths[i] = filtered_content[j][i].length;
+					}
+				}
+				if(header[i] !== "构件编号") {
+					if(widths[i] > 12) {
+						widths[i] = 12
 					}
 				}
 			}
@@ -315,20 +361,59 @@ export default {
 			for(var i in widths) {
 				sum += widths[i];
 			}
-			sum += widths.length * 3;
-			this.headers = header;
-			this.widths = widths;
-			this.contents = filtered_content;
-			this.original_content = content;
-			this.sum_table_width = sum;
-			this.all_headers = all_headers;
-			this.ids = ids;
+			sum += widths.length * 3
+			this.headers = header
+			this.widths = widths
+			this.contents = filtered_content
+			this.original_content = content
+			this.sum_table_width = sum
+			this.all_headers = all_headers
+			this.all_data = all_data
+			this.filtered_ids = filtered_ids
+			this.index_in_all = index_in_all
+			this.ids = ids
+
+			if (this.object_view) {
+				this.setup_object_view();
+			}
 		},
 
 		setup_table_filter(table_filter) {
 			this.table_filter = table_filter;
+			let model_id = table_filter["model_id"];
+			if (model_id[0] === "g") {
+				this.object_view = false
+			} else {
+				this.object_view = true
+			}
 			if(this.all_headers.length !== 0) {
-				this.set_up_table_data(this.headers, this.original_content, this.ids, this.all_headers)
+				this.setup_table_data(this.headers, this.original_content, this.ids, this.all_headers, this.all_data)
+			}
+		},
+
+		setup_object_view() {
+			console.log(this.index_in_all)
+			this.object_view_values = []
+			this.object_view_tips = ""
+			if (this.index_in_all.length === 1) {
+				let headers = this.all_headers
+				let contents = this.all_data[this.index_in_all[0]]
+				for (let i = 0; i < headers.length; i++) {
+					let header = headers[i]
+					if(header === "模型编号") {
+						continue
+					}
+					if(header === "备注") {
+						this.object_view_tips = contents[i]
+						continue
+					}
+					this.object_view_values.push({
+						header: header,
+						content: contents[i]
+					})
+				}
+			} else {
+
 			}
 		}
 	},
@@ -336,8 +421,8 @@ export default {
 	mounted: function() {
 		this.innerHeigh = this.height - this.bottomHeight - this.topHeight
 		var _this = this;
-		bus.$on("set_up_table_data", function(header, content, ids, all_headers) {
-			_this.set_up_table_data(header, content, ids, all_headers)
+		bus.$on("setup_table_data", function(header, content, ids, all_headers, all_data) {
+			_this.setup_table_data(header, content, ids, all_headers, all_data)
 		});
 
 		bus.$on("sort_table_asc", function(index) {
@@ -412,6 +497,7 @@ export default {
 	background-color: rgb(222,235,247);
 	display: inline-block;
 	vertical-align: middle;
+	overflow: hidden;
 	height: 20px;
 	margin: 1px;
 }

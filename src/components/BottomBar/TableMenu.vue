@@ -2,7 +2,7 @@
 	<div
 		id="table_menu"
 		v-show="show"
-		v-bind:style="{left: left + 'px'}"
+		v-bind:style="{left: left + 'px', top : top + 'px'}"
 	>
 		<div
 			class="table_menu_button"
@@ -52,16 +52,15 @@ export default {
 
 	created:function() {
 		var _this = this;
-		bus.$on("open_menu", function(left, index) {
-			if(_this.show === true && _this.index === index ) {
-				_this.show = false;
-			} else {
-				_this.show = true;
-				_this.index = index;
-				_this.left = left;
-			}
+		bus.$on("show_table_menu", function(event, index) {
+			bus.$emit("hide_folder_menu");
+			_this.show = true;
+			_this.index = index;
+			_this.left = event.layerX + 4;
+			_this.top = event.layerY + 4;
 		});
-		bus.$on("hide_menu", function() {
+
+		bus.$on("hide_table_menu", function() {
 			_this.show = false;
 		});
 	}
