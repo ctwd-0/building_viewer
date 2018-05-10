@@ -36,9 +36,12 @@ export default {
 		};
 	},
 	methods: {
+		//自身升级为复合表达式
 		upgrade_self() {
 			this.$emit("upgrade:self")
 		},
+
+		//增加一条表达式
 		add_exp() {
 			if(this.value.exps !== undefined && this.value.exps.length !==undefined) {
 				this.value.exps.push({
@@ -47,6 +50,8 @@ export default {
 				});
 			}
 		},
+
+		//切换表达式的逻辑运算符
 		change_op() {
 			if(this.value.op !== undefined) {
 				if(this.value.op === "and") {
@@ -56,14 +61,20 @@ export default {
 				}
 			}
 		},
+
+		//通知上一级删除自己
 		delete_self() {
 			this.$emit("delete:self")
 		},
+
+		//删除某个孩子
 		delete_child(index) {
 			if(this.value.exps !== undefined) {
 				this.value.exps.splice(index, 1)
 			}
 		},
+
+		//将某个孩子变为复合表达式
 		upgrade_child(index) {
 			let obj = {
 				op: "and",

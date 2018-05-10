@@ -81,29 +81,41 @@ export default {
 		};
 	},
 	methods: {
+		//计算按钮位置。因为pdf会多一个按钮。
 		compute_edit_button_bottom() {
 			this.edit_button_bottom = this.file_array.length && this.file_array[this.index].type == 'pdf' ? 13 : 39
 		},
+
+		//内容主体宽度
 		main_div_width() {
 			return window.innerWidth
 		},
 
+		//内容主题高度
 		main_div_height() {
 			return window.innerHeight - 118
 		},
+
+		//预览pdf。
 		preview() {
 			if(this.file_array[this.index].type == "pdf") {
 				window.open("/dist/pdf/viewer.html?file=" + this.file_array[this.index].original_path)
 			}
 		},
+
+		//取消编辑文件描述
 		cancel() {
 			this.editing = false
 			this.new_text = ""
 		},
+		
+		//编辑文件描述
 		edit() {
 			this.new_text = this.text
 			this.editing = true
 		},
+
+		//保存文件描述
 		save() {
 			this.editing = false
 			this.file_array[this.index].description = this.new_text
@@ -127,10 +139,14 @@ export default {
 			});
 			this.new_text = ""
 		},
+
+		//关闭大图显示
 		hide() {
 			this.cancel()
 			this.show = false
 		},
+
+		//前一个照片
 		prev_photo() {
 			this.cancel()
 			this.index--
@@ -138,6 +154,8 @@ export default {
 				this.index = 0
 			}
 		},
+
+		//后一个照片
 		next_photo() {
 			this.cancel()
 			this.index++
@@ -145,6 +163,8 @@ export default {
 				this.index = this.file_array.length -1
 			}
 		},
+
+		//计算图片显示尺寸
 		image_size() {
 			let div_width = this.main_div_width()
 			let div_height = this.main_div_height()
@@ -172,6 +192,8 @@ export default {
 				}
 			}
 		},
+
+		//计算文本框宽度
 		func_text_area_width() {
 			return this.main_div_width() - 164 - 120 - 50
 		}
@@ -179,6 +201,7 @@ export default {
 
 	mounted: function(){
 		var _this = this
+		//点击图片，显示大图
 		bus.$on("click_photo", function(data) {
 			_this.show = true
 			_this.file_array = data.file_array
@@ -186,6 +209,7 @@ export default {
 			_this.compute_edit_button_bottom()
 		});
 
+		//响应窗口尺寸变化
 		bus.$on("large_image_container_resize", function() {
 			if(_this.show) {
 				_this.$refs.image.width = _this.image_size().width
@@ -198,6 +222,7 @@ export default {
 	},
 
 	computed: {
+		//动态计算各部分的尺寸
 		text: function() {
 			if (this.index < this.file_array.length) {
 				return this.file_array[this.index].description

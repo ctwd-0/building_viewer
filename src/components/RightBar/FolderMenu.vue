@@ -43,6 +43,8 @@ export default {
 
 	created:function() {
 		var _this = this;
+
+		//显示菜单
 		bus.$on("show_folder_menu", function(event, index) {
 			bus.$emit("hide_table_menu");
 			_this.show = true;
@@ -51,6 +53,7 @@ export default {
 			_this.top = event.layerY;
 		});
 
+		//关闭菜单
 		bus.$on("hide_folder_menu", function() {
 			_this.show = false;
 		});

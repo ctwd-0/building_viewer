@@ -51,6 +51,7 @@ export default {
 		};
 	},
 	methods: {
+		//登陆按钮。
 		login_click: function (event) {
 			if (this.username == "" || this.password == "") {
 				alert("用户名和密码不能为空");

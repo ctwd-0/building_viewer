@@ -6,6 +6,7 @@
 </template>
 
 <script>
+//右边栏工具栏
 import Selector2 from './Selector2.vue'
 import Direct from './Direct.vue'
 

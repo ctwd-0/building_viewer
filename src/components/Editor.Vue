@@ -60,15 +60,18 @@ export default {
 		};
 	},
 	methods: {
+		//计算编辑器高度
 		calc_height() {
 			this.height = window.innerHeight - 100;
 		},
 
+		//完成编辑，返回viewer
 		hide() {
 			bus.$emit("query:finish", JSON.stringify(this.data, null, "  "));
 			this.show = false;
 		},
 
+		//删除所有编辑的条件
 		delete_self() {
 			this.data = {
 				key:"",
@@ -76,6 +79,7 @@ export default {
 			};
 		},
 
+		//将自身升级为复合条件
 		upgrade_self() {
 			this.data = {
 				op: "and",
@@ -88,6 +92,7 @@ export default {
 			};
 		},
 
+		//检查检索条件是否有语法错误
 		check_data : function(obj) {
 			if(obj instanceof Object) {
 				for(let key in obj) {
@@ -125,10 +130,13 @@ export default {
 	mounted: function(){
 		var _this = this;
 		this.calc_height()
+
+		//响应窗口尺寸改变
 		bus.$on("editor_resize", function() {
 			_this.calc_height()
 		})
 
+		//传入检索json，显示编辑器
 		bus.$on("edit_json", function(query) {
 			_this.show = true;
 			try {
@@ -154,12 +162,14 @@ export default {
 	},
 
 	computed: {
+		//将json结构转换为string
 		data_string: function() {
 			return JSON.stringify(this.data, null, "  ");
 		}
 	},
 
 	updated: function() {
+		//自适应左右两栏的高度，实质一致。
 		if(this.$refs.content.clientHeight === 0) {
 			return
 		}

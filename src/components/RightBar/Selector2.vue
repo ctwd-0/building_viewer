@@ -38,13 +38,18 @@ export default {
 		};
 	},
 	methods: {
+		//新建检索条件
 		new_query: function() {
 			this.current_name = "新建检索条件";
 			this.query_string = "{\n  \"key\": \"\",\n  \"val\": \"\"\n}";
 		},
+
+		//打开可视化编辑器
 		edit_click: function() {
 			bus.$emit("edit_json", this.query_string);
 		},
+
+		//删除当前检索条件，并通知服务器
 		delete_current: function() {
 			if (this.current_name == ""){
 				alert("删除名不能为空")
@@ -68,6 +73,8 @@ export default {
 				},
 			});
 		},
+
+		//向服务器保存当前检索条件
 		save_current: function() {
 			if (this.current_name == ""){
 				alert("保存名不能为空")
@@ -98,6 +105,8 @@ export default {
 				},
 			});
 		},
+
+		//向服务发送检索请求
 		search_click: function() {
 			$.ajax({
 				type: 'POST',
@@ -116,6 +125,8 @@ export default {
 				},
 			});
 		},
+
+		//检查obj是否有语法错误
 		check_data : function(obj) {
 			if(obj instanceof Object) {
 				for(let key in obj) {
@@ -148,6 +159,8 @@ export default {
 			}
 			return false;
 		},
+
+		//检查string格式的query是否有语法错误
 		query_legal(query) {
 			try {
 				let tempdata = JSON.parse(query);
@@ -159,6 +172,8 @@ export default {
 			}
 			return false
 		},
+
+		//点击某个检索条件。加载检索条件内容
 		click_on(val) {
 			//console.log(val);
 			$.ajax({
@@ -177,12 +192,18 @@ export default {
 	},
 	mounted: function() {
 		var _this = this;
+
+		//完成检索条件可视化编辑
 		bus.$on("query:finish", function(query) {
 			_this.query_string = query;
 		});
+
+		//初始化保存的检索条件名称
 		bus.$on("init:options", function(options) {
 			_this.options = options;
 		});
+
+		//加载检索条件内容
 		bus.$on("query:loaded", function(query) {
 			_this.query_string = query;
 		});

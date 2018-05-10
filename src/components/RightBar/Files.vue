@@ -73,6 +73,7 @@ export default {
 		leftWidth: Number,
 	},
 	methods: {
+		//重命名文件夹
 		rename_folder(index) {
 			let new_folder = prompt("请输入新文件夹的名称：", "")
 			if(new_folder === null) {
@@ -112,6 +113,7 @@ export default {
 			});
 		},
 
+		//重命名文件夹成功
 		folder_renamed(old_folder, new_folder) {
 			for (let key in this.folders) {
 				if (this.folders[key].text === old_folder) {
@@ -121,6 +123,7 @@ export default {
 			}
 		},
 		
+		//删除文件夹
 		remove_folder(index) {
 			let new_folder = prompt("请输入被删除文件夹将被移动到的文件夹：", "")
 			if(new_folder === null) {
@@ -154,6 +157,7 @@ export default {
 			});
 		},
 
+		//删除文件夹成功
 		folder_removed(old_folder, new_folder) {
 			let index1 = -1;
 			for (let key in this.folders) {
@@ -179,10 +183,12 @@ export default {
 			}
 		},
 
+		//打开菜单
 		show_menu(event, index) {
 			bus.$emit("show_folder_menu", event, index)
 		},
 
+		//增加文件夹
 		add_folder() {
 			var _this = this;
 			let new_folder = prompt("请输入新文件夹的名字：", "")
@@ -215,12 +221,14 @@ export default {
 			});
 		},
 
+		//增加文件夹成功
 		folder_added(new_folder) {
 			let index = -1;
 			this.folders.push({text:new_folder, sel:false})
 			this.change_folder_sel(this.folders.length-1)
 		},
 
+		//向左滚动文件夹列表
 		left_click() {
 			this.list_left += 100;
 			if (this.list_left > 0) {
@@ -228,10 +236,12 @@ export default {
 			}
 		},
 
+		//向右滚动文件夹列表
 		right_click() {
 			this.list_left -= 100;
 		},
 		
+		//上传文件
 		upload() {
 			let _this = this;
 			if (this.$refs.file_input.files.length === 0) {
@@ -284,10 +294,12 @@ export default {
 			});
 		},
 
+		//点击文件，显示大图
 		click_file(index) {
 			bus.$emit("click_photo", {index:index, file_array: this.file_array});
 		},
 
+		//切换当前文件夹
 		change_folder_sel(index) {
 			this.file_sel = index;
 			for(var item in this.folders) {
@@ -312,6 +324,7 @@ export default {
 			});
 		},
 
+		//删除文件成功
 		single_file_removed(index, id) {
 			if(this.file_array.length > index && this.file_array[index]._id === id) {
 				this.file_array.splice(index, 1)
@@ -359,6 +372,8 @@ export default {
 			},
 		});
 
+
+		//循环检查图片完成状态
 		this.$on("waiting_image", function(val) {
 			if(val > 100) {
 				_this.waiting = false;
@@ -390,10 +405,12 @@ export default {
 			});
 		});
 
+		//接受文件列表
 		this.$on("file_array", function(file_array) {
 			_this.file_array = file_array;
 		});
 
+		//接收文件夹列表
 		this.$on("folders", function(folders,index) {
 			let make_folders = []
 			for (let key in folders) {
@@ -405,6 +422,7 @@ export default {
 			_this.folders = make_folders;
 		});
 
+		//当前渲染层级变化，切换文件夹和文件夹内容
 		bus.$on("change_photo", function(m_id){
 			if(m_id !== 'g_-1' && m_id !== 'g_7' && m_id !== 'o') {
 				return;
@@ -429,14 +447,17 @@ export default {
 			}
 		});
 
+		//删除文件夹成功
 		bus.$on("folder_remove", function(index) {
 			_this.remove_folder(index)
 		});
 
+		//文件夹重命名成功
 		bus.$on("folder_rename", function(index) {
 			_this.rename_folder(index)
 		});
 
+		//删除单个文件成功
 		bus.$on("single_file_removed", function(index, id) {
 			_this.single_file_removed(index, id)
 		})

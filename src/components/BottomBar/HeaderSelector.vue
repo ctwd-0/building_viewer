@@ -64,6 +64,7 @@ export default {
 	},
 
 	methods: {
+		//删除表头过滤器
 		delete_selector(index) {
 			if (this.names.length === 1) {
 				alert("不能删除最后一个选择器。")
@@ -91,6 +92,7 @@ export default {
 			});
 		},
 		
+		//新建表头过滤器
 		new_selector() {
 			let new_selector = prompt("请输入新的选择器名称", "")
 			if(new_selector === null) {
@@ -100,6 +102,7 @@ export default {
 			this.commit_new_selector(new_selector);
 		},
 
+		//确认新建表头过滤器，并提交服务器
 		commit_new_selector(new_selector_name) {
 			if(new_selector_name == "") {
 				alert("名称不能为空");
@@ -125,6 +128,7 @@ export default {
 			});
 		},
 
+		//修改当前激活的表头选择器
 		table_selector_change(index) {
 			let old_index = this.current_index;
 			let new_index = index;
@@ -133,6 +137,7 @@ export default {
 			this.current_index = index;
 		},
 
+		//根据表头选择器，裁剪数据
 		cut_data() {
 			if(!this.has_data_t) {
 				return;
@@ -160,6 +165,7 @@ export default {
 			bus.$emit("setup_table_data", header, content, ids, this.data_t.header, this.data_t.content_t);
 		},
 
+		//向服务器提交表头选择器变化
 		save_model() {
 			$.ajax({
 				type: 'GET',
@@ -173,6 +179,7 @@ export default {
 			});
 		},
 		
+		//移除表头选择器中因为某些操作导致的不再有意义的内容
 		remove_garbage(header, filter) {
 			let result = []
 			for(let key in filter) {
@@ -183,6 +190,7 @@ export default {
 			return result
 		},
 
+		//收到表头选择器。裁剪数据并分发给表格。
 		selector_arrive(data) {
 			this.headers = [];
 			this.models = [];
@@ -224,6 +232,7 @@ export default {
 			}
 		},
 
+		//表格内容到来。尝试裁剪内容并分发给表格。
 		new_table_content_arrive(data) {
 			let content = [];
 			for(let i = 0; i < data.header.length; i++) {
@@ -242,6 +251,7 @@ export default {
 			this.cut_data();
 		},
 
+		//增加新列成功，修改缓存内容
 		new_column_added(new_column) {
 			if(this.has_data_t) {
 				this.data_t.header.push(new_column)
@@ -256,6 +266,7 @@ export default {
 			}
 		},
 
+		//列重命名成功，修改缓存内容
 		column_renamed(old_column, new_column) {
 			if(this.has_data_t) {
 				let index = this.data_t.header.indexOf(old_column)
@@ -279,6 +290,7 @@ export default {
 			}
 		},
 
+		//列删除成功，修改缓存内容
 		column_deleted(deleted_column) {
 			if(this.has_data_t) {
 				let index = this.data_t.header.indexOf(deleted_column)
@@ -311,6 +323,7 @@ export default {
 			}
 		},
 
+		//修改值成功，修改缓存内容
 		update_single_value(column_name, row_id, new_value){
 			if(this.has_data_t) {
 				let column = this.data_t.header.indexOf(column_name)
@@ -335,26 +348,32 @@ export default {
 			},
 		});
 
+		//接收表头选择器
 		this.$on("selector_arrive", function(data) {
 			_this.selector_arrive(data);
 		});
 
+		//接受表格内容
 		bus.$on("new_table_content_arrive", function(data){
 			_this.new_table_content_arrive(data)
 		});
 		
+		//列增加成功
 		bus.$on("new_column_added", function(new_column){
 			_this.new_column_added(new_column)
 		});
 
+		//列重命名成功
 		bus.$on("column_renamed", function(old_column, new_column){
 			_this.column_renamed(old_column, new_column)
 		});
 
+		//列删除成功
 		bus.$on("column_deleted", function(deleted_column){
 			_this.column_deleted(deleted_column)
 		});
 
+		//修改表格中的值成功
 		bus.$on("update_single_value", function(column_name, row_id, new_value) {
 			_this.update_single_value(column_name, row_id, new_value);
 		});

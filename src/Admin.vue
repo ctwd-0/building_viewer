@@ -88,6 +88,7 @@ export default {
 		};
 	},
 	methods: {
+		//更新管理员密码
 		update_admin_password() {
 			if(this.admin_password === "") {
 				alert("管理员密码不能为空");
@@ -98,10 +99,12 @@ export default {
 			this.post_password("admin", password)
 		},
 
+		//改变当前栏目
 		change_category(index) {
 			this.category_index = index
 		},
 
+		//登出
 		logout() {
 			$.ajax({
 				type: 'GET',
@@ -116,16 +119,19 @@ export default {
 			});
 		},
 
+		//增加用户
 		add_user() {
 			this.adding = true;
 		},
 
+		//取消增加用户
 		cancel_add_user() {
 			this.new_username = "";
 			this.new_password = "";
 			this.adding = false;
 		},
 
+		//改变用户状态。
 		state_change(index) {
 			let name = this.users[index].name.trim();
 			let write = this.users[index].write;
@@ -155,6 +161,7 @@ export default {
 			});
 		},
 
+		//重设用户密码。
 		set_password(index) {
 			let name = this.users[index].name;
 			let password = this.users[index].password;
@@ -163,6 +170,7 @@ export default {
 			this.post_password(name, password)
 		},
 		
+		//重设密码，服务器通信。
 		post_password(name, password) {
 			let _this = this;
 			if(name === "" || password === "") {
@@ -192,6 +200,7 @@ export default {
 			});
 		},
 		
+		//删除用户
 		delete_user(index) {
 			if (!del) {
 				return
@@ -220,6 +229,7 @@ export default {
 			});
 		},
 
+		//确认增加用户。
 		commit_add_user() {
 			let name = this.new_username.trim();
 			let password = this.new_password.trim();
@@ -252,6 +262,7 @@ export default {
 			});
 		},
 	},
+
 	mounted: function() {
 		let _this = this;
 		$.ajax({
@@ -268,6 +279,7 @@ export default {
 			},
 		});
 
+		//处理服务器返沪的用户列表。
 		this.$on("user_arrive", function(users) {
 			for(let index in users){
 				users[index]["password"] = "";

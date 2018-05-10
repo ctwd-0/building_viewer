@@ -86,10 +86,12 @@ export default {
 	},
 	
 	methods: {
+		//表格滚动，隐藏菜单
 		table_scroll() {
 			bus.$emit("hide_table_menu")
 		},
 
+		//修改表格的值
 		modify_value(line_no, index) {
 			let column_name = this.headers[index]
 			let id = this.filtered_ids[line_no]
@@ -119,6 +121,7 @@ export default {
 			});
 		},
 
+		//增加列
 		add_column() {
 			let new_column = prompt("请输入新列的名称", "")
 			if(new_column === null) {
@@ -149,6 +152,7 @@ export default {
 			});
 		},
 
+		//重命名列。
 		rename_column(index) {
 			let old_column = this.headers[index];
 			if(old_column === "构件编号") {
@@ -194,6 +198,7 @@ export default {
 			});
 		},
 
+		//删除列。
 		remove_column(index) {
 			if (this.headers[index] === "构件编号") {
 				alert("不能删除构件编号列")
@@ -218,6 +223,8 @@ export default {
 			});
 		},
 
+		//有bug。排序之后编辑内容要改。
+		//递增排序
 		sort_asc_index(a, b) {
 			var x = a[this.index];
 			var y = b[this.index];
@@ -230,6 +237,7 @@ export default {
 			}
 		},
 
+		//递减排序
 		sort_desc_index(a, b) {
 			var x = a[this.index];
 			var y = b[this.index];
@@ -242,10 +250,12 @@ export default {
 			}
 		},
 
+		//显示菜单
 		show_table_menu(event, index) {
 			bus.$emit("show_table_menu", event, index);
 		},
 
+		//弃用，改用邮件菜单
 		on_table_header_button(index) {
 			var left = 5;
 			for(var i = 0; i <= index; i++) {
@@ -256,6 +266,7 @@ export default {
 			bus.$emit("open_menu", left,index);
 		},
 
+		//按属性过滤
 		filter_by(index) {
 			var name_index = -1;
 			for(var i = 0; i < this.headers.length; i++) {
@@ -303,6 +314,7 @@ export default {
 			bus.$emit("show_filter_example", width, contents);
 		},
 		
+		//按照当前显示的层级过滤表格
 		filter_content(content, ids) {
 			let filtered_content = []
 			let filtered_ids = []
@@ -329,6 +341,7 @@ export default {
 			}
 		},
 
+		//设置表格内容
 		setup_table_data(header, content, ids, all_headers, all_data){
 			var widths = [];
 			let obj = this.filter_content(content, ids)
@@ -378,6 +391,7 @@ export default {
 			}
 		},
 
+		//设置当前层级的表格过滤器
 		setup_table_filter(table_filter) {
 			this.table_filter = table_filter;
 			let model_id = table_filter["model_id"];
@@ -391,8 +405,8 @@ export default {
 			}
 		},
 
+		//设置单个构件视图的数据
 		setup_object_view() {
-			console.log(this.index_in_all)
 			this.object_view_values = []
 			this.object_view_tips = ""
 			if (this.index_in_all.length === 1) {
@@ -421,32 +435,40 @@ export default {
 	mounted: function() {
 		this.innerHeigh = this.height - this.bottomHeight - this.topHeight
 		var _this = this;
+
+		//接收数据
 		bus.$on("setup_table_data", function(header, content, ids, all_headers, all_data) {
 			_this.setup_table_data(header, content, ids, all_headers, all_data)
 		});
 
+		//递增排序
 		bus.$on("sort_table_asc", function(index) {
 			_this.index = index;
 			_this.contents.sort(_this.sort_asc_index);
 		});
 
+		//递减排序
 		bus.$on("sort_table_desc", function(index) {
 			_this.index = index;
 			_this.contents.sort(_this.sort_desc_index);
 		});
 
+		//按属性过滤
 		bus.$on("filter_by", function(index) {
 			_this.filter_by(index);
 		});
 
+		//重命名列
 		bus.$on("rename_column", function(index) {
 			_this.rename_column(index);
 		});
 
+		//删除列
 		bus.$on("remove_column", function(index) {
 			_this.remove_column(index);
 		});
 
+		//接受表格过滤器
 		bus.$on("table_filter_arrive", function(table_filter) {
 			_this.setup_table_filter(table_filter);
 		});

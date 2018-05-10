@@ -44,6 +44,7 @@ export default {
 		};
 	},
 	methods: {
+		//下载文件
 		download_file() {
 			var url = json_server+"/file/download";
 			var form = $("<form></form>").attr("action", url).attr("method", "post");
@@ -51,6 +52,7 @@ export default {
 			form.appendTo('body').submit().remove();
 		},
 		
+		//删除文件
 		delete_file() {
 			var _this = this;
 			$.ajax({
@@ -69,12 +71,14 @@ export default {
 			});
 		},
 
+		//预览pdf
 		preview_pdf() {
 			if(this.data.type == "pdf") {
 				window.open("/dist/pdf/viewer.html?file=" + this.data.original_path)
 			}
 		},
 
+		//计算图片显示尺寸
 		image_size() {
 			let max_width = this.width
 			let max_height = this.height
@@ -100,15 +104,22 @@ export default {
 				}
 			}
 		},
+
+		//计算图片显示宽度
 		image_width() {
 			return this.image_size().width
 		},
+
+		//计算图片显示高度
 		image_height() {
 			return this.image_size().height
 		},
+
 		image_padding() {
 
 		},
+
+		//计算图片左侧偏移量
 		image_padding_left() {
 			let max_width = this.width
 			let image_width = this.image_width()
@@ -118,6 +129,8 @@ export default {
 				return (max_width - image_width) / 2;
 			}
 		},
+
+		//计算图片顶部偏移量
 		image_padding_top() {
 			let max_height = this.height
 			let image_height = this.image_height()

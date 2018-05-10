@@ -14,6 +14,7 @@
 </template>
 
 <script>
+//封装vselect
 import VSelect from './VSelect.vue'
 export default {
 	name: 'select_input',
@@ -31,9 +32,12 @@ export default {
 		};
 	},
 	methods: {
+		向外传递值变化
 		update_search(val) {
 			this.$emit('input', val);
 		},
+
+		//单击事件，展开选单。
 		click_on(val) {
 			this.$emit("clickon", val);
 		}

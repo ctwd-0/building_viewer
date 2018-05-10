@@ -22,6 +22,7 @@ export default {
 		};
 	},
 	methods: {
+		//直接根据构件编号进入某个构件
 		direct_click() {
 			triger_mv_direct_to_object(this.table_id)
 		},

@@ -43,6 +43,7 @@ export default {
 		};
 	},
 	methods: {
+		//取消过滤
 		on_cancel_filter(from_mesh) {
 			this.show = false;
 			if(from_mesh !== true) {
@@ -52,10 +53,12 @@ export default {
 	},
 	created: function() {
 		var _this = this;
+		//取消过滤
 		bus.$on("cancel_filter", function(from_mesh) {
 			_this.on_cancel_filter(from_mesh);
 		});
 
+		//显示过滤
 		bus.$on("show_filter_example", function(width, contents) {
 			_this.show = true;
 			_this.width = width;

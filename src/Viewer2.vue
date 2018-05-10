@@ -110,11 +110,13 @@ export default {
 	},
 
 	methods: {
+		//单击事件处理，隐藏所有菜单。
 		outer_div_click() {
 			bus.$emit("hide_table_menu");
 			bus.$emit("hide_folder_menu");
 		},
 
+		//点击右侧标签。切换显示
 		right_click(index) {
 			if(this.right_show) {
 				if(index === this.right_index) {
@@ -131,6 +133,7 @@ export default {
 			this.webgl_need_update = true;
 		},
 		
+		//点击底部标签，切换显示
 		bottom_click(index) {
 			if(this.bottom_show) {
 				if(index === this.bottom_index) {
@@ -147,12 +150,14 @@ export default {
 			this.webgl_need_update = true;
 		},
 
+		//开始拖拽函数。记录拖拽开始位置
 		start_drag(event, type) {
 			event.dataTransfer.setData("type", type)
 			event.dataTransfer.setData("start_X", event.clientX)
 			event.dataTransfer.setData("start_Y", event.clientY)
 		},
 
+		//拖拽结束函数。处理拖拽，改变不同部分的大小
 		drop(event) {
 			event.preventDefault()
 			let type = event.dataTransfer.getData("type")
@@ -167,6 +172,7 @@ export default {
 			this.webgl_need_update = true;
 		},
 
+		//重设右边大小
 		resize_right(delta) {
 			let dest_right_width = this.right_width - delta
 			if (dest_right_width > this.inner_width * .5) {
@@ -178,6 +184,7 @@ export default {
 			this.set_x_according()
 		},
 
+		//重设下边大小
 		resize_bottom(delta) {
 			let dest_bottom_height = this.bottom_height - delta
 			if(dest_bottom_height > this.inner_height * .5) {
@@ -189,6 +196,7 @@ export default {
 			this.set_y_according()
 		},
 
+		//设置纵向尺寸
 		set_y_according() {
 			if (this.bottom_show) {
 				this.webgl_height = this.inner_height - this.bottom_height
@@ -199,6 +207,7 @@ export default {
 			}
 		},
 
+		//设置横向尺寸
 		set_x_according() {
 			if (this.right_show) {
 				this.webgl_width = this.inner_width - this.right_width
@@ -209,10 +218,12 @@ export default {
 			}
 		},
 
+		//允许拖拽函数。
 		allow_drop(event) {
 			event.preventDefault()
 		},
 
+		//计算初始各部件尺寸。
 		calculate_paras_init() {
 			this.inner_width = window.innerWidth - 18 < 640 ? 640 : window.innerWidth - 18
 			this.inner_height = window.innerHeight - 18 < 480? 480: window.innerHeight - 18
@@ -224,6 +235,7 @@ export default {
 			this.set_y_according()
 		},
 
+		//计算各部件尺寸。
 		calculate_paras() {
 			let width_ratio = this.right_width / this.inner_width
 			let height_ratio = this.bottom_height / this.inner_height
@@ -248,9 +260,13 @@ export default {
 			bus.$emit("editor_resize")
 			_this.$emit("viewer2_resize")
 		})
+		
+		//响应窗口尺寸变化
 		this.$on("viewer2_resize", function() {
 			this.calculate_paras();
 		})
+
+		//初始化数据表
 		$.ajax({
 			type: 'GET',
 			url: json_server+"/table/init",
