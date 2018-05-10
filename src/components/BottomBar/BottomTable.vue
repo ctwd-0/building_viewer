@@ -34,8 +34,8 @@
 			<div v-show="object_view_values.length === 0">这个构件暂时未绑定数据。</div>
 			<div v-show="object_view_values.length !== 0">
 				<div v-for="obj, index in object_view_values">
-					<label>{{obj.header}}</label>
-					<label>{{obj.content}}</label>
+					<label class="object_view_key">{{obj.header}}</label>
+					<label class="object_view_value" @dblclick.prevent="object_modify_value(index)">{{obj.content}}</label>
 				</div>
 				<div>备注</div>
 				<p>{{object_view_tips}}</p>
@@ -51,6 +51,13 @@ export default {
 	components: {
 		TableMenu
 	},
+	props: {
+		width: Number,
+		height: Number,
+		topHeight: Number,
+		bottomHeight: Number,
+	},
+
 	data () {
 		return {
 			object_view: false,
@@ -71,19 +78,6 @@ export default {
 			object_view_tips: "",
 		};
 	},
-
-	props: {
-		width: Number,
-		height: Number,
-		topHeight: Number,
-		bottomHeight: Number,
-	},
-
-	watch: {
-		height(val) {
-			this.innerHeigh = this.height - this.bottomHeight - this.topHeight
-		}
-	},
 	
 	methods: {
 		//表格滚动，隐藏菜单
@@ -91,15 +85,13 @@ export default {
 			bus.$emit("hide_table_menu")
 		},
 
-		//修改表格的值
-		modify_value(line_no, index) {
-			let column_name = this.headers[index]
-			let id = this.filtered_ids[this.contents[line_no][0]]
-
+		//向服务器提交表单值
+		modify_value_core(id, column_name, success_callback) {
 			let new_value = prompt("请输入新的值", "")
 			if (new_value == null) {
 				return
 			}
+			
 			new_value = new_value.trim()
 			var _this = this
 			$.ajax({
@@ -112,13 +104,55 @@ export default {
 				},
 				success: function( result ) {
 					if(result["success"]) {
-						_this.contents[line_no].splice(index, 1, new_value)
-
-						_this.original_content[_this.index_in_all[id]].splice(index, 1, new_value)
-						//_this.contents[line_no][index] = new_value
+						success_callback(new_value);
 						bus.$emit("update_single_value", column_name, id, new_value)
 					}
 				},
+			});
+		},
+
+		//在构件级别修改表格的值
+		object_modify_value(index) {
+			let column_name = this.object_view_values[index].header
+			let table_id = this.object_view_values[0].content
+			let id = this.filtered_ids[table_id]
+
+			if (column_name === "构件编号") {
+				alert("不能修改“构件编号”")
+				return
+			}
+
+			let _this = this
+			this.modify_value_core(id, column_name, function(new_value) {
+				_this.object_view_values[index].content = new_value
+				for(let i in _this.headers) {
+					if(_this.headers[i] === column_name) {
+						_this.original_content[_this.index_in_all[id]].splice(i, 1, new_value)
+					}
+				}
+			});
+		},
+
+		//修改表格的值
+		modify_value(line_no, index) {
+			let column_name = this.headers[index]
+			let table_id = this.contents[line_no][0]
+			let id = this.filtered_ids[table_id]
+
+			if(column_name === "构件编号") {
+				alert("不能修改“构件编号”")
+				return
+			}
+			if(column_name === "备注") {
+				alert("不能在列表中修改“备注”")
+				return
+			}
+
+			let _this = this
+
+			this.modify_value_core(id, column_name, function(new_value) {
+				_this.contents[line_no].splice(index, 1, new_value)
+				_this.original_content[_this.index_in_all[id]].splice(index, 1, new_value)
 			});
 		},
 
@@ -395,7 +429,12 @@ export default {
 		//设置当前层级的表格过滤器
 		setup_table_filter(table_filter) {
 			this.table_filter = table_filter;
-			let model_id = table_filter["model_id"];
+			let model_id = ""
+			if (table_filter === null) {
+				model_id = "g_-1"
+			} else {
+				model_id = table_filter["model_id"];
+			}
 			if (model_id[0] === "g") {
 				this.object_view = false
 			} else {
@@ -432,6 +471,12 @@ export default {
 			} else {
 
 			}
+		}
+	},
+
+	watch: {
+		height(val) {
+			this.innerHeigh = this.height - this.bottomHeight - this.topHeight
 		}
 	},
 
@@ -524,6 +569,26 @@ export default {
 	vertical-align: middle;
 	overflow: hidden;
 	height: 20px;
+	margin: 1px;
+}
+
+.object_view_key {
+	background-color: rgb(222,235,247);
+	display: inline-block;
+	vertical-align: middle;
+	overflow: hidden;
+	height: 20px;
+	width: 80px;
+	margin: 1px;
+}
+
+.object_view_value {
+	background-color: rgb(222,235,247);
+	display: inline-block;
+	vertical-align: middle;
+	overflow: hidden;
+	height: 20px;
+	width: 180px;
 	margin: 1px;
 }
 </style>
