@@ -32,7 +32,7 @@ export default {
 		};
 	},
 	methods: {
-		向外传递值变化
+		//向外传递值变化
 		update_search(val) {
 			this.$emit('input', val);
 		},

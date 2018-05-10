@@ -58,8 +58,8 @@ export default {
 			index: 0,
 			all_headers: [],
 			ids: [],
-			filtered_ids: [],
-			index_in_all: [],
+			filtered_ids: {},
+			index_in_all: {},
 			widths: [],
 			headers: [],
 			contents: [],
@@ -94,7 +94,7 @@ export default {
 		//修改表格的值
 		modify_value(line_no, index) {
 			let column_name = this.headers[index]
-			let id = this.filtered_ids[line_no]
+			let id = this.filtered_ids[this.contents[line_no][0]]
 
 			let new_value = prompt("请输入新的值", "")
 			if (new_value == null) {
@@ -113,7 +113,8 @@ export default {
 				success: function( result ) {
 					if(result["success"]) {
 						_this.contents[line_no].splice(index, 1, new_value)
-						_this.original_content[_this.index_in_all[line_no]].splice(index, 1, new_value)
+
+						_this.original_content[_this.index_in_all[id]].splice(index, 1, new_value)
 						//_this.contents[line_no][index] = new_value
 						bus.$emit("update_single_value", column_name, id, new_value)
 					}
@@ -317,20 +318,20 @@ export default {
 		//按照当前显示的层级过滤表格
 		filter_content(content, ids) {
 			let filtered_content = []
-			let filtered_ids = []
-			let index_in_all = []
+			let filtered_ids = {}
+			let index_in_all = {}
 			if(this.table_filter === null) {
 				for(let key in content) {
 					filtered_content.push(content[key])
-					filtered_ids.push(ids[key])
-					index_in_all.push(key)
+					filtered_ids[content[key][0]] = ids[key] 
+					index_in_all[ids[key]] = key
 				}
 			} else {
 				for(let key in content) {
 					if(this.table_filter[content[key][0]] !== undefined) {
 						filtered_content.push(content[key])
-						filtered_ids.push(ids[key])
-						index_in_all.push(key)
+						filtered_ids[content[key][0]] = ids[key] 
+						index_in_all[ids[key]] = key
 					}
 				}
 			}
@@ -409,9 +410,11 @@ export default {
 		setup_object_view() {
 			this.object_view_values = []
 			this.object_view_tips = ""
-			if (this.index_in_all.length === 1) {
+			if (this.contents.length === 1) {
 				let headers = this.all_headers
-				let contents = this.all_data[this.index_in_all[0]]
+				let table_id = this.contents[0][0]
+				let id = this.filtered_ids[table_id]
+				let contents = this.all_data[this.index_in_all[id]]
 				for (let i = 0; i < headers.length; i++) {
 					let header = headers[i]
 					if(header === "模型编号") {
