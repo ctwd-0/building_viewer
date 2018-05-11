@@ -37,8 +37,16 @@
 					<label class="object_view_key">{{obj.header}}</label>
 					<label class="object_view_value" @dblclick.prevent="object_modify_value(index)">{{obj.content}}</label>
 				</div>
-				<div>备注</div>
-				<p>{{object_view_tips}}</p>
+				<label class="object_view_key">备注</label>
+				<button v-show="!object_view_edit_tips" @click="edit_tips">编辑备注</button>
+				<button v-show="object_view_edit_tips" @click="object_view_save_tips">保存备注</button>
+				<button v-show="object_view_edit_tips" @click="cancel_edit_tips">取消修改</button>
+				<div v-show="!object_view_edit_tips"> 
+					<p class="object_view_p" v-for="(tip_line, index) in object_view_tips_parts">{{tip_line}}</p>
+				</div>
+				<div v-show="object_view_edit_tips"> 
+					<textarea class="object_view_edit_tips_textarea" :style="{width: width - 40 + 'px'}" v-model="object_view_tips_new"></textarea>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -61,6 +69,7 @@ export default {
 	data () {
 		return {
 			object_view: false,
+			object_view_edit_tips: false,
 			innerHeigh: 200,
 			index: 0,
 			all_headers: [],
@@ -76,13 +85,65 @@ export default {
 			all_data: [],
 			object_view_values: [],
 			object_view_tips: "",
+			object_view_tips_new: "",
 		};
 	},
 	
 	methods: {
+
+		edit_tips() {
+			this.object_view_edit_tips = true
+			this.object_view_tips_new = this.object_view_tips
+		},
+
+		cancel_edit_tips() {
+			this.object_view_edit_tips = false
+			this.object_view_tips_new = ""
+		},
+
 		//表格滚动，隐藏菜单
 		table_scroll() {
 			bus.$emit("hide_table_menu")
+		},
+
+
+		//向服务器提交保存备注
+		object_view_save_tips() {
+			let table_id = this.object_view_values[0].content
+			let id = this.filtered_ids[table_id]
+
+			let new_value = this.object_view_tips_new
+			var _this = this
+			$.ajax({
+				type: 'GET',
+				url: json_server+"/table/update",
+				data: {
+					id: id,
+					column: "备注",
+					value: new_value,
+				},
+				success: function( result ) {
+					if(result["success"]) {
+						_this.object_view_tips = new_value
+						for(let i in _this.object_view_values) {
+							if (_this.object_view_values[i].header === "备注") {
+								_this.object_view_values[i].content = new_value
+								break
+							}
+						}
+						for(let i in _this.headers) {
+							if(_this.headers[i] === "备注") {
+								_this.original_content[_this.index_in_all[id]].splice(i, 1, new_value)
+								break
+							}
+						}
+						bus.$emit("update_single_value", "备注", id, new_value)
+					} else {
+						alert(result["reason"])
+					}
+					_this.cancel_edit_tips();
+				},
+			});
 		},
 
 		//向服务器提交表单值
@@ -106,6 +167,8 @@ export default {
 					if(result["success"]) {
 						success_callback(new_value);
 						bus.$emit("update_single_value", column_name, id, new_value)
+					} else {
+						alert(result["reason"])
 					}
 				},
 			});
@@ -447,6 +510,7 @@ export default {
 
 		//设置单个构件视图的数据
 		setup_object_view() {
+			this.cancel_edit_tips();
 			this.object_view_values = []
 			this.object_view_tips = ""
 			if (this.contents.length === 1) {
@@ -477,6 +541,16 @@ export default {
 	watch: {
 		height(val) {
 			this.innerHeigh = this.height - this.bottomHeight - this.topHeight
+		}
+	},
+
+	computed: {
+		object_view_tips_parts: function() {
+			if(this.object_view_tips === "") {
+				return [""]
+			} else {
+				return this.object_view_tips.split("\n")
+			}
 		}
 	},
 
@@ -590,5 +664,16 @@ export default {
 	height: 20px;
 	width: 180px;
 	margin: 1px;
+}
+
+.object_view_edit_tips_textarea {
+	resize: none;
+	font-size: 16px;
+	margin-top: 4px;
+	height: 150px;
+}
+.object_view_p {
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 </style>

@@ -2,8 +2,8 @@
 	<div class="files" :style="{height:height + 'px', width: (innerWidth) + 'px'}">
 		<div class="tab_header" :style="{width:(innerWidth) + 'px'}">
 			<a class="arrow_left" @click="left_click"></a>
-			<div class="tab_header_content" :style="{width:(innerWidth - 30) + 'px'}">
-				<ul :style="{display: 'block', whiteSpace:'nowrap',  position: 'relative', left: list_left + 'px'}">
+			<div class="tab_header_content" :style="{width:(innerWidth - 30) + 'px'}" ref="ul_outter_div">
+				<ul :style="{display: 'block', whiteSpace:'nowrap',  position: 'relative', left: list_left + 'px'}" ref="ul_folder_names">
 					<li
 						v-for="(item, index) in folders"
 						v-bind:item="item"
@@ -238,6 +238,10 @@ export default {
 
 		//向右滚动文件夹列表
 		right_click() {
+			// let width = this.$refs.ul_folder_names.clientWidth
+			// let outer_width = this.$refs.ul_outter_div.clientWidth
+			// console.log(width)
+			// console.log(outer_width)
 			this.list_left -= 100;
 		},
 		
