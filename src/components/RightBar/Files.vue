@@ -428,9 +428,6 @@ export default {
 
 		//当前渲染层级变化，切换文件夹和文件夹内容
 		bus.$on("change_photo", function(m_id){
-			if(m_id !== 'g_-1' && m_id !== 'g_7' && m_id !== 'o') {
-				return;
-			}
 			if(m_id == model_id) {
 				return;
 			} else {
