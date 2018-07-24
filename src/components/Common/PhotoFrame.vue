@@ -5,8 +5,8 @@
 			:style="{
 				width: image_width() + 'px',
 				height: image_height() + 'px', 
-				paddingTop: image_padding_top() + 'px',
-				paddingLeft: image_padding_left() + 'px'
+				marginTop: image_padding_top() + 'px',
+				marginLeft: image_padding_left() + 'px'
 			}"
 			class="img_image"
 			@click="clickPhoto(index)"
