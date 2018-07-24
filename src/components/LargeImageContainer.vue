@@ -5,6 +5,7 @@
 				<img
 					ref="image"
 					opacity="1"
+					class="img_image"
 					v-bind:width="image_width + 'px'"
 					v-bind:height="image_height + 'px'"
 					v-bind:src="file_array[index].thumbnail_path"
@@ -420,5 +421,8 @@ export default {
 	background-repeat: no-repeat;
 	right: 40px;
 	bottom: 13px;
+}
+.img_image{
+	background-color: white;
 }
 </style>

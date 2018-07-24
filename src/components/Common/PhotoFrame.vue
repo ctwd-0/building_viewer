@@ -8,6 +8,7 @@
 				paddingTop: image_padding_top() + 'px',
 				paddingLeft: image_padding_left() + 'px'
 			}"
+			class="img_image"
 			@click="clickPhoto(index)"
 		>
 		<a 
@@ -205,5 +206,8 @@ export default {
 }
 .slide_out-enter, .slide_out-leave-to {
 	transform: translateX(46px);
+}
+.img_image{
+	background-color: white;
 }
 </style>
