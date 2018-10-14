@@ -1,6 +1,6 @@
 <template>
 	<div class="bottom_table" :style="{height: innerHeigh - 20 + 'px', width: width - 20 + 'px'}" @scroll="table_scroll">
-		<div v-show="!object_view" class="table_header_and_add" v-bind:style="{width : sum_table_width + 20 + 'px'}">
+		<div v-show="!object_view" class="table_header_and_add" v-bind:style="{width : sum_table_width + 27 + 'px'}">
 			<div 
 				class="table_header"
 				v-bind:style="{width : widths[index] + 'px'}"
